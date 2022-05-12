@@ -1,0 +1,3 @@
+sim_mode: BODY  #else: LEG
+robot_name: laikago #else: miniCheetah
+testparam: 1
