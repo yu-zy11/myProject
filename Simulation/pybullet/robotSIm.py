@@ -1,5 +1,6 @@
 
 from lib2to3.pytree import BasePattern
+from numpy import arange
 import yaml
 import os
 import pybullet as p
@@ -37,7 +38,10 @@ class robotSim():
         else:
             print("cannot load URDF,plese check your model !")
             os.abort()
-          
+    def addTerrain(self):
+        colSphereId = p.createCollisionShape(p.GEOM_SPHERE, radius=0.3)
+        geom1=p.createCollisionShape(p.GEOM_BOX, halfExtents=[1,1,1])
+        terrainID=p.createMultiBody(geom1,colSphereId)
     def initTerrain(self):
         heightPerturbationRange = 0.06
         numHeightfieldRows = 256
@@ -54,9 +58,27 @@ class robotSim():
             numHeightfieldRows-1)/2, heightfieldData=heightfieldData, numHeightfieldRows=numHeightfieldRows, numHeightfieldColumns=numHeightfieldColumns)
         ground_id = p.createMultiBody(0, terrainShape)
         p.resetBasePositionAndOrientation(ground_id, [0, 0, 0], [0, 0, 0, 1])
+        return ground_id
     def getDataFromSim(self):
         a=1
+    def subscribeROSmsg(self):
+        a=1
+    
+    def runLegControl(self):
+        joint_kp=[1]*self.joint_num
+        joint_kd=[1]*self.joint_num
+        tau_ff=[0]*self.joint_num
+        q_des=[0]*self.joint_num
+        dq_des=[0]*self.joint_num
+        q_data=[0]*self.joint_num
+        dq_data=[0]*self.joint_num
         
+        tau=[1]*self.joint_num
+        #print("self.jointsID",self.jointsID)
+        for i in arange(self.joint_num):
+            tau[i]=joint_kp[i]*(q_des[i]-q_data[i])+joint_kd[i]*(dq_des[i]-dq_data[i])+tau_ff[i]
+        p.setJointMotorControlArray(bodyUniqueId=self.robotID,jointIndices=self.jointsID,controlMode=p.TORQUE_CONTROL,forces=tau)   
+         
     def initSimulation(self): #the use of function in pybullet refer to https://docs.google.com/document/d/10sXEhzFRSnvFcl3XxNGhnD4N2SedqwdAvK3dsihxVUA/edit# 
         self.loadParameter()
         physicsClient=p.connect(p.GUI)                       #connect to GUI physics server
@@ -70,12 +92,22 @@ class robotSim():
         p.setTimeStep(self.sim_step)
         print("set simulation step:",self.sim_step)
         p.resetDebugVisualizerCamera(1, 45, -30, [0, 0, 0.5])
-        
+        # self.initTerrain()
+        self.addTerrain()
+        self.joint_num=p.getNumJoints(self.robotID)
+        self.jointsID=arange(self.joint_num)
+        #disable velocity control mode ,and reset joint control mode to torque control
+        for i in arange(self.joint_num):
+            p.setJointMotorControl2(self.robotID, self.jointsID[i],controlMode=p.VELOCITY_CONTROL, force=0)
+            
+            
         print("init simulation finished!")
         
     def runSimulation(self):
         while p.isConnected:
-            
+            self.subscribeROSmsg()
+            self.getDataFromSim()
+            self.runLegControl()
             p.stepSimulation()
         
     
