@@ -4,8 +4,9 @@ import yaml
 import os
 import pybullet as p
 import pybullet_data
+import random
     #loafParam()  #loadURDF()  #initTerrain()  #initStair()  #subscribeROSmsg()  #runControl()
-    #getDataFromRobot()  #publishROSmsg()
+    #getDataFromSim()  #publishROSmsg()
 class robotSim():
     def __init__(self):
         self.run_path=os.path.dirname(__file__)
@@ -37,6 +38,25 @@ class robotSim():
             print("cannot load URDF,plese check your model !")
             os.abort()
           
+    def initTerrain(self):
+        heightPerturbationRange = 0.06
+        numHeightfieldRows = 256
+        numHeightfieldColumns = 256
+        heightfieldData = [0]*numHeightfieldRows*numHeightfieldColumns
+        for j in range(int(numHeightfieldColumns/2)):
+            for i in range(int(numHeightfieldRows/2)):
+                height = random.uniform(0, heightPerturbationRange)
+                heightfieldData[2*i+2*j*numHeightfieldRows] = height
+                heightfieldData[2*i+1+2*j*numHeightfieldRows] = height
+                heightfieldData[2*i+(2*j+1)*numHeightfieldRows] = height
+                heightfieldData[2*i+1+(2*j+1)*numHeightfieldRows] = height
+        terrainShape = p.createCollisionShape(shapeType=p.GEOM_HEIGHTFIELD, meshScale=[.05, .05, 1], heightfieldTextureScaling=(
+            numHeightfieldRows-1)/2, heightfieldData=heightfieldData, numHeightfieldRows=numHeightfieldRows, numHeightfieldColumns=numHeightfieldColumns)
+        ground_id = p.createMultiBody(0, terrainShape)
+        p.resetBasePositionAndOrientation(ground_id, [0, 0, 0], [0, 0, 0, 1])
+    def getDataFromSim(self):
+        a=1
+        
     def initSimulation(self): #the use of function in pybullet refer to https://docs.google.com/document/d/10sXEhzFRSnvFcl3XxNGhnD4N2SedqwdAvK3dsihxVUA/edit# 
         self.loadParameter()
         physicsClient=p.connect(p.GUI)                       #connect to GUI physics server
@@ -48,8 +68,10 @@ class robotSim():
         p.setGravity(0,0,-9.8)
         p.setAdditionalSearchPath(pybullet_data.getDataPath()) #use pybullet data package
         p.setTimeStep(self.sim_step)
+        print("set simulation step:",self.sim_step)
         p.resetDebugVisualizerCamera(1, 45, -30, [0, 0, 0.5])
-        print("self.sim_step:",self.sim_step)
+        
+        print("init simulation finished!")
         
     def runSimulation(self):
         while p.isConnected:
@@ -64,3 +86,4 @@ if __name__=='__main__':
     Cheetah=robotSim()
     Cheetah.initSimulation()
     Cheetah.runSimulation()
+    
