@@ -4,6 +4,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
   std_msgs
+  ros_pybullet_msg
   # geometry_msgs
   # message_generation
 )
@@ -20,7 +21,7 @@ find_package(catkin REQUIRED COMPONENTS
 # )
 
 # catkin_package(CATKIN_DEPENDS  message_runtime std_msgs geometry_msgs)
-catkin_package(CATKIN_DEPENDS   std_msgs )
+catkin_package(CATKIN_DEPENDS   std_msgs ros_pybullet_msg)
 ###########
 include_directories(
   ${catkin_INCLUDE_DIRS}

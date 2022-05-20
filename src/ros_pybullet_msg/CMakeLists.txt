@@ -10,7 +10,7 @@ find_package(catkin REQUIRED COMPONENTS
 
 add_message_files(
   FILES
-  pybullet.msg
+  pybullet_msg.msg
 )
 
 generate_messages(
