@@ -1,0 +1,4 @@
+sim_mode: BODY  #else: LEG
+robot_name: laikago #laikago #else: mini_Cheetah ##you can add new model here and modify __init__ and loadURDF()
+testparam: 1
+sim_step: 0.002
