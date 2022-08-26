@@ -1,14 +1,16 @@
 #ifndef TRANSFORMATIONMATH_H
 #define TRANSFORMATIONMATH_H
 #include <string>
+#include "dynamics.h"
+#include "constant.h"
 
 //template <typename T>
 //T Addyu(T x, T y);
-
-namespace yTransMath
+template <typename T>
+class yTransMath:public Dynamics
 {
-    constexpr double pi{3.1415926};
-    template <typename T>
+    
+    // constexpr double pi{3.1415926};
     T Addyu(T x, T y)
     {
         // std::cout<<"addyu~\n";
@@ -24,7 +26,7 @@ namespace yTransMath
         double grade{};
     };
     enum Color{red,black,yellow,}; //unscoped 
-    enum class Pet{dog,cat,}; //scoped
-}
+    enum class Pet{dog,cat}; //scoped
+};
 
 #endif

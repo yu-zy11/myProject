@@ -1,8 +1,13 @@
 #ifndef DYNAMICS_H
 #define DYNAMICS_H
-namespace yDyn
+class Dynamics
 {
-    constexpr double pi{3.1415926};
-}
+   public:
+    int m_inheritance{1};
+};
+// namespace yDyn
+// {
+//     constexpr double pi{3.1415926};
+// }
 
 #endif
