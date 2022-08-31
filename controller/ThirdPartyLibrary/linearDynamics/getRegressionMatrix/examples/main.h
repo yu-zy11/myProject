@@ -33,9 +33,9 @@
 #define MAIN_H
 
 // Include Files
-#include <stddef.h>
-#include <stdlib.h>
-#include "rtwtypes.h"
+// #include <stddef.h>
+// #include <stdlib.h>
+// #include "rtwtypes.h"
 #include "getRegressionMatrix_types.h"
 
 // Function Declarations

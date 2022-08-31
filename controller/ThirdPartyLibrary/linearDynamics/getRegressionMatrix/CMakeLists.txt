@@ -19,5 +19,5 @@ project(linearDynamics)
 message(${CMAKE_CURRENT_SOURCE_DIR})
 message(${PROJECT_NAME} )
 
-
-add_library(${PROJECT_NAME}  *.cpp)
+aux_source_directory(. SRC_LIST) # 搜索当前目录下的所有.cpp文件
+add_library(${PROJECT_NAME}  ${SRC_LIST})

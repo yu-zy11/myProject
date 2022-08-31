@@ -1,0 +1,30 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/yuzy/workspace/learnCpp/myProject/controller/ThirdPartyLibrary/linearDynamics/getRegressionMatrix/getRegressionMatrix.h
+getRegressionMatrix_types.h
+/home/yuzy/workspace/learnCpp/myProject/controller/ThirdPartyLibrary/linearDynamics/getRegressionMatrix/getRegressionMatrix_types.h
+
+/home/yuzy/workspace/learnCpp/myProject/controller/ThirdPartyLibrary/linearDynamics/getRegressionMatrix/getRegressionMatrix_types.h
+
+/home/yuzy/workspace/learnCpp/myProject/main.cpp
+iostream
+-
+cstdint
+-
+string
+-
+cassert
+-
+chrono
+-
+thread
+-
+controller/ThirdPartyLibrary/linearDynamics/getRegressionMatrix/getRegressionMatrix.h
+/home/yuzy/workspace/learnCpp/myProject/controller/ThirdPartyLibrary/linearDynamics/getRegressionMatrix/getRegressionMatrix.h
+

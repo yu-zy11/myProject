@@ -8,7 +8,7 @@
 #define GETREGRESSIONMATRIX_TYPES_H
 
 // Include Files
-#include "rtwtypes.h"
+// #include "rtwtypes.h"
 #endif
 
 //

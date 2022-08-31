@@ -27,17 +27,26 @@ void writeA(int a)
 void writeB(int &a) { a = 2; };
 int main()
 {
-    GetYmatrix Ymatrix;
+    // GetYmatrix Ymatrix;
     double a_q1{1}, a_q2{1}, a_q3{1};
     double g{9.81};
-    double q1{1}, q2{1}, q3{1};
-    double v_q1{2}, v_q2{2}, v_q3{2};
+    double q1{1}, q2{0}, q3{2};
+    double v_q1{2}, v_q2{1}, v_q3{1};
     double Y[180];
-    Ymatrix.getYmatrix_leg1(a_q1, a_q2, a_q3, g, q1, q2, q3, v_q1, v_q2, v_q3, Y);
+    // Ymatrix.getYmatrix_leg1(a_q1, a_q2, a_q3, g, q1, q2, q3, v_q1, v_q2, v_q3, Y);
     int leg{1};
-    double  Y_data[];
+    double Y_data[180];
     int Y_size[2];
-    getRegressionMatrix(a_q1, a_q2, a_q3, g, q1, q2, q3, v_q1, v_q2, v_q3, leg, Y_data[], Y_size);
+    getRegressionMatrix(a_q1, a_q2, a_q3, g, q1, q2, q3, v_q1, v_q2, v_q3, leg, Y_data, Y_size);
+    std::cout<<"Y_data\n";
+    for(int i=0;i<180;i++)
+{
+    std::cout<<" "<<Y_data[i];
+    // if (i==60||i==120)
+    // {
+    //     std::cout<<std::endl;
+    // }
+}
     int a = 0;
     int n = 10;
     std::thread t2(f1, n + 1); // pass by value

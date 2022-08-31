@@ -32,7 +32,7 @@
 // Return Type  : void
 //
 void getRegressionMatrix(double a_q1, double a_q2, double a_q3, double g, double
-  q1, double q2, double q3, double v_q1, double v_q2, double v_q3, double leg,
+  q1, double q2, double q3, double v_q1, double v_q2, double v_q3, int leg,
   double Y_data[], int Y_size[2])
 {
   double dv0[180];
