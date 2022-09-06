@@ -1,4 +1,9 @@
 sim_mode: BODY  #else: LEG
-robot_name: laikago #laikago #else: mini_Cheetah ##you can add new model here and modify __init__ and loadURDF()
-testparam: 1
+urdf_name: laikago  #must be same with name of URDF
+useFixedBase: true  #load urdf using fixed body mode or float body
+message_channle: ROS #else LCM
 sim_step: 0.002
+
+basePosition: [0,0,0.5]
+baseOrientation: [0, 0, 0 ,1]
+gravity: [0, 0, -9.81]

@@ -1,0 +1,23 @@
+package lcm_msgs;
+struct command
+{
+    float  joint_position[12];
+    float  joint_velocity[12];
+    float  joint_kp[12]; 
+    float  joint_kd[12]; 
+    float  torque_feedforward[12]; 
+}
+
+struct states
+{
+    float  joint_position[12];
+    float  joint_velocity[12];
+    float  torque_feedback[12]; 
+    float  contact_state[4]; 
+
+    float  body_position[3]; 
+    float  body_velocity[3]; 
+    float  body_acceleration[3]; 
+    float  body_quaternion[4]; 
+    float  body_rpy[4];
+}

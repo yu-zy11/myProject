@@ -63,5 +63,11 @@
         "typeinfo": "cpp",
         "variant": "cpp"
     },
-    "cmake.sourceDirectory": "${workspaceFolder}/myProject"
+    "cmake.sourceDirectory": "${workspaceFolder}/myProject",
+    "python.autoComplete.extraPaths": [
+        "/opt/ros/noetic/lib/python3/dist-packages"
+    ],
+    "python.analysis.extraPaths": [
+        "/opt/ros/noetic/lib/python3/dist-packages"
+    ]
 }
