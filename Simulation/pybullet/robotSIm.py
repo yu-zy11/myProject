@@ -8,6 +8,9 @@ import pybullet as p
 import pybullet_data
 import random
 import time
+import sys
+from lcm_message.lcm_interface import LCMInterface
+import lcm_message.lcm_msgs 
     #loafParam()  #loadURDF()  #initTerrain()  #initStair()  #subscribeROSmsg()  #runControl()
     #getDataFromSim()  #publishROSmsg()
 class robotSim():
@@ -16,9 +19,29 @@ class robotSim():
         self.yaml_path=os.path.join(self.run_path,'config','config.yaml')
         self.loadConfig()
         self.urdf_path=os.path.join(self.run_path,'../URDF/urdf/')+self.urdf_name+'.urdf'
-        # self.basePosition=[0 ,0, 1]
-        a=1
-        
+        self.joint_kp=[0]*12
+        self.joint_kd=[0]*12
+        self.tau_ff=[0]*12
+        self.q_des=[0]*12
+        self.dq_des=[0]*12
+        self.ddq_des=[0]*12
+        self.body_position=[0]*3
+        self.body_velocity=[0]*3
+        self.body_quaternion=[0]*4 #x y z w
+        self.joint_position=[0]*12
+        self.joint_velocity=[0]*12
+        self.joint_torque=[0]*12
+
+    def subscribeMessage(self):
+        #choose message channel:ros or lcm
+        if self.message_type=="ROS":
+            # self.msgs_channel=LCMInterface()
+            a=1
+        elif self.message_type=="LCM":
+            self.msgs_channel=LCMInterface()   
+            self.msgs_channel.subscribe_command()
+        #     
+
     def loadConfig(self):
         if os.path.exists(self.yaml_path):
             with open(file=self.yaml_path, mode="rb") as f:
@@ -26,7 +49,7 @@ class robotSim():
                 self.sim_mode = config.get("sim_mode")
                 self.urdf_name = config.get("urdf_name")
                 self.useFixedBase=config.get("useFixedBase")
-                self.message_channle=message_channle=config.get("message_channle")
+                self.message_type=config.get("message_channle")
                 self.sim_step = config.get("sim_step")
                 self.basePosition=config.get("basePosition")
                 self.baseOrientation=config.get("baseOrientation")
@@ -37,7 +60,7 @@ class robotSim():
             os.abort()
             
     def loadURDF(self):       
-            self.robotID=p.loadURDF(self.urdf_path,basePosition=self.basePosition,baseOrientation=self.baseOrientation, useFixedBase=self.useFixedBase)
+            self.robot_id=p.loadURDF(self.urdf_path,basePosition=self.basePosition,baseOrientation=self.baseOrientation, useFixedBase=self.useFixedBase)
             if self.robotID<0:
                 print("loading URDF failed!")
                 os.abort()
@@ -66,10 +89,28 @@ class robotSim():
     #     ground_id = p.createMultiBody(0, terrainShape)
     #     p.resetBasePositionAndOrientation(ground_id, [0, 0, 0], [0, 0, 0, 1])
     #     return ground_id
-    def getDataFromSim(self):
+    def updateRobotStates(self):
+        root_velocity = p.getBaseVelocity(self.robot_id)
+        self.root_position, self.root_quaternion = p.getBasePositionAndOrientation(self.robot_id)
+        root_euler = p.getEulerFromQuaternion(self.root_quaternion)
+        # rotation matrix from world to body
+        invert_transform = p.invertTransform(self.root_position, self.root_quaternion)
+        rotation_matrix = p.getMatrixFromQuaternion(invert_transform[1])
+        root_rotation_matrix = np.array(rotation_matrix).reshape(3, 3)
         a=1
-    def subscribeROSmsg(self):
+    def publishStates(self):
         a=1
+    def recieveCommand(self):
+        if self.message_type=="LCM":
+            # self.msgs_channel.lc.handle()
+            self.msgs_channel.lc.handle_timeout(100)
+            self.joint_kp=self.msgs_channel.msg.joint_kd
+            self.joint_kd=self.msgs_channel.msg.joint_kd
+            self.tau_ff=self.msgs_channel.msg.torque_feedforward
+            self.q_des=self.msgs_channel.msg.joint_position
+            self.dq_des=self.msgs_channel.msg.joint_velocity
+        # self.ddq_des=self.msgs_channel.msg.
+        
     
     def runLegControl(self):
         joint_kp=[1]*self.joint_num
@@ -127,7 +168,22 @@ class robotSim():
 
 if __name__=='__main__':
     print("start simulation ")
-    sim=robotSim()
-    sim.initSimulation()
-    sim.runSimulation()
+    Rsim=robotSim()
+    Rsim.subscribeMessage()#订阅信息
+    #
+    #test
+    sim=Rsim.msgs_channel
+    sim.cmd_msgs.joint_kd=[1]*12
+    sim.cmd_msgs.joint_kp=[1]*12
+    sim.cmd_msgs.torque_feedforward=[0]*12
+    sim.cmd_msgs.joint_position=[0]*12
+    sim.cmd_msgs.joint_velocity=[0]*12
+    sim.lc.publish("/joint_command",sim.cmd_msgs.encode())
+    while True:
+        Rsim.recieveCommand()
+
+        print(Rsim.joint_kd)
+
+    Rsim.initSimulation()
+    Rsim.runSimulation()
     

@@ -1,7 +1,7 @@
 sim_mode: BODY  #else: LEG
 urdf_name: laikago  #must be same with name of URDF
 useFixedBase: true  #load urdf using fixed body mode or float body
-message_channle: ROS #else LCM
+message_channle: LCM #else ROS or LCM
 sim_step: 0.002
 
 basePosition: [0,0,0.5]

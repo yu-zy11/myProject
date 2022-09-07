@@ -1,6 +1,6 @@
 import imp
 import lcm
-from lcm_msgs import states, command
+from lcm_message.lcm_msgs import states, command
 import time
 
 class LCMInterface:
@@ -11,7 +11,9 @@ class LCMInterface:
         self.msg={}
 
     def subscribe_command(self):
-        self.lc.subscribe("/joint_command",self.command_callback)
+        self.subscription=self.lc.subscribe("/joint_command",self.command_callback)
+        self.subscription.set_queue_capacity(1)# store only one data
+
 
     def publish_states(self):
         self.state_msgs.body_quaternion=(0 ,0 ,0 ,1) # [x y z w]
@@ -19,12 +21,6 @@ class LCMInterface:
 
     def command_callback(self,channel,data):
         self.msg = command.decode(data)
-
-
-    def update_states(self):
-        a=1
-    def update_command(self):
-        a=1
 
 #test
 if __name__=='__main__':
