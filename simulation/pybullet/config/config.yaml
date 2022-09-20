@@ -1,0 +1,9 @@
+sim_mode: BODY  #else: LEG
+urdf_name: px2_et1  #laikago  or px2_et1
+useFixedBase: true  #load urdf using fixed body mode or float body
+# message_channle: ROS #else ROS or LCM
+sim_step: 0.002
+
+basePosition: [0,0,0.5]
+baseOrientation: [0, 0, 0 ,1]
+gravity: [0, 0, -9.81]

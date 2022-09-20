@@ -1,0 +1,810 @@
+<?xml version="1.0"?>
+<robot name="pxi_robot">
+  <material name="BlueGrey">
+    <color rgba="0.3 0.3 0.3 0.5" />
+  </material>
+  <material name="White">
+    <color rgba="1.0 1.0 1.0 1.0" />
+  </material>
+  <material name="red">
+    <color rgba="0.8 0.0 0.0 1.0" />
+  </material>
+
+  <link name="base_link">
+    <!-- No head  -->
+    <!-- <inertial>
+      <origin
+          rpy="0 0 0"
+          xyz="0.016998 -0.000331 0.001318" />
+      <mass value="25.25" />
+      <inertia
+          ixx="278395.26E-06"
+          ixy="152.889E-06"
+          ixz="22651.99E-06"
+          iyy="846723.829E-06"
+          iyz="-3102.74E-06"
+          izz="820125.4E-06" />
+    </inertial>
+    <visual>
+      <origin
+          rpy="0 0 0"
+          xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/px2/base_link_withouthead.stl" />
+      </geometry>
+      <material name="White" />
+    </visual> -->
+    <!-- No head  -->
+
+    <!--  With head  -->
+    <inertial>
+      <origin
+          rpy="0 0 0"
+          xyz="0.047667 -0.000272 0.063558" />
+      <mass value="29.96" />
+      <inertia
+          ixx="1025387.025E-06"
+          ixy="424.514E-06"
+          ixz="346767.5E-06"
+          iyy="1741046.826E-06"
+          iyz="-2423.749E-06"
+          izz="1007097.4E-06" />
+    </inertial>
+    <visual>
+      <origin
+          rpy="0 0 0"
+          xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/px2/base_link.stl" />
+      </geometry>
+      <material name="White" />
+    </visual>
+    <!--  With head  -->
+
+    <collision>
+      <origin
+          rpy="0 0 0"
+          xyz="0 0 0" />
+      <geometry>
+        <box size="0.475 0.154 0.158" />
+      </geometry>
+    </collision>
+  </link>
+
+
+
+  <!-- fr leg and foot  -->
+  <joint
+      name="leg0-fr1_j"
+      type="revolute">
+    <origin
+        rpy="0 0 0"
+        xyz="0.2375 -0.077 0" />
+    <limit
+        effort="600"
+        lower="-0.7"
+        upper="0.7"
+        velocity="60" />
+    <dynamics
+        damping="1"
+        friction="1" />
+    <parent link="base_link" />
+    <child link="fr1_l" />
+    <axis xyz="1 0 0" />
+  </joint>
+
+  <link name="fr1_l">
+<inertial>
+   <origin rpy="0.0 0.0 0.0"    xyz="0.00354500 -0.02230924 0.02002258" />
+    <mass value="2.43400000" />
+    <inertia
+    ixx="0.00268012"
+    ixy="-0.00029613"
+    ixz="0.00017430"
+    iyy="0.00435143"
+    iyz="-0.00104346"
+    izz="0.00284157" />
+</inertial>
+    <visual>
+      <origin
+          rpy="0 0 0"
+          xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/px2/fr1_l.stl" />
+      </geometry>
+      <material name="BlueGrey" />
+    </visual>
+  </link>
+
+
+  <joint
+      name="leg0-fr2_j"
+      type="revolute">
+    <origin
+        rpy="0 0 0"
+        xyz="0 -0.1135 0" />
+    <limit
+        effort="600"
+        lower="-2.68"
+        upper="0.55"
+        velocity="60" />
+    <dynamics
+        damping="1"
+        friction="1" />
+    <parent link="fr1_l" />
+    <child link="fr2_l" />
+    <axis xyz="0 1 0" />
+  </joint>
+
+  <link name="fr2_l">
+<inertial>
+   <origin rpy="0.0 0.0 0.0"    xyz="-0.02477925 0.07000000 -0.02640761" />
+    <mass value="3.57936525" />
+    <inertia
+    ixx="0.03445276"
+    ixy="-0.00188556"
+    ixz="0.00269291"
+    iyy="0.02343212"
+    iyz="0.01618739"
+    izz="0.01164799" />
+</inertial>
+    <visual>
+      <origin
+          rpy="0 0 0"
+          xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/px2/fr2_l.stl" />
+      </geometry>
+      <material name="BlueGrey" />
+    </visual>
+    <collision>
+      <origin
+          rpy="1.57079632679 0 0"
+          xyz="0 0 0" />
+      <geometry>
+        <cylinder
+            length="0.03"
+            radius="0.06" />
+      </geometry>
+    </collision>
+  </link>
+
+
+  <joint
+      name="leg0-fr3_j"
+      type="revolute">
+    <origin
+        rpy="0 0 0"
+        xyz="0 0 -0.226" />
+    <limit
+        effort="600"
+        lower="0"
+        upper="2.44"
+        velocity="60" />
+    <dynamics
+        damping="1"
+        friction="1" />
+    <parent link="fr2_l" />
+    <child link="fr3_l" />
+    <axis xyz="0 1 0" />
+  </joint>
+
+  <link name="fr3_l">
+<inertial>
+   <origin rpy="0.0 0.0 0.0"    xyz="-0.01999998 0.02000000 -0.14000000" />
+    <mass value="0.65000000" />
+    <inertia
+    ixx="0.05241858"
+    ixy="0.00441805"
+    ixz="-0.00173991"
+    iyy="0.00746827"
+    iyz="0.01787160"
+    izz="0.04581055" />
+</inertial>
+    <visual>
+      <origin
+          rpy="0 0 0"
+          xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/px2/fr3_l.stl" />
+      </geometry>
+      <material name="BlueGrey" />
+    </visual>
+  </link>
+
+
+  <joint
+      name="leg0-fr4_foot_fixed"
+      type="fixed">
+    <origin
+        rpy="0 0 0"
+        xyz="0 0 -0.310" />
+    <parent link="fr3_l" />
+    <child link="fr_foot" />
+  </joint>
+
+  <link name="fr_foot">
+    <visual>
+      <origin
+          rpy="0 0 0"
+          xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/px2/fr_foot.stl" />
+      </geometry>
+      <material name="red" />
+    </visual>
+    <collision>
+      <origin
+          rpy="0 0 0"
+          xyz="0 0 0" />
+      <geometry>
+        <sphere radius="0.03" />
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.06" />
+      <inertia
+          ixx="8.64E-05"
+          ixy="0.0"
+          ixz="0.0"
+          iyy="8.64E-05"
+          iyz="0.0"
+          izz="8.64E-05" />
+    </inertial>
+  </link>
+
+
+
+
+  <!-- FH leg and foot  -->
+  <joint
+      name="leg1-fl1_j"
+      type="revolute">
+    <origin
+        rpy="0 0 0"
+        xyz="0.2375 0.077 0" />
+    <limit
+        effort="600"
+        lower="-0.7"
+        upper="0.7"
+        velocity="60" />
+    <dynamics
+        damping="1"
+        friction="1" />
+    <parent link="base_link" />
+    <child link="fl1_l" />
+    <axis xyz="1 0 0" />
+  </joint>
+
+  <link name="fl1_l">
+<inertial>
+   <origin rpy="0.0 0.0 0.0"    xyz="0.00354500 0.03258693 0.00215309" />
+    <mass value="2.43400000" />
+    <inertia
+    ixx="0.00408763"
+    ixy="0.00038481"
+    ixz="0.00002565"
+    iyy="0.00531594"
+    iyz="0.00019348"
+    izz="0.00146829" />
+</inertial>
+    <visual>
+      <origin
+          rpy="0 0 0"
+          xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/px2/fl1_l.stl" />
+      </geometry>
+      <material name="BlueGrey" />
+    </visual>
+  </link>
+
+
+  <joint
+      name="leg1-fl2_j"
+      type="revolute">
+    <origin
+        rpy="0 0 0"
+        xyz="0 0.1135 0" />
+    <limit
+        effort="600"
+        lower="-2.68"
+        upper="0.55"
+        velocity="60" />
+    <dynamics
+        damping="1"
+        friction="1" />
+    <parent link="fl1_l" />
+    <child link="fl2_l" />
+    <axis xyz="0 1 0" />
+  </joint>
+
+  <link name="fl2_l">
+<inertial>
+   <origin rpy="0.0 0.0 0.0"    xyz="-0.00536604 -0.06783790 -0.02000000" />
+    <mass value="2.99035317" />
+    <inertia
+    ixx="0.01164472"
+    ixy="0.00136433"
+    ixz="0.00081678"
+    iyy="0.00328953"
+    iyz="-0.00513201"
+    izz="0.00878947" />
+</inertial>
+    <visual>
+      <origin
+          rpy="0 0 0"
+          xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/px2/fl2_l.stl" />
+      </geometry>
+      <material name="BlueGrey" />
+    </visual>
+    <collision>
+      <origin
+          rpy="1.57079632679 0 0"
+          xyz="0 0 0" />
+      <geometry>
+        <cylinder
+            length="0.03"
+            radius="0.06" />
+      </geometry>
+    </collision>
+  </link>
+
+
+  <joint
+      name="leg1-fl3_j"
+      type="revolute">
+    <origin
+        rpy="0 0 0"
+        xyz="0 0 -0.226" />
+    <limit
+        effort="600"
+        lower="0"
+        upper="2.44"
+        velocity="60" />
+    <dynamics
+        damping="1"
+        friction="1" />
+    <parent link="fl2_l" />
+    <child link="fl3_l" />
+    <axis xyz="0 1 0" />
+  </joint>
+
+  <link name="fl3_l">
+<inertial>
+   <origin rpy="0.0 0.0 0.0"    xyz="-0.02000000 -0.02000000 -0.14000000" />
+    <mass value="0.97564684" />
+    <inertia
+    ixx="0.05038278"
+    ixy="-0.00888918"
+    ixz="-0.00228545"
+    iyy="0.00479596"
+    iyz="-0.01215046"
+    izz="0.04893086" />
+</inertial>
+    <visual>
+      <origin
+          rpy="0 0 0"
+          xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/px2/fl3_l.stl" />
+      </geometry>
+      <material name="BlueGrey" />
+    </visual>
+  </link>
+
+
+  <joint
+    name="leg1-fl4_foot_fixed"
+    type="fixed">
+    <origin
+      rpy="0 0 0"
+      xyz="0 0 -0.310" />
+    <parent link="fl3_l" />
+    <child link="fl_foot" />
+  </joint>
+
+  <link name="fl_foot">
+    <visual>
+      <origin
+          rpy="0 0 0"
+          xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/px2/fl_foot.stl" />
+      </geometry>
+      <material name="red" />
+    </visual>
+    <collision>
+      <origin
+          rpy="0 0 0"
+          xyz="0 0 0" />
+      <geometry>
+        <sphere radius="0.03" />
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.06" />
+      <inertia
+          ixx="8.64E-05"
+          ixy="0.0"
+          ixz="0.0"
+          iyy="8.64E-05"
+          iyz="0.0"
+          izz="8.64E-05" />
+    </inertial>
+  </link>
+
+
+
+
+  <!-- HR leg and foot  -->
+  <joint
+      name="leg2-hr1_j"
+      type="revolute">
+    <origin
+        rpy="0 0 0"
+        xyz="-0.2375 -0.077 0" />
+    <limit
+        effort="600"
+        lower="-0.7"
+        upper="0.7"
+        velocity="60" />
+    <dynamics
+        damping="1"
+        friction="1" />
+    <parent link="base_link" />
+    <child link="hr1_l" />
+    <axis xyz="1 0 0" />
+  </joint>
+
+  <link name="hr1_l">
+<inertial>
+   <origin rpy="0.0 0.0 0.0"    xyz="-0.00354500 -0.01830891 0.01865722" />
+    <mass value="2.43400000" />
+    <inertia
+    ixx="0.00218178"
+    ixy="0.00026162"
+    ixz="-0.00016806"
+    iyy="0.00447997"
+    iyz="-0.00085414"
+    izz="0.00323706" />
+</inertial>
+    <visual>
+      <origin
+          rpy="0 0 0"
+          xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/px2/hr1_l.stl" />
+      </geometry>
+      <material name="BlueGrey" />
+    </visual>
+  </link>
+
+
+  <joint
+      name="leg2-hr2_j"
+      type="revolute">
+    <origin
+        rpy="0 0 0"
+        xyz="0 -0.1135 0" />
+    <limit
+        effort="600"
+        lower="0.0"
+        upper="3.14"
+        velocity="60" />
+    <dynamics
+        damping="1"
+        friction="1" />
+    <parent link="hr1_l" />
+    <child link="hr2_l" />
+    <axis xyz="0 1 0" />
+  </joint>
+
+  <link name="hr2_l">
+<inertial>
+   <origin rpy="0.0 0.0 0.0"    xyz="0.02509895 0.07000000 -0.04463996" />
+    <mass value="3.36313887" />
+    <inertia
+    ixx="0.02396915"
+    ixy="0.00337509"
+    ixz="-0.00370761"
+    iyy="0.01415618"
+    iyz="0.01193186"
+    izz="0.01191047" />
+</inertial>
+    <visual>
+      <origin
+          rpy="0 0 0"
+          xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/px2/hr2_l.stl" />
+      </geometry>
+      <material name="BlueGrey" />
+    </visual>
+    <collision>
+      <origin
+          rpy="1.57079632679 0 0"
+          xyz="0 0 0" />
+      <geometry>
+        <cylinder
+            length="0.03"
+            radius="0.06" />
+      </geometry>
+    </collision>
+  </link>
+
+
+  <joint
+      name="leg2-hr3_j"
+      type="revolute">
+    <origin
+        rpy="0 0 0"
+        xyz="0 0 -0.255" />
+    <limit
+        effort="600"
+        lower="-2.68"
+        upper="0.48"
+        velocity="60" />
+    <dynamics
+        damping="1"
+        friction="1" />
+    <parent link="hr2_l" />
+    <child link="hr3_l" />
+    <axis xyz="0 1 0" />
+  </joint>
+
+  <link name="hr3_l">
+<inertial>
+   <origin rpy="0.0 0.0 0.0"    xyz="0.02000000 0.02000000 -0.14000000" />
+    <mass value="0.80286113" />
+    <inertia
+    ixx="0.05334258"
+    ixy="-0.00609705"
+    ixz="0.00144681"
+    iyy="0.00357972"
+    iyz="0.01198324"
+    izz="0.05123513" />
+</inertial>
+    <visual>
+      <origin
+          rpy="0 0 0"
+          xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/px2/hr3_l.stl" />
+      </geometry>
+      <material name="BlueGrey" />
+    </visual>
+  </link>
+
+
+
+
+  <joint
+      name="leg2-hr4_foot_fixed"
+      type="fixed">
+    <origin
+        rpy="0 0 0"
+        xyz="0 0 -0.310" />
+    <parent link="hr3_l" />
+    <child link="hr_foot" />
+  </joint>
+
+
+  <link name="hr_foot">
+    <visual>
+      <origin
+          rpy="0 0 0"
+          xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/px2/hr_foot.stl" />
+      </geometry>
+      <material name="red" />
+    </visual>
+    <collision>
+      <origin
+          rpy="0 0 0"
+          xyz="0 0 0" />
+      <geometry>
+        <sphere radius="0.03" />
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.06" />
+      <inertia
+          ixx="8.64E-05"
+          ixy="0.0"
+          ixz="0.0"
+          iyy="8.64E-05"
+          iyz="0.0"
+          izz="8.64E-05" />
+    </inertial>
+  </link>
+
+
+
+  <!-- HL leg and foot  -->
+  <joint
+      name="leg3-hl1_j"
+      type="revolute">
+    <origin
+        rpy="0 0 0"
+        xyz="-0.2375 0.077 0" />
+    <limit
+        effort="600"
+        lower="-0.7"
+        upper="0.7"
+        velocity="60" />
+    <dynamics
+        damping="1"
+        friction="1" />
+    <parent link="base_link" />
+    <child link="hl1_l" />
+    <axis xyz="1 0 0" />
+  </joint>
+
+  <link name="hl1_l">
+<inertial>
+   <origin rpy="0.0 0.0 0.0"    xyz="-0.00354500 0.01647435 0.00359586" />
+    <mass value="2.43400000" />
+    <inertia
+    ixx="0.00197650"
+    ixy="-0.00024579"
+    ixz="-0.00002395"
+    iyy="0.00529575"
+    iyz="0.00018798"
+    izz="0.00339238" />
+</inertial>
+    <visual>
+      <origin
+          rpy="0 0 0"
+          xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/px2/hl1_l.stl" />
+      </geometry>
+      <material name="BlueGrey" />
+    </visual>
+  </link>
+
+
+  <joint
+      name="leg3-hl2_j"
+      type="revolute">
+    <origin
+        rpy="0 0 0"
+        xyz="0 0.1135 0" />
+    <limit
+        effort="600"
+        lower="0.0"
+        upper="3.14"
+        velocity="60" />
+    <dynamics
+        damping="1"
+        friction="1" />
+    <parent link="hl1_l" />
+    <child link="hl2_l" />
+    <axis xyz="0 1 0" />
+  </joint>
+
+  <link name="hl2_l">
+<inertial>
+   <origin rpy="0.0 0.0 0.0"    xyz="0.01944211 -0.07000000 -0.05887972" />
+    <mass value="3.56421937" />
+    <inertia
+    ixx="0.04871723"
+    ixy="-0.00522334"
+    ixz="-0.00515335"
+    iyy="0.02513521"
+    iyz="-0.02435640"
+    izz="0.02579234" />
+</inertial>
+    <visual>
+      <origin
+          rpy="0 0 0"
+          xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/px2/hl2_l.stl" />
+      </geometry>
+      <material name="BlueGrey" />
+    </visual>
+    <collision>
+      <origin
+          rpy="1.57079632679 0 0"
+          xyz="0 0 0" />
+      <geometry>
+        <cylinder
+            length="0.03"
+            radius="0.06" />
+      </geometry>
+    </collision>
+  </link>
+
+
+  <joint
+      name="leg3-hl3_j"
+      type="revolute">
+    <origin
+        rpy="0 0 0"
+        xyz="0 0 -0.255" />
+    <limit
+        effort="600"
+        lower="-2.68"
+        upper="0.48"
+        velocity="60" />
+    <dynamics
+        damping="1"
+        friction="1" />
+    <parent link="hl2_l" />
+    <child link="hl3_l" />
+    <axis xyz="0 1 0" />
+  </joint>
+
+  <link name="hl3_l">
+<inertial>
+   <origin rpy="0.0 0.0 0.0"    xyz="-0.02000000 -0.01959903 -0.14000000" />
+    <mass value="0.65000000" />
+    <inertia
+    ixx="0.03989879"
+    ixy="0.00259123"
+    ixz="0.00194020"
+    iyy="0.01459572"
+    iyz="-0.01914250"
+    izz="0.02582834" />
+</inertial>
+    <visual>
+      <origin
+          rpy="0 0 0"
+          xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/px2/hl3_l.stl" />
+      </geometry>
+      <material name="BlueGrey" />
+    </visual>
+  </link>
+
+
+
+
+  <joint
+      name="leg3-hl4_foot_fixed"
+      type="fixed">
+    <origin
+        rpy="0 0 0"
+        xyz="0 0 -0.310" />
+    <parent link="hl3_l" />
+    <child link="hl_foot" />
+  </joint>
+
+
+  <link name="hl_foot">
+    <visual>
+      <origin
+          rpy="0 0 0"
+          xyz="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/px2/hl_foot.stl" />
+      </geometry>
+      <material name="red" />
+    </visual>
+    <collision>
+      <origin
+          rpy="0 0 0"
+          xyz="0 0 0" />
+      <geometry>
+        <sphere radius="0.03" />
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.06" />
+      <inertia
+          ixx="8.64E-05"
+          ixy="0.0"
+          ixz="0.0"
+          iyy="8.64E-05"
+          iyz="0.0"
+          izz="8.64E-05" />
+    </inertial>
+  </link>
+
+</robot>

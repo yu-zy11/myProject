@@ -1,0 +1,2 @@
+ros_msgs
+-DCATKIN_DEVEL_PREFIX=/home/yuzy/workspace/learnCpp/myProject/ros_pack/ros_message/devel -DCMAKE_INSTALL_PREFIX=/home/yuzy/workspace/learnCpp/myProject/ros_pack/ros_message/install -G Unix Makefiles

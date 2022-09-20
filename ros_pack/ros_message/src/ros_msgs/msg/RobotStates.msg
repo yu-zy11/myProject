@@ -1,0 +1,20 @@
+Header header
+float32[3] body_position
+float32[3] body_linear_velocity_in_world
+float32[3] body_linear_velocity_in_body
+float32[3] body_acceleration_in_body
+float32[3] body_euler
+float32[4] body_quaternion
+float32[3] body_angular_velocity_in_world
+float32[3] body_angular_velocity_in_body
+# float32[9] rotation_matrix_body_to_world
+float32[12] joint_position
+float32[12] joint_velocity
+float32[12] torque_reading
+float32[12] joint_acceleration
+float32[4] foot_contact_force
+int32[4] foot_contact_detected
+float32[4] foot_contact_probability
+float32[12] foot_position_in_body
+float32[12] foot_velocity_in_body
+float32[144] foot_jacobian_in_body
