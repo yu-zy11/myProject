@@ -61,7 +61,8 @@
         "cinttypes": "cpp",
         "typeindex": "cpp",
         "typeinfo": "cpp",
-        "variant": "cpp"
+        "variant": "cpp",
+        "core": "cpp"
     },
     "cmake.sourceDirectory": "${workspaceFolder}/myProject",
     "python.autoComplete.extraPaths": [
