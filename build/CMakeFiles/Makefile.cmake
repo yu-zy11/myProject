@@ -12,9 +12,7 @@ set(CMAKE_MAKEFILE_DEPENDS
   "CMakeFiles/3.16.3/CMakeCXXCompiler.cmake"
   "CMakeFiles/3.16.3/CMakeSystem.cmake"
   "../controller/CMakeLists.txt"
-  "../controller/ThirdPartyLibrary/CMakeLists.txt"
-  "../controller/ThirdPartyLibrary/linearDynamics/CMakeLists.txt"
-  "../controller/ThirdPartyLibrary/linearDynamics/getRegressionMatrix/CMakeLists.txt"
+  "../controller/third_party/qpOASES/CMakeLists.txt"
   "/usr/share/cmake-3.16/Modules/CMakeCInformation.cmake"
   "/usr/share/cmake-3.16/Modules/CMakeCXXInformation.cmake"
   "/usr/share/cmake-3.16/Modules/CMakeCheckCompilerFlagCommonPatterns.cmake"
@@ -52,13 +50,11 @@ set(CMAKE_MAKEFILE_OUTPUTS
 set(CMAKE_MAKEFILE_PRODUCTS
   "CMakeFiles/CMakeDirectoryInformation.cmake"
   "controller/CMakeFiles/CMakeDirectoryInformation.cmake"
-  "controller/ThirdPartyLibrary/CMakeFiles/CMakeDirectoryInformation.cmake"
-  "controller/ThirdPartyLibrary/linearDynamics/CMakeFiles/CMakeDirectoryInformation.cmake"
-  "controller/ThirdPartyLibrary/linearDynamics/getRegressionMatrix/CMakeFiles/CMakeDirectoryInformation.cmake"
+  "controller/third_party/qpOASES/CMakeFiles/CMakeDirectoryInformation.cmake"
   )
 
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
   "CMakeFiles/main.dir/DependInfo.cmake"
-  "controller/ThirdPartyLibrary/linearDynamics/getRegressionMatrix/CMakeFiles/linearDynamics.dir/DependInfo.cmake"
+  "controller/third_party/qpOASES/CMakeFiles/qpOASES.dir/DependInfo.cmake"
   )

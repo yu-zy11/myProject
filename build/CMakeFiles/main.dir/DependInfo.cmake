@@ -10,11 +10,12 @@ set(CMAKE_CXX_COMPILER_ID "GNU")
 
 # The include file search paths:
 set(CMAKE_CXX_TARGET_INCLUDE_PATH
+  ".././controller/third_party/qpOASES/include"
   )
 
 # Targets to which this target links.
 set(CMAKE_TARGET_LINKED_INFO_FILES
-  "/home/yuzy/workspace/learnCpp/myProject/build/controller/ThirdPartyLibrary/linearDynamics/getRegressionMatrix/CMakeFiles/linearDynamics.dir/DependInfo.cmake"
+  "/home/yuzy/workspace/learnCpp/myProject/build/controller/third_party/qpOASES/CMakeFiles/qpOASES.dir/DependInfo.cmake"
   )
 
 # Fortran module output directory.

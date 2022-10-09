@@ -73,87 +73,51 @@ clean: controller/clean
 # Directory level rules for directory controller
 
 # Recursive "all" directory target.
-controller/all: controller/ThirdPartyLibrary/all
+controller/all: controller/third_party/qpOASES/all
 
 .PHONY : controller/all
 
 # Recursive "preinstall" directory target.
-controller/preinstall: controller/ThirdPartyLibrary/preinstall
+controller/preinstall: controller/third_party/qpOASES/preinstall
 
 .PHONY : controller/preinstall
 
 # Recursive "clean" directory target.
-controller/clean: controller/ThirdPartyLibrary/clean
+controller/clean: controller/third_party/qpOASES/clean
 
 .PHONY : controller/clean
 
 #=============================================================================
-# Directory level rules for directory controller/ThirdPartyLibrary
+# Directory level rules for directory controller/third_party/qpOASES
 
 # Recursive "all" directory target.
-controller/ThirdPartyLibrary/all: controller/ThirdPartyLibrary/linearDynamics/all
+controller/third_party/qpOASES/all: controller/third_party/qpOASES/CMakeFiles/qpOASES.dir/all
 
-.PHONY : controller/ThirdPartyLibrary/all
-
-# Recursive "preinstall" directory target.
-controller/ThirdPartyLibrary/preinstall: controller/ThirdPartyLibrary/linearDynamics/preinstall
-
-.PHONY : controller/ThirdPartyLibrary/preinstall
-
-# Recursive "clean" directory target.
-controller/ThirdPartyLibrary/clean: controller/ThirdPartyLibrary/linearDynamics/clean
-
-.PHONY : controller/ThirdPartyLibrary/clean
-
-#=============================================================================
-# Directory level rules for directory controller/ThirdPartyLibrary/linearDynamics
-
-# Recursive "all" directory target.
-controller/ThirdPartyLibrary/linearDynamics/all: controller/ThirdPartyLibrary/linearDynamics/getRegressionMatrix/all
-
-.PHONY : controller/ThirdPartyLibrary/linearDynamics/all
+.PHONY : controller/third_party/qpOASES/all
 
 # Recursive "preinstall" directory target.
-controller/ThirdPartyLibrary/linearDynamics/preinstall: controller/ThirdPartyLibrary/linearDynamics/getRegressionMatrix/preinstall
+controller/third_party/qpOASES/preinstall:
 
-.PHONY : controller/ThirdPartyLibrary/linearDynamics/preinstall
-
-# Recursive "clean" directory target.
-controller/ThirdPartyLibrary/linearDynamics/clean: controller/ThirdPartyLibrary/linearDynamics/getRegressionMatrix/clean
-
-.PHONY : controller/ThirdPartyLibrary/linearDynamics/clean
-
-#=============================================================================
-# Directory level rules for directory controller/ThirdPartyLibrary/linearDynamics/getRegressionMatrix
-
-# Recursive "all" directory target.
-controller/ThirdPartyLibrary/linearDynamics/getRegressionMatrix/all: controller/ThirdPartyLibrary/linearDynamics/getRegressionMatrix/CMakeFiles/linearDynamics.dir/all
-
-.PHONY : controller/ThirdPartyLibrary/linearDynamics/getRegressionMatrix/all
-
-# Recursive "preinstall" directory target.
-controller/ThirdPartyLibrary/linearDynamics/getRegressionMatrix/preinstall:
-
-.PHONY : controller/ThirdPartyLibrary/linearDynamics/getRegressionMatrix/preinstall
+.PHONY : controller/third_party/qpOASES/preinstall
 
 # Recursive "clean" directory target.
-controller/ThirdPartyLibrary/linearDynamics/getRegressionMatrix/clean: controller/ThirdPartyLibrary/linearDynamics/getRegressionMatrix/CMakeFiles/linearDynamics.dir/clean
+controller/third_party/qpOASES/clean: controller/third_party/qpOASES/CMakeFiles/qpOASES.dir/clean
 
-.PHONY : controller/ThirdPartyLibrary/linearDynamics/getRegressionMatrix/clean
+.PHONY : controller/third_party/qpOASES/clean
 
 #=============================================================================
 # Target rules for target CMakeFiles/main.dir
 
 # All Build rule for target.
-CMakeFiles/main.dir/all: controller/ThirdPartyLibrary/linearDynamics/getRegressionMatrix/CMakeFiles/linearDynamics.dir/all
+CMakeFiles/main.dir/all: controller/third_party/qpOASES/CMakeFiles/qpOASES.dir/all
 	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/depend
 	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/yuzy/workspace/learnCpp/myProject/build/CMakeFiles --progress-num=9,10 "Built target main"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/yuzy/workspace/learnCpp/myProject/build/CMakeFiles --progress-num=1,2 "Built target main"
 .PHONY : CMakeFiles/main.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/main.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/yuzy/workspace/learnCpp/myProject/build/CMakeFiles 10
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/yuzy/workspace/learnCpp/myProject/build/CMakeFiles 21
 	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/main.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/yuzy/workspace/learnCpp/myProject/build/CMakeFiles 0
 .PHONY : CMakeFiles/main.dir/rule
@@ -169,31 +133,31 @@ CMakeFiles/main.dir/clean:
 .PHONY : CMakeFiles/main.dir/clean
 
 #=============================================================================
-# Target rules for target controller/ThirdPartyLibrary/linearDynamics/getRegressionMatrix/CMakeFiles/linearDynamics.dir
+# Target rules for target controller/third_party/qpOASES/CMakeFiles/qpOASES.dir
 
 # All Build rule for target.
-controller/ThirdPartyLibrary/linearDynamics/getRegressionMatrix/CMakeFiles/linearDynamics.dir/all:
-	$(MAKE) -f controller/ThirdPartyLibrary/linearDynamics/getRegressionMatrix/CMakeFiles/linearDynamics.dir/build.make controller/ThirdPartyLibrary/linearDynamics/getRegressionMatrix/CMakeFiles/linearDynamics.dir/depend
-	$(MAKE) -f controller/ThirdPartyLibrary/linearDynamics/getRegressionMatrix/CMakeFiles/linearDynamics.dir/build.make controller/ThirdPartyLibrary/linearDynamics/getRegressionMatrix/CMakeFiles/linearDynamics.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/yuzy/workspace/learnCpp/myProject/build/CMakeFiles --progress-num=1,2,3,4,5,6,7,8 "Built target linearDynamics"
-.PHONY : controller/ThirdPartyLibrary/linearDynamics/getRegressionMatrix/CMakeFiles/linearDynamics.dir/all
+controller/third_party/qpOASES/CMakeFiles/qpOASES.dir/all:
+	$(MAKE) -f controller/third_party/qpOASES/CMakeFiles/qpOASES.dir/build.make controller/third_party/qpOASES/CMakeFiles/qpOASES.dir/depend
+	$(MAKE) -f controller/third_party/qpOASES/CMakeFiles/qpOASES.dir/build.make controller/third_party/qpOASES/CMakeFiles/qpOASES.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/yuzy/workspace/learnCpp/myProject/build/CMakeFiles --progress-num=3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21 "Built target qpOASES"
+.PHONY : controller/third_party/qpOASES/CMakeFiles/qpOASES.dir/all
 
 # Build rule for subdir invocation for target.
-controller/ThirdPartyLibrary/linearDynamics/getRegressionMatrix/CMakeFiles/linearDynamics.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/yuzy/workspace/learnCpp/myProject/build/CMakeFiles 8
-	$(MAKE) -f CMakeFiles/Makefile2 controller/ThirdPartyLibrary/linearDynamics/getRegressionMatrix/CMakeFiles/linearDynamics.dir/all
+controller/third_party/qpOASES/CMakeFiles/qpOASES.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/yuzy/workspace/learnCpp/myProject/build/CMakeFiles 19
+	$(MAKE) -f CMakeFiles/Makefile2 controller/third_party/qpOASES/CMakeFiles/qpOASES.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/yuzy/workspace/learnCpp/myProject/build/CMakeFiles 0
-.PHONY : controller/ThirdPartyLibrary/linearDynamics/getRegressionMatrix/CMakeFiles/linearDynamics.dir/rule
+.PHONY : controller/third_party/qpOASES/CMakeFiles/qpOASES.dir/rule
 
 # Convenience name for target.
-linearDynamics: controller/ThirdPartyLibrary/linearDynamics/getRegressionMatrix/CMakeFiles/linearDynamics.dir/rule
+qpOASES: controller/third_party/qpOASES/CMakeFiles/qpOASES.dir/rule
 
-.PHONY : linearDynamics
+.PHONY : qpOASES
 
 # clean rule for target.
-controller/ThirdPartyLibrary/linearDynamics/getRegressionMatrix/CMakeFiles/linearDynamics.dir/clean:
-	$(MAKE) -f controller/ThirdPartyLibrary/linearDynamics/getRegressionMatrix/CMakeFiles/linearDynamics.dir/build.make controller/ThirdPartyLibrary/linearDynamics/getRegressionMatrix/CMakeFiles/linearDynamics.dir/clean
-.PHONY : controller/ThirdPartyLibrary/linearDynamics/getRegressionMatrix/CMakeFiles/linearDynamics.dir/clean
+controller/third_party/qpOASES/CMakeFiles/qpOASES.dir/clean:
+	$(MAKE) -f controller/third_party/qpOASES/CMakeFiles/qpOASES.dir/build.make controller/third_party/qpOASES/CMakeFiles/qpOASES.dir/clean
+.PHONY : controller/third_party/qpOASES/CMakeFiles/qpOASES.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.

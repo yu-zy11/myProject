@@ -1,93 +1,85 @@
+/*
+ *	This file is part of qpOASES.
+ *
+ *	qpOASES -- An Implementation of the Online Active Set Strategy.
+ *	Copyright (C) 2007-2017 by Hans Joachim Ferreau, Andreas Potschka,
+ *	Christian Kirches et al. All rights reserved.
+ *
+ *	qpOASES is free software; you can redistribute it and/or
+ *	modify it under the terms of the GNU Lesser General Public
+ *	License as published by the Free Software Foundation; either
+ *	version 2.1 of the License, or (at your option) any later version.
+ *
+ *	qpOASES is distributed in the hope that it will be useful,
+ *	but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *	See the GNU Lesser General Public License for more details.
+ *
+ *	You should have received a copy of the GNU Lesser General Public
+ *	License along with qpOASES; if not, write to the Free Software
+ *	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ *
+ */
+
+
+/**
+ *	\file examples/example1a.cpp
+ *	\author Hans Joachim Ferreau
+ *	\version 3.2
+ *	\date 2007-2017
+ *
+ *	Very simple example for testing qpOASES using the SQProblem class.
+ */
+
+
+
+#include <qpOASES.hpp>
 #include <iostream>
-#include <cstdint>
-#include <string>
-#include <cassert>
-#include <chrono>
 
-#include <thread>
-#include "controller/ThirdPartyLibrary/linearDynamics/getRegressionMatrix/getRegressionMatrix.h"
-void f1(int n)
+/** Example for qpOASES main function using the SQProblem class. */
+int main( )
 {
-    for (int i = 0; i < 50000; ++i)
-    {
-        std::cout << "Thread 1 executing\n";
-        ++n;
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
-    }
+	USING_NAMESPACE_QPOASES
+
+	/* Setup data of first QP. */
+	real_t H[2*2] = { 1.0, 0.0, 0.0, 0.5 };
+	real_t A[1*2] = { 1.0, 1.0 };
+	real_t g[2] = { 1.5, 1.0 };
+	real_t lb[2] = { 0.5, -2.0 };
+	real_t ub[2] = { 5.0, 2.0 };
+	real_t lbA[1] = { -1.0 };
+	real_t ubA[1] = { 2.0 };
+
+	/* Setup data of second QP. */
+	real_t H_new[2*2] = { 1.0, 0.5, 0.5, 0.5 };
+	real_t A_new[1*2] = { 1.0, 5.0 };
+	real_t g_new[2] = { 1.0, 1.5 };
+	real_t lb_new[2] = { 0.0, -1.0 };
+	real_t ub_new[2] = { 5.0, -0.5 };
+	real_t lbA_new[1] = { -2.0 };
+	real_t ubA_new[1] = { 1.0 };
+
+
+	/* Setting up SQProblem object. */
+	SQProblem example( 2,1 );
+
+	/* Solve first QP. */
+	int_t nWSR = 10;
+	example.init( H,g,A,lb,ub,lbA,ubA, nWSR,0 );
+
+	/* Solve second QP. */
+	nWSR = 10;
+	example.hotstart( H_new,g_new,A_new,lb_new,ub_new,lbA_new,ubA_new, nWSR,0 );
+
+	/* Get and print solution of second QP. */
+	real_t xOpt[2];
+	example.getPrimalSolution( xOpt );
+	printf( "\nxOpt = [ %e, %e ];  objVal = %e\n\n", xOpt[0],xOpt[1],example.getObjVal() );
+	std::cout<<"run qpoases finished\n";
+	return 0;
 }
-void writeA(int a)
-{
-    for (int i = 0; i < 50000; ++i)
-    {
-        std::cout << "Thread 2 executing\n";
-        std::cout << "a1:" << a << std::endl;
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
-    }
-};
-void writeB(int &a) { a = 2; };
-namespace AAA{
-class TEST
-{
-public:
-    void test()
-    {
-        double a_q1{1}, a_q2{1}, a_q3{1};
-        double g{9.81};
-        double q1{1}, q2{0}, q3{2};
-        double v_q1{2}, v_q2{1}, v_q3{1};
-        double Y[180];
-        // Ymatrix.getYmatrix_leg1(a_q1, a_q2, a_q3, g, q1, q2, q3, v_q1, v_q2, v_q3, Y);
-        int leg{1};
-        double Y_data[180];
-        int Y_size[2];
-        getRegressionMatrix(a_q1, a_q2, a_q3, g, q1, q2, q3, v_q1, v_q2, v_q3, leg, Y_data, Y_size);
-    }
-};
-};
 
 
-int main()
-{
-    // GetYmatrix Ymatrix;
-    double a_q1{1}, a_q2{1}, a_q3{1};
-    double g{9.81};
-    double q1{1}, q2{0}, q3{2};
-    double v_q1{2}, v_q2{1}, v_q3{1};
-    double Y[180];
-    // Ymatrix.getYmatrix_leg1(a_q1, a_q2, a_q3, g, q1, q2, q3, v_q1, v_q2, v_q3, Y);
-    int leg{1};
-    double Y_data[180];
-    int Y_size[2];
-    getRegressionMatrix(a_q1, a_q2, a_q3, g, q1, q2, q3, v_q1, v_q2, v_q3, leg, Y_data, Y_size);
-    std::cout<<"Y_data\n";
-    AAA::TEST A;
-    A.test();
-    for(int i=0;i<180;i++)
-{
-    std::cout<<" "<<Y_data[i];
-    // if (i==60||i==120)
-    // {
-    //     std::cout<<std::endl;
-    // }
-}
-    int a = 0;
-    int n = 10;
-    std::thread t2(f1, n + 1); // pass by value
-    std::thread t1(writeA, a);
-    while (true)
-    {
-        /* code */
-    }
-
-    for (int i = 0; i < 10; i++)
-    {
-        // std::thread t1(writeA, a);
-        // std::thread t2(f1, n + 1); // pass by value
-        // std::thread t2
-        // writeA(a);
-        // std::cout << "a1:" << a << std::endl;
-        // std::thread thread2(writeB, std::ref(a));
-        // std::cout << "a2:" << a << std::endl;
-    }
-    return 0;
-}
+/*
+ *	end of file
+ */

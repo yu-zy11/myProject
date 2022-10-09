@@ -1,47 +1,46 @@
 #include"convexMPC.h"
 #include "math_utils.h"
 
-convexMPC::convexMPC(int horizon,float dt_mpc)
-{
-    dt_mpc_=dt_mpc;
-    horizon_mpc_=horizon;
-}
+// convexMPC::convexMPC(int horizon,float dt_mpc)
+// {
+//     dt_mpc_=dt_mpc;
+//     horizon_mpc_=horizon;
+// }
 void convexMPC::MPCInterface(Eigen::Matrix<float, 3, 3>Inertial, Eigen::Matrix<float, 3, 4>foot_position_in_world,float body_mass,float dt_mpc)
 {
     Inertial_=Inertial;
     foot_position_in_world_=foot_position_in_world;
     body_mass_=body_mass;
     mu_=0.5;
-    // rotm_body2world=
-    // root_euler_target,root_omega_target,root_position_target,root_velocity_target
-    // root_euler,root_omega,root_position,root_velocity;
+    //rotm_body2world=
+    //root_euler_target=,
+    //root_omega_target=,
+    //root_position_target=,
+    //root_velocity_target=
+    // root_euler=,
+    //root_omega=,
+    //root_position=,
+    //root_velocity=;
 
     // Eigen::Matrix3d mat_omega2rpy_rate,mat_omega2rpy_rate_simplified;
-    double c3 = cos(root_euler_[2]);
-    double s3 = sin(root_euler_[2]);
-    double c2 = cos(root_euler_[1]);
-    double s2 = sin(root_euler_[1]);
-    mat_omega2rpy_rate_ << c3/c2,  s3 / c2,    0, 
-                        -s3,     c3,         0, 
-                     c3 * s2/c2, s3 * s2/c2, 1;
-    mat_omega2rpy_rate_simplified_ << c3, s3, 0,-s3, c3, 0, 0, 0, 1; //simplified c2=1
+    // double c3 = cos(root_euler_[2]);
+    // double s3 = sin(root_euler_[2]);
+    // double c2 = cos(root_euler_[1]);
+    // double s2 = sin(root_euler_[1]);
+    // mat_omega2rpy_rate_ << c3/c2,  s3 / c2,    0, 
+    //                     -s3,     c3,         0, 
+    //                  c3 * s2/c2, s3 * s2/c2, 1;
+    mat_omega2rpy_rate_= omega2rpyrate(root_euler_);  //euler zyx
+    Eigen::Vector3f root_euler_simplified;
+    root_euler_simplified<<0.0,0.0,root_euler_[2];
+    // mat_omega2rpy_rate_simplified_ << c3, s3, 0,-s3, c3, 0, 0, 0, 1; //simplified c2=1
+    mat_omega2rpy_rate_simplified_=omega2rpyrate(root_euler_simplified);
 }
 
 void convexMPC::calculateContinuousEquation(Eigen::Vector3d root_euler)
 { 
     //Amatrix
     Amat_continuous_.setZero();
-    // double c3 = cos(root_euler[2]);
-    // double s3 = sin(root_euler[2]);
-    // double c2 = cos(root_euler[1]);
-    // double s2 = sin(root_euler[1]);
-
-    // // Eigen::Matrix3d mat_omega2rpy_rate,mat_omega2rpy_rate_simplified;
-    // mat_omega2rpy_rate << c3/c2,  s3 / c2,    0, 
-    //                     -s3,     c3,         0, 
-    //                  c3 * s2/c2, s3 * s2/c2, 1;
-
-    // mat_omega2rpy_rate_simplified << c3, s3, 0,-s3, c3, 0, 0, 0, 1; //simplified c2=1
     Amat_continuous_.block<3, 3>(0, 6) = mat_omega2rpy_rate_;
     Amat_continuous_.block<3, 3>(3, 9) = Eigen::Matrix3d::Identity();
     Amat_continuous_(11, 12) = 1;
@@ -146,4 +145,10 @@ void convexMPC::generateReferenceTrajectory()
         reference_trajectory_.block(13*i+3,0,3,1)=reference_trajectory_.block(13*(i-1)+3,0,3,1)+dt_mpc_*reference_trajectory_.block(13*(i-1)+9,0,3,1);
         reference_trajectory_[13*i+12]=0;
     }
+}
+
+void convexMPC::generateForceContriant(float mu)
+{
+    
+
 }

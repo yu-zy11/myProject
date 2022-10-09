@@ -1,16 +1,13 @@
 {
-	"version": "2.0.0",
-	"tasks": [
-		{
-			"type": "shell",
-			"label": "CMake: build",
-			"command": "cd ./build ;cmake .. ;make -j64",
-			"group": {
-				"kind": "build",
-				"isDefault": true
-			},
-			"problemMatcher": [],
-			"detail": "CMake template build task"
-		}
-	],
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "shell",
+            "label": "CMake: build",
+            "command": "cd ./build ;cmake .. ;make -j64",
+            "group": "build",
+            "problemMatcher": [],
+            "detail": "CMake template build task"
+        }
+    ]
 }

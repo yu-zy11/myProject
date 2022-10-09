@@ -1,2 +1,0 @@
-/usr/bin/ar qc liblinearDynamics.a  CMakeFiles/linearDynamics.dir/getRegressionMatrix.cpp.o CMakeFiles/linearDynamics.dir/getRegressionMatrix_initialize.cpp.o CMakeFiles/linearDynamics.dir/getRegressionMatrix_terminate.cpp.o CMakeFiles/linearDynamics.dir/getYmatrix_leg1.cpp.o CMakeFiles/linearDynamics.dir/getYmatrix_leg2.cpp.o CMakeFiles/linearDynamics.dir/getYmatrix_leg3.cpp.o CMakeFiles/linearDynamics.dir/getYmatrix_leg4.cpp.o
-/usr/bin/ranlib liblinearDynamics.a

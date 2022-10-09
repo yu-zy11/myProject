@@ -6,5 +6,5 @@ CXX_FLAGS = -g
 
 CXX_DEFINES = 
 
-CXX_INCLUDES = 
+CXX_INCLUDES = -I/home/yuzy/workspace/learnCpp/myProject/./controller/third_party/qpOASES/include 
 
