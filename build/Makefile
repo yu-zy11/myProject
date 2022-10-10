@@ -170,17 +170,30 @@ main/fast:
 .PHONY : main/fast
 
 #=============================================================================
-# Target rules for targets named qpOASES
+# Target rules for targets named qpOASES1
 
 # Build rule for target.
-qpOASES: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 qpOASES
-.PHONY : qpOASES
+qpOASES1: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 qpOASES1
+.PHONY : qpOASES1
 
 # fast build rule for target.
-qpOASES/fast:
-	$(MAKE) -f controller/third_party/qpOASES/CMakeFiles/qpOASES.dir/build.make controller/third_party/qpOASES/CMakeFiles/qpOASES.dir/build
-.PHONY : qpOASES/fast
+qpOASES1/fast:
+	$(MAKE) -f controller/third_party/qpOASES/CMakeFiles/qpOASES1.dir/build.make controller/third_party/qpOASES/CMakeFiles/qpOASES1.dir/build
+.PHONY : qpOASES1/fast
+
+#=============================================================================
+# Target rules for targets named mpc_controller
+
+# Build rule for target.
+mpc_controller: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 mpc_controller
+.PHONY : mpc_controller
+
+# fast build rule for target.
+mpc_controller/fast:
+	$(MAKE) -f controller/mpc_controller/CMakeFiles/mpc_controller.dir/build.make controller/mpc_controller/CMakeFiles/mpc_controller.dir/build
+.PHONY : mpc_controller/fast
 
 main.o: main.cpp.o
 
@@ -222,7 +235,8 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
 	@echo "... main"
-	@echo "... qpOASES"
+	@echo "... qpOASES1"
+	@echo "... mpc_controller"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"

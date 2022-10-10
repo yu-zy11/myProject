@@ -12,7 +12,11 @@ set(CMAKE_MAKEFILE_DEPENDS
   "CMakeFiles/3.16.3/CMakeCXXCompiler.cmake"
   "CMakeFiles/3.16.3/CMakeSystem.cmake"
   "../controller/CMakeLists.txt"
+  "../controller/mpc_controller/CMakeLists.txt"
   "../controller/third_party/qpOASES/CMakeLists.txt"
+  "/usr/lib/cmake/eigen3/Eigen3Config.cmake"
+  "/usr/lib/cmake/eigen3/Eigen3ConfigVersion.cmake"
+  "/usr/lib/cmake/eigen3/Eigen3Targets.cmake"
   "/usr/share/cmake-3.16/Modules/CMakeCInformation.cmake"
   "/usr/share/cmake-3.16/Modules/CMakeCXXInformation.cmake"
   "/usr/share/cmake-3.16/Modules/CMakeCheckCompilerFlagCommonPatterns.cmake"
@@ -51,10 +55,12 @@ set(CMAKE_MAKEFILE_PRODUCTS
   "CMakeFiles/CMakeDirectoryInformation.cmake"
   "controller/CMakeFiles/CMakeDirectoryInformation.cmake"
   "controller/third_party/qpOASES/CMakeFiles/CMakeDirectoryInformation.cmake"
+  "controller/mpc_controller/CMakeFiles/CMakeDirectoryInformation.cmake"
   )
 
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
   "CMakeFiles/main.dir/DependInfo.cmake"
-  "controller/third_party/qpOASES/CMakeFiles/qpOASES.dir/DependInfo.cmake"
+  "controller/third_party/qpOASES/CMakeFiles/qpOASES1.dir/DependInfo.cmake"
+  "controller/mpc_controller/CMakeFiles/mpc_controller.dir/DependInfo.cmake"
   )

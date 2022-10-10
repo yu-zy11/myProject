@@ -62,7 +62,10 @@
         "typeindex": "cpp",
         "typeinfo": "cpp",
         "variant": "cpp",
-        "core": "cpp"
+        "core": "cpp",
+        "dense": "cpp",
+        "matrixfunctions": "cpp",
+        "*.ipp": "cpp"
     },
     "cmake.sourceDirectory": "${workspaceFolder}/myProject",
     "python.autoComplete.extraPaths": [

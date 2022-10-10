@@ -1,17 +1,11 @@
-# add_library(mpc_controller
-#   locomotion_mpc_controller.cpp
-#   locomotion_mpc_controller.h
-#   mpc_interface.cpp
-#   mpc_interface.h
-#   solver_mpc.cpp
-#   solver_mpc.h
-#   stance_leg_mpc_controller.cpp
-#   stance_leg_mpc_controller.h
-# )
-# target_link_libraries(locomotion_mpc_controller
-#   PUBLIC
-#     locomotion_gait
-#     locomotion_utils
-#     locomotion_planner
-#     qpOASES
-# )
+project(mpc_controller)
+add_library(mpc_controller
+  convexMPC.cpp
+  convexMPC.h
+  math_utils.h
+)
+target_link_libraries(${PROJECT_NAME}
+  PUBLIC
+    qpOASES1
+)
+

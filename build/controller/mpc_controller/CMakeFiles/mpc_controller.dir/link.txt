@@ -1,0 +1,2 @@
+/usr/bin/ar qc libmpc_controller.a  CMakeFiles/mpc_controller.dir/convexMPC.cpp.o
+/usr/bin/ranlib libmpc_controller.a

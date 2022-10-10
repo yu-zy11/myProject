@@ -11,11 +11,13 @@ set(CMAKE_CXX_COMPILER_ID "GNU")
 # The include file search paths:
 set(CMAKE_CXX_TARGET_INCLUDE_PATH
   ".././controller/third_party/qpOASES/include"
+  "/usr/include/eigen3"
   )
 
 # Targets to which this target links.
 set(CMAKE_TARGET_LINKED_INFO_FILES
-  "/home/yuzy/workspace/learnCpp/myProject/build/controller/third_party/qpOASES/CMakeFiles/qpOASES.dir/DependInfo.cmake"
+  "/home/yuzy/workspace/learnCpp/myProject/build/controller/mpc_controller/CMakeFiles/mpc_controller.dir/DependInfo.cmake"
+  "/home/yuzy/workspace/learnCpp/myProject/build/controller/third_party/qpOASES/CMakeFiles/qpOASES1.dir/DependInfo.cmake"
   )
 
 # Fortran module output directory.
