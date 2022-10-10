@@ -47,6 +47,7 @@ private:
     Eigen::Matrix<float, 4, -1>foot_contact_table_;
     Eigen::Matrix<float, 5, 3> constraint_unit_;
     Eigen::Matrix<float, -1, -1> constraint_mat_;
+    Eigen::Matrix<float, -1, 1> constraint_ub_;
 
     qpOASES::real_t *H_qpoases;
     qpOASES::real_t *g_qpoases;

@@ -181,12 +181,15 @@ void convexMPC::generateContraint()
         0, mu_inv, 1.f,
         0, -mu_inv, 1.f,
         0, 0, 1.f;
-    constraint_mat_.resize(5*4*horizon_mpc_,3*4*horizon_mpc_);
+    int cols=constraint_unit_.cols();
+    int rows=constraint_unit_.cols();
+    constraint_mat_.resize(rows*4*horizon_mpc_,cols*4*horizon_mpc_);
+    constraint_ub_.resize(12*horizon_mpc_,1);
     for (int i = 0; i < horizon_mpc_; i++)
     {
         for (int leg=0;leg<4;leg++)
         {
-           constraint_mat_.block(i * 20+leg*5, i * 12+leg*3, 5, 3) = constraint_unit_;
+           constraint_mat_.block((i * 4+leg)*rows, (i * 4+leg)*cols, rows, cols) = constraint_unit_;
         }
     }
 }
