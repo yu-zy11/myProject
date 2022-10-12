@@ -4,6 +4,10 @@
 #include <eigen3/Eigen/Dense>
 #include <qpOASES.hpp>
 #include "math_utils.h"
+#include<string>
+
+#define BIG_FORCE 120
+// #define PRINT_TEST
 class convexMPC{
 public:
     convexMPC(int horizon_mpc,float dt_mpc):dt_mpc_(dt_mpc),horizon_mpc_(horizon_mpc){};
@@ -16,6 +20,9 @@ public:
     void FormulateQPform();
     void solveMPC();
     void run();
+    void printMatrix(Eigen::Matrix<float,-1,-1> mat);
+    Eigen::Matrix<float,12,1>  getFootForce();
+    // void resizeMatrix();
     int test{1};
 private:
     float body_mass_;
@@ -31,9 +38,10 @@ private:
     Eigen::Matrix<float, 3, 3>Inertial_,Inertial_in_world_;
     Eigen::Matrix<float,-1,13> A_mpc_;
     Eigen::Matrix<float,-1,-1> B_mpc_;
-    Eigen::Matrix<float,-1,-1>Hessian_qp_,Gradient_qp_;
+    Eigen::Matrix<float,-1,-1>Hessian_qp_,Gradient_qp_,Hessian_qp_tmp;
     Eigen::Matrix<float,-1,-1>Lweight_qp_,Kweight_qp_;
-    Eigen::Matrix<float,12,1>lweight_qp_unit_,kweight_qp_unit_;
+    Eigen::Matrix<float,13,1>lweight_qp_unit_;
+    Eigen::Matrix<float,12,1>kweight_qp_unit_;
     Eigen::Matrix<float,13,1>x0_qp_;
 
     Eigen::Matrix<float,3,1> root_euler_target_,root_omega_target_,root_position_target_,root_velocity_target_;
@@ -48,6 +56,7 @@ private:
     Eigen::Matrix<float, 5, 3> constraint_unit_;
     Eigen::Matrix<float, -1, -1> constraint_mat_;
     Eigen::Matrix<float, -1, 1> constraint_ub_;
+    Eigen::Matrix<float, -1, 1>constraint_lb_A_;
 
     qpOASES::real_t *H_qpoases;
     qpOASES::real_t *g_qpoases;
@@ -55,13 +64,8 @@ private:
     qpOASES::real_t *lb_qpoases;
     qpOASES::real_t *ub_qpoases;
     qpOASES::real_t *q_soln;
-
-    // qpOASES::real_t *H_red;
-    // qpOASES::real_t *g_red;
-    // qpOASES::real_t *A_red;
-    // qpOASES::real_t *lb_red;
-    // qpOASES::real_t *ub_red;
-    // qpOASES::real_t *q_red;
+    qpOASES::real_t *lb_A_qpoases;
+    int real_allocated{0};
 
 };
 

@@ -65,7 +65,11 @@
         "core": "cpp",
         "dense": "cpp",
         "matrixfunctions": "cpp",
-        "*.ipp": "cpp"
+        "*.ipp": "cpp",
+        "hash_map": "cpp",
+        "hash_set": "cpp",
+        "unordered_set": "cpp",
+        "shared_mutex": "cpp"
     },
     "cmake.sourceDirectory": "${workspaceFolder}/myProject",
     "python.autoComplete.extraPaths": [

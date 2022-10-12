@@ -205,6 +205,8 @@ qpOASES.hpp
 -
 math_utils.h
 /home/yuzy/workspace/learnCpp/myProject/controller/mpc_controller/math_utils.h
+string
+-
 
 /home/yuzy/workspace/learnCpp/myProject/controller/mpc_controller/math_utils.h
 eigen3/Eigen/Dense
