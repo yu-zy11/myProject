@@ -18,11 +18,11 @@ void matrix_to_real(qpOASES::real_t *dst, Eigen::Matrix<float, -1, -1> src, int 
     }
 }
 // resize dimensions of matrix in accordence with horizon_mpc_,and set weights for QP problem
-void convexMPC::initConvexMPC()
+void convexMPC::init()
 {
     foot_contact_table_.resize(4, horizon_mpc_);
     // weight for qp problem;
-    Lweight_qp_.resize(13 * horizon_mpc_, 13 * horizon_mpc_);
+    Lweight_qp_.resize(13 * horizon_mpc_, 13 * horizon_mpc_); 
     Kweight_qp_.resize(12 * horizon_mpc_, 12 * horizon_mpc_);
     reference_trajectory_.resize(13 * horizon_mpc_, 1);
     A_mpc_.resize(13 * horizon_mpc_, 13);
@@ -46,7 +46,7 @@ void convexMPC::initConvexMPC()
     lweight_qp_unit_ << 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0;
     kweight_qp_unit_ << 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1;
     Lweight_qp_.diagonal() = lweight_qp_unit_.replicate(horizon_mpc_, 1);
-    Kweight_qp_.diagonal() = kweight_qp_unit_.replicate(horizon_mpc_, 1) * 0.00001;
+    Kweight_qp_.diagonal() = kweight_qp_unit_.replicate(horizon_mpc_, 1) * 0.000001;
     std::cout << "init MPC finished\n";
 }
 
@@ -259,7 +259,7 @@ void convexMPC::generateContraint()
 void convexMPC::run()
 {
     std::cout << "run mpc\n";
-    MPCInterface();
+    // MPCInterface();
     calculateContinuousEquation();
     discretizeStateEquation();
     generateReferenceTrajectory();
@@ -326,7 +326,7 @@ void convexMPC::solveMPC()
     int rval2 = problem_sqp.getPrimalSolution(q_soln);
     if (rval2 != qpOASES::SUCCESSFUL_RETURN)
         printf("failed to solve!\n");
-    for (int i = 0; i < 12; i++)
+    for (int i = 0; i < 12*horizon_mpc_; i++)
     {
         std::cout << q_soln[i] << std::endl;
     }

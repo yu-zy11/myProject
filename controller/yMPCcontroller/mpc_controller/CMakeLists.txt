@@ -1,0 +1,13 @@
+project(ympc_controller)
+add_library(ympc_controller
+  convexMPC.cpp
+  convexMPC.h
+  math_utils.h
+)
+target_link_libraries(${PROJECT_NAME}
+  PUBLIC
+    qpOASES
+    locomotion_gait
+    locomotion_utils
+    locomotion_planner
+)
