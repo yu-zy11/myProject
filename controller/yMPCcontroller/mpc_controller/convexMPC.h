@@ -20,18 +20,15 @@ public:
     void run(const MCC::common::message::FusionData& fusion_data, const MCC::common::message::OperatorData& operator_data,int* mpcTable);
     Eigen::Matrix<float,12,1>  getFootForceInWorld(){return foot_force_in_world_;};
     Eigen::Matrix<float,12,1> getJointTorque(const MCC::common::message::FusionData& fusion_data);
-    const float dt_{0.002};
+    float dt_;
 private:
-    void updateMPC(const MCC::common::message::FusionData& fusion_data, const MCC::common::message::OperatorData& operator_data,int* mpcTable); //change MPCInterface input inaccordence with your own data
+    void update(const MCC::common::message::FusionData& fusion_data, const MCC::common::message::OperatorData& operator_data,int* mpcTable); //change MPCInterface input inaccordence with your own data
     void calculateContinuousEquation();  //calculate A and B in continuous equation of motion: dotX=AX+BU,euler sequence is zyx [x,y,z]
     void discretizeStateEquation();      //
     void generateReferenceTrajectory();
-    void generateContraint();
     void FormulateQPform();
-    void FormulateQPformV2();
-    void generateContraintV2();
+    void generateContraint();
     void solveMPC();
-    void solveMPCV2();
     void printMatrix(Eigen::Matrix<float,-1,-1> mat);
     float body_mass_;
     float dt_mpc_;
@@ -39,7 +36,8 @@ private:
     int horizon_mpc_;
     float mu_;
     int counter_;
-    int num_contact_foot_;
+    int sum_contact_;
+    float body_height_;
     // const float dt_{0.002};
     Eigen::Matrix<float,12,1>  foot_force_in_world_;
     Eigen::Matrix<float, 13, 13> Amat_continuous_;
@@ -53,7 +51,7 @@ private:
     Eigen::Matrix<float,-1,-1>Hessian_qp_,Gradient_qp_,Hessian_qp_tmp;
     Eigen::Matrix<float,-1,-1>Lweight_qp_,Kweight_qp_;
     Eigen::Matrix<float,13,1>lweight_qp_unit_;
-    Eigen::Matrix<float,12,1>kweight_qp_unit_;
+    Eigen::Matrix<float,3,1>kweight_qp_unit_;
     Eigen::Matrix<float,13,1>x0_qp_;
 
     Eigen::Matrix<float,3,1> root_euler_target_,root_omega_target_,root_position_target_,root_velocity_target_;
@@ -64,7 +62,7 @@ private:
     Eigen::Matrix3f mat_omega2rpy_rate_;
     Eigen::Matrix3f mat_omega2rpy_rate_simplified_;
 
-    Eigen::Matrix<float, 4, -1>foot_contact_table_;
+    Eigen::Matrix<float, 4, -1>contact_table_;
     Eigen::Matrix<float, 6, 3> constraint_unit_;
     Eigen::Matrix<float, -1, -1> constraint_mat_;
     Eigen::Matrix<float, -1, 1> constraint_ub_,constraint_lb_;
