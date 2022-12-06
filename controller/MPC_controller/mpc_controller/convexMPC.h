@@ -5,8 +5,8 @@
 #include <qpOASES.hpp>
 #include <string>
 #include "math_utils.h"
-#include "mc_modules/common/config_loader.h"
-#include "mc_modules/locomotion/locomotion_core/gait/time_gait_generator.h"
+#include "mc_modules/common/algo_config_loader.h"
+// #include "mc_modules/locomotion/locomotion_core/gait/time_gait_generator.h"
 #include "modules/common/message/common_data.h"
 #include "modules/common/message/sim_msg/FusionData.hpp"
 #include "modules/common/message/sim_msg/OperatorData.hpp"
@@ -34,7 +34,6 @@ class convexMPC {
       const MCC::common::message::FusionData& fusion_data,
       const MCC::common::message::OperatorData& operator_data,
       int* mpcTable,
-      float* phase_table,
       float stance_duration);
   Eigen::Matrix<float, 12, 1> getFootForceInWorld() { return foot_force_in_world_; };
   Eigen::Matrix<float, 12, 1> getJointTorque() { return joint_torque_; };
@@ -47,23 +46,23 @@ class convexMPC {
       int* mpcTable,
       float* phase_table,
       float stance_duration);          // change MPCInterface input inaccordence with your own data
-  void calculateContinuousEquation();  // calculate A and B in continuous equation of motion: dotX=AX+BU,euler sequence
-                                       // is zyx [x,y,z]
+  void calculateContinuousEquation();  // calculate A and B in equation: dotX=AX+BU,euler sequence is zyx [x,y,z]
   void discretizeStateEquation();      //
-  void generateReferenceTrajectory();
-  void FormulateQPform();
-  void generateContraint();
-  void generateContraintV2();  // six constraints on each foot
-  void solveMPC();             // 5 constraints on each foot
-  void solveMPCV2();
-  //   float constrainFzmax(float phase);
-  void updateFootPositionTable();
   void calculateAdiscrete();
   void calculateBdiscrete(Eigen::Matrix<float, 13, 12>& Bmat, Eigen::Matrix<float, 12, 1> r_foot);
+  void generateReferenceTrajectory();
+  void FormulateQPform();
+  void generateContraint_TN();  // joint torque limit
+  void generateContraint();     // six constraints on each foot
+  void solveMPC_TN();           // 5 constraints on each foot
+  void solveMPC();
 
+  float constrainFzmax(float phase);
+  void updateFootPositionTable();
   void getHipPositionInWorld(Eigen::Vector3f& p, int leg);
-  void updateLWeight();
-  void printMatrix(Eigen::Matrix<float, -1, -1> mat);
+  void updateLWeight();  // change Lweight from body frame to world frame. min (X'*Lweight*X +U'*Kweight*U)
+  inline float getTorqueBorderFromTN(float omega);
+  void testMPC();
   bool optimism_{false};
   float dt_mpc_;
   int iteration_step_;
@@ -71,7 +70,7 @@ class convexMPC {
   int counter_;
   int sum_contact_;
   float stance_duration_;
-  Eigen::Matrix<float, 12, 1> foot_force_in_world_, joint_torque_;
+  Eigen::Matrix<float, 12, 1> foot_force_in_world_, joint_torque_, joint_vel_;
   Eigen::Matrix<float, 13, 13> Amat_continuous_;
   Eigen::Matrix<float, 13, 12> Bmat_continuous_;
   Eigen::Matrix<float, 13, 13> Amat_discrete_;

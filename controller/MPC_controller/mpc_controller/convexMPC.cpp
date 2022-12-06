@@ -16,11 +16,11 @@ void matrix_to_real(qpOASES::real_t* dst, Eigen::Matrix<float, -1, -1> src, int 
     }
   }
 }
-// resize dimensions of matrix using horizon_mpc_,and set weights for QP problem
+// resize  matrix using horizon_mpc_,and set weights for QP problem
 void convexMPC::init() {
   contact_table_.resize(4, horizon_mpc_);
   foot_pos_table_.resize(12, horizon_mpc_);
-  phase_table_.resize(4, horizon_mpc_);
+  // phase_table_.resize(4, horizon_mpc_);
   Lweight_qp_.resize(13 * horizon_mpc_, 13 * horizon_mpc_);
   Kweight_qp_.resize(12 * horizon_mpc_, 12 * horizon_mpc_);
   traj_.resize(13 * horizon_mpc_, 1);
@@ -48,8 +48,8 @@ void convexMPC::init() {
   root_omega_target_.setZero();
   root_velocity_target_.setZero();
   // load param
-  auto param = ConfigLoaderInstance.getRobotConfig();
-  config.dt = (float)ConfigLoaderInstance.getCommonConfig()->default_cycle_time_;
+  auto param = AlgoConfigLoaderInstance.GetControllerConfig();
+  config.dt = (float)AlgoConfigLoaderInstance.GetAlgoCommonConfig()->default_cycle_time_;
   config.body_mass = (float)param->mass;
   config.mu = (float)param->mu;
   config.max_reaction_force = (float)param->max_reaction_force;
@@ -80,15 +80,14 @@ void convexMPC::update(
     const MCC::common::message::FusionData& fusion_data,
     const MCC::common::message::OperatorData& operator_data,
     int* mpcTable,
-    float* phase_table,
     float stance_duration) {
-  // update robot states for mpc
   stance_duration_ = stance_duration;
   root_euler_ = fusion_data.root_euler;
   root_omega_ = fusion_data.root_angular_velocity_in_world;
   root_position_ = fusion_data.root_position;
   root_velocity_ = fusion_data.root_linear_velocity_in_world;
   rotm_body2world_ = fusion_data.rotation_matrix_body_to_world;  // ok
+  joint_vel_ = fusion_data.joint_velocity;
 
   root_omega_target_ = root_omega_target_ * (1 - config.filter_omega) +
                        config.filter_omega * rotm_body2world_ * operator_data.root_angular_velocity_in_body;
@@ -105,9 +104,6 @@ void convexMPC::update(
         rotm_body2world_ * (fusion_data.foot_position_in_body.row(leg).transpose() - config.com_offset);
     jacobian_leg_.block(0, 3 * leg, 3, 3) = fusion_data.foot_jacobian_in_body.block<3, 3>(3 * leg, 3 * leg);
   }
-#ifdef DEBUG_MPC
-  std::cout << "jacobian_leg_:\n" << jacobian_leg_ << std::endl;
-#endif
   if (!optimism_) {
     Eigen::Vector3f rpy;
     Eigen::Matrix<float, 3, 3> R_yaw;
@@ -118,13 +114,12 @@ void convexMPC::update(
     Inertial_in_world_ = rotm_body2world_ * config.inertial * rotm_body2world_.transpose();
   }
   inv_inertial_ = Inertial_in_world_.inverse();
-
   mat_omega2rpy_rate_ = omega2rpyrate(root_euler_);
 
   for (int i = 0; i < horizon_mpc_; i++) {
     for (int leg = 0; leg < 4; leg++) {
       contact_table_(leg, i) = mpcTable[4 * i + leg];
-      phase_table_(leg, i) = static_cast<float>(phase_table[4 * i + leg]);
+      // phase_table_(leg, i) = static_cast<float>(phase_table[4 * i + leg]);
     }
   }
   sum_contact_ = contact_table_.sum();
@@ -134,29 +129,31 @@ void convexMPC::run(
     const MCC::common::message::FusionData& fusion_data,
     const MCC::common::message::OperatorData& operator_data,
     int* mpcTable,
-    float* phase_table,
     float stance_duration) {
   time_t begin, end;
-  update(fusion_data, operator_data, mpcTable, phase_table, stance_duration);
+  update(fusion_data, operator_data, mpcTable, stance_duration);
   if (counter_ % iteration_step_ == 0) {
     counter_ = 0;
-#ifdef DEBUG_MPC
     std::cout << "command velocity:" << root_velocity_target_ << std::endl;
     std::cout << "current velocity:" << root_velocity_ << std::endl;
-#endif
     begin = clock();
-    calculateAdiscrete();
-    calculateBdiscrete(Bmat_discrete_, foot_position_in_world_);
+    // testMPC();
+#ifdef DEBUG_MPC
+    std::cout << "mpc_table:\n" << contact_table_ << std::endl;
+#endif
+    calculateContinuousEquation();
+    discretizeStateEquation();
+    // calculateAdiscrete();
+    // calculateBdiscrete(Bmat_discrete_, foot_position_in_world_);
     generateReferenceTrajectory();
-    // generateContraintV2();
-    generateContraint();
     FormulateQPform();
+    generateContraint();
+    // generateContraint_TN();
     end = clock();
     std::cout << "before solving mpc time0:" << (end - begin) << std::endl;
-
     begin = clock();
-    // solveMPCV2();
     solveMPC();
+    // solveMPC_TN();
     end = clock();
     std::cout << "solving mpc time:" << (end - begin) << std::endl;
   }
@@ -176,6 +173,12 @@ void convexMPC::calculateContinuousEquation() {
     Bmat_continuous_.block(6, i * 3, 3, 3) = inv_inertial_ * cross2mat(vec);
     Bmat_continuous_.block(9, i * 3, 3, 3) = Eigen::Matrix<float, 3, 3>::Identity() / config.body_mass;
   }
+#ifdef DEBUG_MPC
+  std::cout << "inv_inertial_:\n" << inv_inertial_ << std::endl;
+  std::cout << "foot_position_in_world_:\n" << foot_position_in_world_ << std::endl;
+  std::cout << "Amat_continuous_:\n" << Amat_continuous_ << std::endl;
+  std::cout << "Bmat_continuous_:\n" << Bmat_continuous_ << std::endl;
+#endif
 }
 
 void convexMPC::discretizeStateEquation() {
@@ -186,15 +189,19 @@ void convexMPC::discretizeStateEquation() {
   expm = mat25.exp();
   Amat_discrete_ = expm.block(0, 0, 13, 13);
   Bmat_discrete_ = expm.block(0, 13, 13, 12);
+#ifdef DEBUG_MPC
+  std::cout << "Amat_discrete_:\n" << Amat_discrete_ << std::endl;
+  std::cout << "Bmat_discrete_:\n" << Bmat_discrete_ << std::endl;
+#endif
 }
 
 // calculate body's  reference trajectory for MPC
 void convexMPC::generateReferenceTrajectory() {
-  constexpr float max_pos_error{0.2};
+  constexpr float max_pos_error{0.1};
   constexpr float max_rpy_error{0.1};
   root_position_target_ = root_position_target_ + root_velocity_target_ * dt_mpc_;
   root_position_target_[2] = config.body_height;
-  root_euler_target_[2] = root_euler_target_[2] + root_omega_target_[2] * config.dt;
+  root_euler_target_[2] = root_euler_target_[2] + root_omega_target_[2] * dt_mpc_;
   root_euler_target_[0] = 0;
   root_euler_target_[1] = 0;
 // avoid big difference betwween position and the first target position
@@ -231,19 +238,14 @@ void convexMPC::generateReferenceTrajectory() {
         traj_.block(13 * (i - 1) + 3, 0, 3, 1) + dt_mpc_ * traj_.block(13 * (i - 1) + 9, 0, 3, 1);
     traj_[13 * i + 12] = -9.81;
   }
+#ifdef DEBUG_MPC
+  std::cout << "traj_:\n";
+  for (int i = 0; i < horizon_mpc_; i++) {
+    for (int j = 0; j < 13; j++) { std::cout << traj_[13 * i + j] << " "; }
+    std::cout << std::endl;
+  }
+#endif
 }
-
-// void convexMPC::getJointTorque(
-//      Eigen::Matrix<float, 12, 1>& joint_torque) {
-//   Eigen::Matrix<float, 3, 1> foot_foorce_tmp;
-//   for (int leg = 0; leg < 4; leg++) {
-//     foot_foorce_tmp = rotm_body2world_.transpose() * foot_force_in_world_.segment<3>(3 * leg);
-//     Eigen::Matrix3f foot_jacob = fusion_data.foot_jacobian_in_body.block<3, 3>(3 * leg, 3 * leg);
-//     joint_torque.segment<3>(3 * leg) = foot_jacob.transpose() * foot_foorce_tmp;
-//   }
-//   std::cout << "joint_torque:\n" << joint_torque << std::endl;
-// }
-
 // calaulate Ampc and Bmpc
 void convexMPC::FormulateQPform() {
   A_mpc_.block(0, 0, 13, 13) = Amat_discrete_;
@@ -289,7 +291,6 @@ void convexMPC::FormulateQPform() {
   x0_qp_.block(6, 0, 3, 1) = root_omega_;
   x0_qp_.block(9, 0, 3, 1) = root_velocity_;
   x0_qp_[12] = -9.81;
-
   Kweight_qp_.resize(3 * sum_contact_, 3 * sum_contact_);
   Kweight_qp_.setZero();
   Kweight_qp_.diagonal() = kweight_qp_unit_.replicate(sum_contact_, 1);
@@ -297,18 +298,24 @@ void convexMPC::FormulateQPform() {
   Hessian_qp_tmp = 2 * B_mpc_.transpose() * Lweight_qp_;
   Gradient_qp_ = Hessian_qp_tmp * (A_mpc_ * x0_qp_ - traj_);
   Hessian_qp_ = (Hessian_qp_tmp * B_mpc_ + 2 * Kweight_qp_);
+#ifdef DEBUG_MPC
+  std::cout << "Initial state in QP:\n" << x0_qp_ << std::endl;
+  std::cout << "kweight_qp_unit_:\n" << kweight_qp_unit_ << std::endl;
+  std::cout << "lweight_qp_unit_:\n" << lweight_qp_unit_ << std::endl;
+  // std::cout << "A_mpc_:\n" << A_mpc_ << std::endl;
+  std::cout << "B_mpc_20 20:\n" << B_mpc_.rows(1) << std::endl;
+  std::cout << "Hessian_qp_:\n" << Hessian_qp_ << std::endl;
+  std::cout << "Gradient_qp_:\n" << Gradient_qp_ << std::endl;
+#endif
 }
 
-void convexMPC::generateContraint() {
+void convexMPC::generateContraint_TN() {
   assert(config.mu >= 0.0001 && "mu_ must not be 0!");
   float mu_inv = 1.f / config.mu;
   Eigen::Matrix<float, 6, 3> constraint_unit;
   Eigen::Matrix<float, 12, 1> lbA_unit;
   constraint_unit << mu_inv, 0, 1.f, -mu_inv, 0, 1.f, 0, mu_inv, 1.f, 0, -mu_inv, 1.f, 0, 0, 1.f, 0, 0, -1.f;
   Eigen::Vector3f tau_max;
-  tau_max << 60.0, 60.0, 60.0;
-  lbA_unit << 0, 0, 0, 0, 0, -config.max_reaction_force, -tau_max[0], -tau_max[1], -tau_max[2], -tau_max[0],
-      -tau_max[1], -tau_max[2];
   int cols{3};
   int rows{12};
   constraint_mat_.resize(rows * sum_contact_, cols * sum_contact_);
@@ -319,9 +326,15 @@ void convexMPC::generateContraint() {
   Eigen::Matrix<float, 12, 3> JacobR;
   JacobR = jacobian_leg_.transpose() * (rotm_body2world_.transpose());
   int a{0};
+  // std::cout << "joint_vel:" << joint_vel_ << std::endl;
   for (int i = 0; i < horizon_mpc_; i++) {
     for (int leg = 0; leg < 4; leg++) {
       if (contact_table_(leg, i) == 1) {
+        tau_max << getTorqueBorderFromTN(joint_vel_[3 * leg]), getTorqueBorderFromTN(joint_vel_[3 * leg + 1]),
+            getTorqueBorderFromTN(joint_vel_[3 * leg + 2]);
+        lbA_unit << 0, 0, 0, 0, 0, -config.max_reaction_force, -tau_max[0], -tau_max[1], -tau_max[2], -tau_max[0],
+            -tau_max[1], -tau_max[2];
+        // std::cout << "tau_max:" << tau_max << std::endl;
         constraint_mat_.block(a * rows, a * cols, 6, 3) = constraint_unit;
         constraint_mat_.block(a * rows + 6, a * cols, 3, 3) = -JacobR.block(3 * leg, 0, 3, 3);
         constraint_mat_.block(a * rows + 6 + 3, a * cols, 3, 3) = JacobR.block(3 * leg, 0, 3, 3);
@@ -332,7 +345,7 @@ void convexMPC::generateContraint() {
   }
 }
 
-void convexMPC::generateContraintV2() {
+void convexMPC::generateContraint() {
   assert(config.mu >= 0.0001 && "mu_ must not be 0!");
   float mu_inv = 1.f / config.mu;
   Eigen::Matrix<float, 6, 3> constraint_unit;
@@ -350,7 +363,6 @@ void convexMPC::generateContraintV2() {
     for (int leg = 0; leg < 4; leg++) {
       if (contact_table_(leg, i) == 1) {
         constraint_mat_.block(a * rows, a * cols, rows, cols) = constraint_unit;
-        // lbA_unit[5] = -config.max_reaction_force * constrainFzmax(phase_table_(leg, i));
         constraint_lb_A_.block(a * rows, 0, rows, 1) = lbA_unit;
         a++;
       }
@@ -358,15 +370,12 @@ void convexMPC::generateContraintV2() {
   }
 }
 
-void convexMPC::solveMPC() {
+void convexMPC::solveMPC_TN() {
   if (real_allocated) {
     free(H_qpoases);
     free(g_qpoases);
     free(A_qpoases);
     free(lb_A_qpoases);
-    // free(ub_A_qpoases);
-    // free(ub_qpoases);
-    // free(lb_qpoases);
     free(q_soln);
   }
   int col_A{3};
@@ -375,29 +384,13 @@ void convexMPC::solveMPC() {
   g_qpoases = (qpOASES::real_t*)malloc(3 * sum_contact_ * sizeof(qpOASES::real_t));
   A_qpoases = (qpOASES::real_t*)malloc(row_A * sum_contact_ * col_A * sum_contact_ * sizeof(qpOASES::real_t));
   lb_A_qpoases = (qpOASES::real_t*)malloc(row_A * sum_contact_ * sizeof(qpOASES::real_t));
-  // ub_A_qpoases = (qpOASES::real_t*)malloc(row_A * sum_contact_ * sizeof(qpOASES::real_t));
   q_soln = (qpOASES::real_t*)malloc(3 * sum_contact_ * sizeof(qpOASES::real_t));
-  // lb_qpoases = (qpOASES::real_t*)malloc(3 * sum_contact_ * sizeof(qpOASES::real_t));
-  // ub_qpoases = (qpOASES::real_t*)malloc(3 * sum_contact_ * sizeof(qpOASES::real_t));
   real_allocated = 1;
 
   matrix_to_real(H_qpoases, Hessian_qp_, 3 * sum_contact_, 3 * sum_contact_);
   matrix_to_real(g_qpoases, Gradient_qp_, 3 * sum_contact_, 1);
   matrix_to_real(A_qpoases, constraint_mat_, row_A * sum_contact_, col_A * sum_contact_);
   matrix_to_real(lb_A_qpoases, constraint_lb_A_, row_A * sum_contact_, 1);
-  // matrix_to_real(ub_A_qpoases, constraint_ub_A_, row_A * sum_contact_, 1);
-  // matrix_to_real(lb_qpoases, constraint_lb_, 3 * sum_contact_, 1);
-  // matrix_to_real(ub_qpoases, constraint_ub_, 3 * sum_contact_, 1);
-#ifdef DEBUG_MPC
-  std::cout << "Hessian_qp_:\n";
-  printMatrix(Hessian_qp_);
-  std::cout << "Gradient_qp_:\n";
-  printMatrix(Gradient_qp_);
-  std::cout << "constraint_mat_:\n";
-  printMatrix(constraint_mat_);
-  std::cout << "constraint_lb_A_:\n";
-  printMatrix(constraint_lb_A_);
-#endif
   qpOASES::int_t nV, nC;
   nV = 3 * sum_contact_;
   nC = row_A * sum_contact_;
@@ -406,7 +399,7 @@ void convexMPC::solveMPC() {
   op.setToMPC();
   op.printLevel = qpOASES::PL_NONE;
   problem.setOptions(op);
-  qpOASES::int_t nWSR = 10000;
+  qpOASES::int_t nWSR = 1000;
   qpOASES::real_t cpu_time{0.01};
   int rval = problem.init(H_qpoases, g_qpoases, A_qpoases, NULL, NULL, lb_A_qpoases, NULL, nWSR, &cpu_time);
   if (rval == qpOASES::RET_INIT_FAILED) printf("failed to init!\n");
@@ -414,8 +407,6 @@ void convexMPC::solveMPC() {
   int rval2 = problem.getPrimalSolution(q_soln);
   if (rval2 != qpOASES::SUCCESSFUL_RETURN) printf("failed to get answer!\n");
   std::cout << "variance:" << problem.getObjVal() << std::endl;
-  std::cout << "number:" << problem.getObjVal() << std::endl;
-
   int tmp{0};
   for (int i = 0; i < 4; i++) {
     if (contact_table_(i, 0) != 0) {
@@ -426,23 +417,22 @@ void convexMPC::solveMPC() {
       torque = constraint_mat_.block(11 * tmp, 3 * tmp, 11, 3) * foot_force_in_world_.block(3 * i, 0, 3, 1);
       // std::cout << "torque contraint\n" << torque << std::endl;
       tmp++;
-
     } else {
       foot_force_in_world_[3 * i] = 0.0;
       foot_force_in_world_[3 * i + 1] = 0.0;
       foot_force_in_world_[3 * i + 2] = 0.0;
     }
   }
-  std::cout << "foot_force_in_world_:\n" << foot_force_in_world_ << std::endl;
+  // std::cout << "foot_force_in_world_:\n" << foot_force_in_world_ << std::endl;
   foot_force_in_world_ = -foot_force_in_world_;
   for (int leg = 0; leg < 4; leg++) {
     joint_torque_.segment<3>(3 * leg) = jacobian_leg_.block(0, 3 * leg, 3, 3).transpose() *
                                         rotm_body2world_.transpose() * foot_force_in_world_.segment<3>(3 * leg);
   }
-  std::cout << "joint_torque:\n" << joint_torque_ << std::endl;
+  // std::cout << "joint_torque_:\n" << joint_torque_.transpose() << std::endl;
 }
 
-void convexMPC::solveMPCV2()  // six constraints in each foot
+void convexMPC::solveMPC()  // six constraints in each foot
 {
   if (real_allocated) {
     free(H_qpoases);
@@ -459,14 +449,10 @@ void convexMPC::solveMPCV2()  // six constraints in each foot
   lb_A_qpoases = (qpOASES::real_t*)malloc(row_A * sum_contact_ * sizeof(qpOASES::real_t));
   q_soln = (qpOASES::real_t*)malloc(3 * sum_contact_ * sizeof(qpOASES::real_t));
   real_allocated = 1;
-
   matrix_to_real(H_qpoases, Hessian_qp_, 3 * sum_contact_, 3 * sum_contact_);
   matrix_to_real(g_qpoases, Gradient_qp_, 3 * sum_contact_, 1);
   matrix_to_real(A_qpoases, constraint_mat_, row_A * sum_contact_, col_A * sum_contact_);
   matrix_to_real(lb_A_qpoases, constraint_lb_A_, row_A * sum_contact_, 1);
-  // qp
-  time_t begin, end;
-  begin = clock();
   qpOASES::int_t nV = 3 * sum_contact_;
   qpOASES::int_t nC = row_A * sum_contact_;
   qpOASES::Options op;
@@ -474,22 +460,28 @@ void convexMPC::solveMPCV2()  // six constraints in each foot
   op.printLevel = qpOASES::PL_NONE;
   qpOASES::QProblem problem(nV, nC);
   problem.setOptions(op);
-  qpOASES::int_t nWSR = 200;
+  qpOASES::int_t nWSR = 100;
   qpOASES::real_t cpu_time{0.1};
   int rval = problem.init(H_qpoases, g_qpoases, A_qpoases, NULL, NULL, lb_A_qpoases, NULL, nWSR, &cpu_time);
   if (rval != qpOASES::SUCCESSFUL_RETURN) printf("failed to init!\n");
   int rval2 = problem.getPrimalSolution(q_soln);
   if (rval2 != qpOASES::SUCCESSFUL_RETURN) printf("failed to solve!\n");
-  end = clock();
-  std::cout << "qp time:" << end - begin << std::endl;
-
-  // get answer
+  for (int i = 0; i < 12; i++) std::cout << q_soln[i] << std::endl;
+  // qpOASES::SQProblem problem_sqp(nV, nC);
+  // problem_sqp.setOptions(op);
+  // qpOASES::int_t nWSR = 200;
+  // qpOASES::real_t cpu_time{0.1};
+  // int rval = problem.init(H_qpoases, g_qpoases, A_qpoases, NULL, NULL, lb_A_qpoases, NULL, nWSR, &cpu_time);
+  // if (rval != qpOASES::SUCCESSFUL_RETURN) printf("failed to init!\n");
+  // int rval2 = problem.getPrimalSolution(q_soln);
+  // if (rval2 != qpOASES::SUCCESSFUL_RETURN) printf("failed to solve!\n");
+  // get foot force and joint torque
   int tmp{0};
   for (int i = 0; i < 4; i++) {
     if (contact_table_(i, 0) != 0) {
-      foot_force_in_world_[3 * i] = q_soln[3 * tmp];
-      foot_force_in_world_[3 * i + 1] = q_soln[3 * tmp + 1];
-      foot_force_in_world_[3 * i + 2] = q_soln[3 * tmp + 2];
+      foot_force_in_world_[3 * i] = -q_soln[3 * tmp];
+      foot_force_in_world_[3 * i + 1] = -q_soln[3 * tmp + 1];
+      foot_force_in_world_[3 * i + 2] = -q_soln[3 * tmp + 2];
       tmp++;
     } else {
       foot_force_in_world_[3 * i] = 0.0;
@@ -497,26 +489,24 @@ void convexMPC::solveMPCV2()  // six constraints in each foot
       foot_force_in_world_[3 * i + 2] = 0.0;
     }
   }
-  foot_force_in_world_ = -foot_force_in_world_;
   for (int leg = 0; leg < 4; leg++) {
     joint_torque_.segment<3>(3 * leg) = jacobian_leg_.block(0, 3 * leg, 3, 3).transpose() *
                                         rotm_body2world_.transpose() * foot_force_in_world_.segment<3>(3 * leg);
   }
-  std::cout << "joint_torque:\n" << joint_torque_ << std::endl;
 }
-
-// float convexMPC::constrainFzmax(float phase) {
-//   if (phase <= 0.1) {
-//     return 10.0 * phase;
-//   } else if (phase <= 0.9) {
-//     return 1.0;
-//   } else {
-//     return 10.0 - 10.0 * phase;
-//   }
-//   // return -4.0 * (phase - 0.5) * (phase - 0.5) + 1;  // inverted pendulum
-
-//   // return 1.0;
-// }
+float convexMPC::constrainFzmax(float phase) {
+  if (optimism_) {
+    if (phase <= 0.1) {
+      return 10.0 * phase;
+    } else if (phase <= 0.9) {
+      return 1.0;
+    } else {
+      return 10.0 - 10.0 * phase;
+    }
+    // return -4.0 * (phase - 0.5) * (phase - 0.5) + 1;  // inverted pendulum
+  } else
+    return 1.0;
+}
 
 void convexMPC::updateFootPositionTable() {
   foot_pos_table_.block(0, 0, 12, 1) = foot_position_in_world_;
@@ -580,5 +570,87 @@ void convexMPC::updateLWeight() {
   }
   for (int i = 0; i < horizon_mpc_; i++) { Lweight_qp_.block(13 * i, 13 * i, 13, 13) = lweight_qp_tmp; }
 }
+inline float convexMPC::getTorqueBorderFromTN(float omega) {
+  float abs_omega = fabs(omega);
+  assert(abs_omega < 19.896 && "omega must <190 rpm in convex mpc");
+  if (abs_omega < 11.5191) {
+    return 109.0;
+  } else {
+    return (-11.113 * abs_omega + 237.0);
+  }  // 110rpm
+}
 
-void convexMPC::printMatrix(Eigen::Matrix<float, -1, -1> mat) { std::cout << mat << std::endl; }
+void convexMPC::testMPC() {
+  std::cout << "test MPC!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n";
+  Eigen::Vector3f position, vWorld, omegaWorld;
+  Eigen::Vector4f orientation;
+  Eigen::Matrix<float, 12, 1> r_foot;
+  position << 0.0, 0.0, 0.45;
+  vWorld << 1.0, 0.0, 0.0;
+  omegaWorld << 0.0, 0.0, 0.1;
+  orientation << 1.0, 0.0, 0.0, 0.0;
+
+  r_foot << 0.2, -0.1, -0.4, 0.2, 0.1, -0.4, -0.2, -0.1, -0.4, -0.2, 0.1, -0.4;
+  float Q[12] = {0.25, 0.25, 10, 2, 2, 50, 0, 0, 0.3, 0.2, 0.2, 0.1};
+  float* weights = Q;
+  float* p_test = position.data();
+  float* v_test = vWorld.data();
+  float* w_test = omegaWorld.data();
+  float* q_test = orientation.data();
+  float* r_test = r_foot.data();
+  float yaw = 0.0;
+  float alpha = 1e-5;
+  int horizon_mpc = 10;
+  int* mpc_table;
+  Eigen::Matrix<int, 4, 10, Eigen::ColMajor> contact_table;
+  contact_table << 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0;
+  float trajInitial[12] = {0.000462805, 0, 0.0331643, -0.0189391, 0.00102649, 0.45, 0, 0, 0, 0, 0, 0};
+  float trajAll[12 * 36];
+  for (int i = 0; i < horizon_mpc; i++)
+    for (int j = 0; j < 12; j++) trajAll[12 * i + j] = trajInitial[j];
+
+  stance_duration_ = 0.5;
+  root_euler_ << 0.0, 0.0, 0.0;
+  root_omega_ = omegaWorld;
+  root_position_ = position;
+  root_velocity_ = vWorld;
+  rotm_body2world_ = Eigen::Matrix<float, 3, 3>::Identity();  // ok
+  // joint_vel_ = fusion_data.joint_velocity;
+
+  root_omega_target_ << 0.000462805, 0, 0.0331643;
+  root_velocity_target_ << 0, 0, 0;
+  root_position_target_ << -0.0189391, 0.00102649, 0.45;
+  foot_position_in_world_ = r_foot;
+  Inertial_in_world_ << 0.07, 0, 0, 0, 0.26, 0, 0, 0, 0.242;
+  inv_inertial_ = Inertial_in_world_.inverse();
+
+  mat_omega2rpy_rate_ = omega2rpyrate(root_euler_);
+  contact_table_ << 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0;
+  sum_contact_ = contact_table_.sum();
+  config.body_mass = 9;
+  config.dt = 0.002;
+  config.mu = 0.4;
+  config.max_reaction_force = 120;
+  config.body_height = 0.45;
+  config.filter_omega = 1;
+  config.filter_vel = 1;
+  config.weight_rpy << 0.25, 0.25, 10;
+  config.weight_xyz << 2, 2, 50;
+  config.weight_omega << 0, 0, 0.3;
+  config.weight_vel << 0.2, 0.2, 0.1;
+  config.com_offset << 0, 0, 0;
+  config.p_hip << 0, 0, 0;
+  config.inertial << 0.07, 0, 0, 0, 0.26, 0, 0, 0, 0.242;
+  config.weight_input = 1e-5;
+
+  lweight_qp_unit_ << config.weight_rpy[0], config.weight_rpy[1], config.weight_rpy[2], config.weight_xyz[0],
+      config.weight_xyz[1], config.weight_xyz[2], config.weight_omega[0], config.weight_omega[1],
+      config.weight_omega[2], config.weight_vel[0], config.weight_vel[1], config.weight_vel[2], 0.0;
+  kweight_qp_unit_ << config.weight_input, config.weight_input, config.weight_input;
+  Lweight_qp_.diagonal() = lweight_qp_unit_.replicate(horizon_mpc_, 1);      // state weight
+  Kweight_qp_.diagonal() = kweight_qp_unit_.replicate(4 * horizon_mpc_, 1);  // unput weight
+  counter_ = 0;
+  dt_mpc_ = config.dt * iteration_step_;
+}
