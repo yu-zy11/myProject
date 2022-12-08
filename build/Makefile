@@ -195,6 +195,19 @@ mpc_controller/fast:
 	$(MAKE) -f controller/mpc_controller/CMakeFiles/mpc_controller.dir/build.make controller/mpc_controller/CMakeFiles/mpc_controller.dir/build
 .PHONY : mpc_controller/fast
 
+#=============================================================================
+# Target rules for targets named gait
+
+# Build rule for target.
+gait: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 gait
+.PHONY : gait
+
+# fast build rule for target.
+gait/fast:
+	$(MAKE) -f controller/gait/CMakeFiles/gait.dir/build.make controller/gait/CMakeFiles/gait.dir/build
+.PHONY : gait/fast
+
 main.o: main.cpp.o
 
 .PHONY : main.o
@@ -237,6 +250,7 @@ help:
 	@echo "... main"
 	@echo "... qpOASES1"
 	@echo "... mpc_controller"
+	@echo "... gait"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"

@@ -25,3 +25,10 @@
 /home/yuzy/workspace/learnCpp/myProject/build/controller/mpc_controller/CMakeFiles/rebuild_cache.dir
 /home/yuzy/workspace/learnCpp/myProject/build/controller/mpc_controller/CMakeFiles/edit_cache.dir
 /home/yuzy/workspace/learnCpp/myProject/build/controller/mpc_controller/CMakeFiles/mpc_controller.dir
+/home/yuzy/workspace/learnCpp/myProject/build/controller/gait/CMakeFiles/install/strip.dir
+/home/yuzy/workspace/learnCpp/myProject/build/controller/gait/CMakeFiles/install/local.dir
+/home/yuzy/workspace/learnCpp/myProject/build/controller/gait/CMakeFiles/install.dir
+/home/yuzy/workspace/learnCpp/myProject/build/controller/gait/CMakeFiles/list_install_components.dir
+/home/yuzy/workspace/learnCpp/myProject/build/controller/gait/CMakeFiles/rebuild_cache.dir
+/home/yuzy/workspace/learnCpp/myProject/build/controller/gait/CMakeFiles/edit_cache.dir
+/home/yuzy/workspace/learnCpp/myProject/build/controller/gait/CMakeFiles/gait.dir

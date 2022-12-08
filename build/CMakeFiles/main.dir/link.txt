@@ -1,1 +1,1 @@
-/usr/bin/c++  -g  -rdynamic CMakeFiles/main.dir/main.cpp.o  -o main  -Wl,-rpath,/home/yuzy/workspace/learnCpp/myProject/build/controller/third_party/qpOASES/libs -lqpOASES -lpthread controller/mpc_controller/libmpc_controller.a controller/third_party/qpOASES/libs/libqpOASES1.so.3.2 -lqpOASES 
+/usr/bin/c++  -g  -rdynamic CMakeFiles/main.dir/main.cpp.o  -o main  -lqpOASES -lpthread controller/mpc_controller/libmpc_controller.a -lqpOASES 

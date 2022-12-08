@@ -12,6 +12,7 @@ set(CMAKE_MAKEFILE_DEPENDS
   "CMakeFiles/3.16.3/CMakeCXXCompiler.cmake"
   "CMakeFiles/3.16.3/CMakeSystem.cmake"
   "../controller/CMakeLists.txt"
+  "../controller/gait/CMakeLists.txt"
   "../controller/mpc_controller/CMakeLists.txt"
   "../controller/third_party/qpOASES/CMakeLists.txt"
   "/usr/lib/cmake/eigen3/Eigen3Config.cmake"
@@ -56,6 +57,7 @@ set(CMAKE_MAKEFILE_PRODUCTS
   "controller/CMakeFiles/CMakeDirectoryInformation.cmake"
   "controller/third_party/qpOASES/CMakeFiles/CMakeDirectoryInformation.cmake"
   "controller/mpc_controller/CMakeFiles/CMakeDirectoryInformation.cmake"
+  "controller/gait/CMakeFiles/CMakeDirectoryInformation.cmake"
   )
 
 # Dependency information for all targets:
@@ -63,4 +65,5 @@ set(CMAKE_DEPEND_INFO_FILES
   "CMakeFiles/main.dir/DependInfo.cmake"
   "controller/third_party/qpOASES/CMakeFiles/qpOASES1.dir/DependInfo.cmake"
   "controller/mpc_controller/CMakeFiles/mpc_controller.dir/DependInfo.cmake"
+  "controller/gait/CMakeFiles/gait.dir/DependInfo.cmake"
   )

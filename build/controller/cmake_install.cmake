@@ -41,6 +41,7 @@ if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
   include("/home/yuzy/workspace/learnCpp/myProject/build/controller/third_party/qpOASES/cmake_install.cmake")
   include("/home/yuzy/workspace/learnCpp/myProject/build/controller/mpc_controller/cmake_install.cmake")
+  include("/home/yuzy/workspace/learnCpp/myProject/build/controller/gait/cmake_install.cmake")
 
 endif()
 

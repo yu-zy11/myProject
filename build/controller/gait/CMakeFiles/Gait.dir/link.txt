@@ -1,0 +1,2 @@
+/usr/bin/ar qc libGait.a  CMakeFiles/Gait.dir/gait.cpp.o
+/usr/bin/ranlib libGait.a
