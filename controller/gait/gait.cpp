@@ -134,7 +134,7 @@ void Gait::transition() {
   //
 }
 
-void Gait::setMPC(int horizon, int iteration) {
+void Gait::initMPC(int horizon, int iteration) {
   horizon_mpc_ = horizon;
   iteration_mpc_ = iteration;
   contact_sequences_.resize(4, horizon);

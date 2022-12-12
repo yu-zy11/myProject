@@ -31,46 +31,30 @@ struct LegData {
 struct FusionData {
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-  LocomotionData() { zero(); }
-
-  void zero() {
-    tick = 0.0;
-    joint_torque = Vec12<float>::Zero();
-    joint_position = Vec12<float>::Zero();
-    joint_velocity = Vec12<float>::Zero();
-    joint_stiffness = Vec12<float>::Zero();
-    joint_damping = Vec12<float>::Zero();
-    run_state = 1;
-    gait_mode = 1;
-    tracking_mode = 0;
-  }
-
-  double tick;
-  int32_t run_state;
-  int32_t gait_mode;
-  int8_t tracking_mode;
-  Vec12<float> joint_torque;    // tau
-  Vec12<float> joint_position;  // q
-  Vec12<float> joint_velocity;  // qd
-  Vec12<float> joint_stiffness; // kp
-  Vec12<float> joint_damping;   // kd
+  BodyData torso;
+  LegData leg;
 };
 
-struct GaitInfo {
-  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-  GaitInfo() { zero(); }
+struct commandData {
+  BodyData torso_cmd;
+}
 
-  void zero() {
-    gait_flag = 0;
-    contact_target.setOnes();
-    swing_phase.setZero();
-    stance_phase.setOnes();
-  }
+// struct GaitInfo {
+//   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+//   GaitInfo() { zero(); }
 
-  int gait_flag; // 0: no cyclic gait, 1: cyclic gait, such as trot, walk and so
-                 // on
-  Vec4<float> contact_target;
-  Vec4<float> swing_phase;
-  Vec4<float> stance_phase;
-};
+//   void zero() {
+//     gait_flag = 0;
+//     contact_target.setOnes();
+//     swing_phase.setZero();
+//     stance_phase.setOnes();
+//   }
+
+//   int gait_flag; // 0: no cyclic gait, 1: cyclic gait, such as trot, walk and
+//   so
+//                  // on
+//   Vec4<float> contact_target;
+//   Vec4<float> swing_phase;
+//   Vec4<float> stance_phase;
+// };
 #endif

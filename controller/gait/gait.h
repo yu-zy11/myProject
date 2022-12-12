@@ -34,7 +34,7 @@ public:
   Eigen::Vector4f GetSwingPhase();
   void printGaitInfo();
   // funtions for mpc
-  void setMPC(int horizon, int iteration);
+  void initMPC(int horizon, int iteration);
   void getMPCtable(Eigen::Matrix<int, 4, -1> &contact_table);
   float getStanceDuration() { return stance_duration_; };
 

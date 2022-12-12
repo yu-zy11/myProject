@@ -201,6 +201,8 @@ qpOASES/extras/SolutionAnalysis.ipp
 /home/yuzy/workspace/learnCpp/myProject/controller/mpc_controller/convexMPC.cpp
 convexMPC.h
 /home/yuzy/workspace/learnCpp/myProject/controller/mpc_controller/convexMPC.h
+math_utils.h
+/home/yuzy/workspace/learnCpp/myProject/controller/mpc_controller/math_utils.h
 Eigen/Dense
 -
 ctime
@@ -213,26 +215,16 @@ thread
 -
 unsupported/Eigen/MatrixFunctions
 -
-math_utils.h
-/home/yuzy/workspace/learnCpp/myProject/controller/mpc_controller/math_utils.h
 
 /home/yuzy/workspace/learnCpp/myProject/controller/mpc_controller/convexMPC.h
+math_utils.h
+/home/yuzy/workspace/learnCpp/myProject/controller/mpc_controller/math_utils.h
 eigen3/Eigen/Dense
 -
 qpOASES.hpp
 -
 string
 -
-math_utils.h
-/home/yuzy/workspace/learnCpp/myProject/controller/mpc_controller/math_utils.h
-mc_modules/common/algo_config_loader.h
-/home/yuzy/workspace/learnCpp/myProject/controller/mpc_controller/mc_modules/common/algo_config_loader.h
-modules/common/message/common_data.h
-/home/yuzy/workspace/learnCpp/myProject/controller/mpc_controller/modules/common/message/common_data.h
-modules/common/message/sim_msg/FusionData.hpp
-/home/yuzy/workspace/learnCpp/myProject/controller/mpc_controller/modules/common/message/sim_msg/FusionData.hpp
-modules/common/message/sim_msg/OperatorData.hpp
-/home/yuzy/workspace/learnCpp/myProject/controller/mpc_controller/modules/common/message/sim_msg/OperatorData.hpp
 
 /home/yuzy/workspace/learnCpp/myProject/controller/mpc_controller/math_utils.h
 eigen3/Eigen/Dense
