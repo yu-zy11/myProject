@@ -23,7 +23,7 @@ struct LegData {
   Eigen::Matrix<float, 12, 1> foot_position_in_body;
   Eigen::Matrix<float, 12, 1> foot_position_in_world;
   Eigen::Matrix<float, 12, 1> foot_vel;
-  Eigen::Matrix<float, 3, 12> foot_jacobian;
+  Eigen::Matrix<float, 3, 12> foot_jacobian_in_body;
   Eigen::Matrix<float, 3, 12> foot_dot_jacobian;
 };
 
@@ -31,13 +31,13 @@ struct LegData {
 struct FusionData {
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-  BodyData torso;
+  BodyData body;
   LegData leg;
 };
 
 struct commandData {
-  BodyData torso_cmd;
-}
+  BodyData body;
+};
 
 // struct GaitInfo {
 //   EIGEN_MAKE_ALIGNED_OPERATOR_NEW

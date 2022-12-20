@@ -161,6 +161,10 @@ qpOASES/SQProblemSchur.ipp
 ../controller/third_party/qpOASES/include/qpOASES/SQProblemSchur.ipp
 
 ../controller/third_party/qpOASES/include/qpOASES/SparseSolver.hpp
+limits
+-
+sstream
+-
 qpOASES/Utils.hpp
 -
 
@@ -198,13 +202,25 @@ qpOASES/extras/SolutionAnalysis.ipp
 
 ../controller/third_party/qpOASES/include/qpOASES/extras/SolutionAnalysis.ipp
 
+/home/yuzy/workspace/learnCpp/myProject/controller/common_data/common_data.h
+eigen3/Eigen/Dense
+-
+
+/home/yuzy/workspace/learnCpp/myProject/controller/gait/gait.h
+Eigen/Dense
+-
+iostream
+-
+
 /home/yuzy/workspace/learnCpp/myProject/controller/mpc_controller/convexMPC.h
+../common_data/common_data.h
+/home/yuzy/workspace/learnCpp/myProject/controller/common_data/common_data.h
+math_utils.h
+/home/yuzy/workspace/learnCpp/myProject/controller/mpc_controller/math_utils.h
 eigen3/Eigen/Dense
 -
 qpOASES.hpp
 -
-math_utils.h
-/home/yuzy/workspace/learnCpp/myProject/controller/mpc_controller/math_utils.h
 string
 -
 
@@ -213,13 +229,19 @@ eigen3/Eigen/Dense
 -
 
 /home/yuzy/workspace/learnCpp/myProject/main.cpp
-qpOASES.hpp
+./controller/mpc_controller/convexMPC.h
+/home/yuzy/workspace/learnCpp/myProject/controller/mpc_controller/convexMPC.h
+controller/gait/gait.h
+/home/yuzy/workspace/learnCpp/myProject/controller/gait/gait.h
+Eigen/Dense
+-
+ctime
 -
 iostream
 -
-./controller/mpc_controller/convexMPC.h
-/home/yuzy/workspace/learnCpp/myProject/controller/mpc_controller/convexMPC.h
-Eigen/Dense
+qpOASES.hpp
+-
+unistd.h
 -
 
 /usr/include/eigen3/Eigen/Cholesky

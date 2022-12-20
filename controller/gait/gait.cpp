@@ -1,14 +1,15 @@
 #include "gait.h"
 
 void Gait::init() {
-  gait_type_ = GaitType::STAND;
+  current_gait_.gait_type_ = GaitType::STAND;
   current_gait_.period_ = 1.0;
-  current_gait_.phase_offset_ << 0., 0., 0., 0.;
-  current_gait_.stance_duration_ << 1., 1., 1., 1.;
+  current_gait_.phase_offset_ << 0.0f, 0.0f, 0.0f, 0.0f;
+  current_gait_.stance_duration_ << 1.0f, 1.0f, 1.0f, 1.0f;
   counter_ = 0;
   dt_ = 0.002;
   gait_phase_ = 0.0;
   foot_contact_ << 1, 1, 1, 1;
+  next_gait_ = current_gait_;
 }
 
 void Gait::setGaitType(GaitType type, float period) {

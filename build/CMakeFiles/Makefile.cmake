@@ -63,7 +63,7 @@ set(CMAKE_MAKEFILE_PRODUCTS
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
   "CMakeFiles/main.dir/DependInfo.cmake"
-  "controller/third_party/qpOASES/CMakeFiles/qpOASES1.dir/DependInfo.cmake"
+  "controller/third_party/qpOASES/CMakeFiles/qpOASES.dir/DependInfo.cmake"
   "controller/mpc_controller/CMakeFiles/mpc_controller.dir/DependInfo.cmake"
   "controller/gait/CMakeFiles/gait.dir/DependInfo.cmake"
   )

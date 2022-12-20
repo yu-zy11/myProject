@@ -32,6 +32,8 @@ CMakeFiles/main.dir/main.cpp.o: ../controller/third_party/qpOASES/include/qpOASE
 CMakeFiles/main.dir/main.cpp.o: ../controller/third_party/qpOASES/include/qpOASES/extras/OQPinterface.hpp
 CMakeFiles/main.dir/main.cpp.o: ../controller/third_party/qpOASES/include/qpOASES/extras/SolutionAnalysis.hpp
 CMakeFiles/main.dir/main.cpp.o: ../controller/third_party/qpOASES/include/qpOASES/extras/SolutionAnalysis.ipp
+CMakeFiles/main.dir/main.cpp.o: ../controller/common_data/common_data.h
+CMakeFiles/main.dir/main.cpp.o: ../controller/gait/gait.h
 CMakeFiles/main.dir/main.cpp.o: ../controller/mpc_controller/convexMPC.h
 CMakeFiles/main.dir/main.cpp.o: ../controller/mpc_controller/math_utils.h
 CMakeFiles/main.dir/main.cpp.o: ../main.cpp

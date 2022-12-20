@@ -265,6 +265,12 @@ qpOASES1_LIB_DEPENDS:STATIC=general;qpOASES;
 qpOASES1_SOURCE_DIR:STATIC=/home/yuzy/workspace/learnCpp/myProject/controller/third_party/qpOASES
 
 //Value Computed by CMake
+qpOASES_BINARY_DIR:STATIC=/home/yuzy/workspace/learnCpp/myProject/build/controller/third_party/qpOASES
+
+//Value Computed by CMake
+qpOASES_SOURCE_DIR:STATIC=/home/yuzy/workspace/learnCpp/myProject/controller/third_party/qpOASES
+
+//Value Computed by CMake
 quadruped_controller_BINARY_DIR:STATIC=/home/yuzy/workspace/learnCpp/myProject/build/controller
 
 //Value Computed by CMake

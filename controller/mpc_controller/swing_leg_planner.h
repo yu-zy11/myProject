@@ -4,7 +4,7 @@
 class SwingLegPlanner {
 public:
   void init();
-  void update();
+  void update(FusionData state, commandData cmd);
   void getFootTarget();
   void getJointTarget();
   int a = 1;

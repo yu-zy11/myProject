@@ -1,16 +1,11 @@
 
 #ifndef CONVEXMPC
 #define CONVEXMPC
+#include "../common_data/common_data.h"
 #include "math_utils.h"
 #include <eigen3/Eigen/Dense>
 #include <qpOASES.hpp>
 #include <string>
-// #include "mc_modules/common/algo_config_loader.h"
-// // #include
-// "mc_modules/locomotion/locomotion_core/gait/time_gait_generator.h" #include
-// "modules/common/message/common_data.h" #include
-// "modules/common/message/sim_msg/FusionData.hpp" #include
-// "modules/common/message/sim_msg/OperatorData.hpp"
 
 #define BIG_FORCE 1000000
 // #define DEBUG_MPC
@@ -29,12 +24,11 @@ struct MPC_CONFIG {
 
 class convexMPC {
 public:
-  convexMPC(int horizon_mpc, int iteration_mpc)
-      : iteration_mpc_(iteration_mpc), horizon_mpc_(horizon_mpc){};
+  convexMPC(int horizon_mpc, int iteration_step)
+      : iteration_step_(iteration_step), horizon_mpc_(horizon_mpc){};
   void init();
-  void update(const MCC::common::message::FusionData &fusion_data,
-              const MCC::common::message::OperatorData &operator_data,
-              int *mpcTable, float stance_duration);
+  void run(const FusionData &fusion_data, const commandData &operator_data,
+           int *mpcTable, float stance_duration);
   Eigen::Matrix<float, 12, 1> getFootForceInWorld() {
     return foot_force_in_world_;
   };
@@ -42,11 +36,10 @@ public:
   MPC_CONFIG config;
 
 private:
-  void updateData(const MCC::common::message::FusionData &fusion_data,
-                  const MCC::common::message::OperatorData &operator_data,
-                  int *mpcTable, float *phase_table,
-                  float stance_duration); // change MPCInterface input
-                                          // inaccordence with your own data
+  void update(const FusionData &fusion_data, const commandData &operator_data,
+              int *mpcTable,
+              float stance_duration); // change MPCInterface input inaccordence
+                                      // with your own data
   void
   calculateContinuousEquation();  // calculate A and B in equation:
                                   // dotX=AX+BU,euler sequence is zyx [x,y,z]
@@ -61,6 +54,7 @@ private:
   void solveMPC_TN();          // 5 constraints on each foot
   void solveMPC();
 
+  float constrainFzmax(float phase);
   void updateFootPositionTable();
   void getHipPositionInWorld(Eigen::Vector3f &p, int leg);
   void updateLWeight(); // change Lweight from body frame to world frame. min
@@ -69,7 +63,7 @@ private:
   void testMPC();
   bool optimism_{false};
   float dt_mpc_;
-  int iteration_mpc_;
+  int iteration_step_;
   int horizon_mpc_;
   int counter_;
   int sum_contact_;
@@ -100,7 +94,7 @@ private:
   Eigen::Matrix3f mat_omega2rpy_rate_;
   Eigen::Matrix3f mat_omega2rpy_rate_simplified_;
 
-  Eigen::Matrix<float, 4, -1> contact_table_, phase_table_;
+  Eigen::Matrix<float, 4, -1> contact_table_;
   // Eigen::Matrix<float, 6, 3> constraint_unit_;
   Eigen::Matrix<float, -1, -1> constraint_mat_;
   Eigen::Matrix<float, -1, 1> constraint_ub_, constraint_lb_;

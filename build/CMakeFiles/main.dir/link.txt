@@ -1,1 +1,1 @@
-/usr/bin/c++  -g  -rdynamic CMakeFiles/main.dir/main.cpp.o  -o main  -lqpOASES -lpthread controller/mpc_controller/libmpc_controller.a -lqpOASES 
+/usr/bin/c++  -g  -rdynamic CMakeFiles/main.dir/main.cpp.o  -o main  controller/third_party/qpOASES/libs/libqpOASES.a -lpthread controller/mpc_controller/libmpc_controller.a controller/gait/libgait.a controller/third_party/qpOASES/libs/libqpOASES.a 

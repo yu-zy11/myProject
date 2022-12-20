@@ -1,5 +1,4 @@
 #include "swing_leg_planner.h"
-#include "./controller/common_data/common_data.h"
 SwingLegPlanner::SwingLegPlanner() {
   kf_foot_x_ = 0.1;
   kf_foot_y_ = 0.1;

@@ -170,17 +170,17 @@ main/fast:
 .PHONY : main/fast
 
 #=============================================================================
-# Target rules for targets named qpOASES1
+# Target rules for targets named qpOASES
 
 # Build rule for target.
-qpOASES1: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 qpOASES1
-.PHONY : qpOASES1
+qpOASES: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 qpOASES
+.PHONY : qpOASES
 
 # fast build rule for target.
-qpOASES1/fast:
-	$(MAKE) -f controller/third_party/qpOASES/CMakeFiles/qpOASES1.dir/build.make controller/third_party/qpOASES/CMakeFiles/qpOASES1.dir/build
-.PHONY : qpOASES1/fast
+qpOASES/fast:
+	$(MAKE) -f controller/third_party/qpOASES/CMakeFiles/qpOASES.dir/build.make controller/third_party/qpOASES/CMakeFiles/qpOASES.dir/build
+.PHONY : qpOASES/fast
 
 #=============================================================================
 # Target rules for targets named mpc_controller
@@ -248,7 +248,7 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
 	@echo "... main"
-	@echo "... qpOASES1"
+	@echo "... qpOASES"
 	@echo "... mpc_controller"
 	@echo "... gait"
 	@echo "... main.o"

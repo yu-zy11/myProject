@@ -3,8 +3,6 @@
 
 #include <Eigen/Dense>
 #include <iostream>
-// #include <string>
-// #include <vector>
 enum class GaitType {
   TROT,
   TROT_WALK,
@@ -16,27 +14,29 @@ enum class GaitType {
   PRONK,
   GALLOP
 };
-class GaitData {
-public:
-  Eigen::Matrix4f phase_offset_;
-  Eigen::Matrix4f stance_duration_;
+struct GaitData {
   float period_;
+  Eigen::Vector4f phase_offset_;
+  Eigen::Vector4f stance_duration_;
   GaitType gait_type_;
 };
 
 class Gait {
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 public:
+  Gait() { init(); };
   void init();
   void update();
-  void setGaitType(GaitType type, float period = -1);
-  Eigen::Vector4f GetStancePhase();
-  Eigen::Vector4f GetSwingPhase();
+  void setGaitType(GaitType type, float period = 1);
+  // Eigen::Vector4f GetStancePhase();
+  // Eigen::Vector4f GetSwingPhase();
   void printGaitInfo();
-  // funtions for mpc
+  // fuctions for mpc
   void initMPC(int horizon, int iteration);
   void getMPCtable(Eigen::Matrix<int, 4, -1> &contact_table);
   float getStanceDuration() { return stance_duration_; };
+  GaitData current_gait_;
+  GaitData next_gait_;
 
 private:
   // GaitType gait_type_;
@@ -48,9 +48,8 @@ private:
   Eigen::Vector4f swing_phase_;
   Eigen::Vector4f stance_phase_;
   Eigen::Vector4i foot_contact_;
-  GaitData current_gait_;
-  GaitData next_gait_;
   void transition();
+
   // parameters for mpc
   int horizon_mpc_;
   int iteration_mpc_;
