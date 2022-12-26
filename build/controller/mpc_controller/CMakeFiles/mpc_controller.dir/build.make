@@ -43,10 +43,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/yuzy/workspace/learnCpp/myProject
+CMAKE_SOURCE_DIR = /home/yuzy/workspace/myProject
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/yuzy/workspace/learnCpp/myProject/build
+CMAKE_BINARY_DIR = /home/yuzy/workspace/myProject/build
 
 # Include any dependencies generated for this target.
 include controller/mpc_controller/CMakeFiles/mpc_controller.dir/depend.make
@@ -59,16 +59,16 @@ include controller/mpc_controller/CMakeFiles/mpc_controller.dir/flags.make
 
 controller/mpc_controller/CMakeFiles/mpc_controller.dir/convexMPC.cpp.o: controller/mpc_controller/CMakeFiles/mpc_controller.dir/flags.make
 controller/mpc_controller/CMakeFiles/mpc_controller.dir/convexMPC.cpp.o: ../controller/mpc_controller/convexMPC.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/yuzy/workspace/learnCpp/myProject/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object controller/mpc_controller/CMakeFiles/mpc_controller.dir/convexMPC.cpp.o"
-	cd /home/yuzy/workspace/learnCpp/myProject/build/controller/mpc_controller && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/mpc_controller.dir/convexMPC.cpp.o -c /home/yuzy/workspace/learnCpp/myProject/controller/mpc_controller/convexMPC.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/yuzy/workspace/myProject/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object controller/mpc_controller/CMakeFiles/mpc_controller.dir/convexMPC.cpp.o"
+	cd /home/yuzy/workspace/myProject/build/controller/mpc_controller && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/mpc_controller.dir/convexMPC.cpp.o -c /home/yuzy/workspace/myProject/controller/mpc_controller/convexMPC.cpp
 
 controller/mpc_controller/CMakeFiles/mpc_controller.dir/convexMPC.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/mpc_controller.dir/convexMPC.cpp.i"
-	cd /home/yuzy/workspace/learnCpp/myProject/build/controller/mpc_controller && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/yuzy/workspace/learnCpp/myProject/controller/mpc_controller/convexMPC.cpp > CMakeFiles/mpc_controller.dir/convexMPC.cpp.i
+	cd /home/yuzy/workspace/myProject/build/controller/mpc_controller && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/yuzy/workspace/myProject/controller/mpc_controller/convexMPC.cpp > CMakeFiles/mpc_controller.dir/convexMPC.cpp.i
 
 controller/mpc_controller/CMakeFiles/mpc_controller.dir/convexMPC.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/mpc_controller.dir/convexMPC.cpp.s"
-	cd /home/yuzy/workspace/learnCpp/myProject/build/controller/mpc_controller && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/yuzy/workspace/learnCpp/myProject/controller/mpc_controller/convexMPC.cpp -o CMakeFiles/mpc_controller.dir/convexMPC.cpp.s
+	cd /home/yuzy/workspace/myProject/build/controller/mpc_controller && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/yuzy/workspace/myProject/controller/mpc_controller/convexMPC.cpp -o CMakeFiles/mpc_controller.dir/convexMPC.cpp.s
 
 # Object files for target mpc_controller
 mpc_controller_OBJECTS = \
@@ -80,9 +80,9 @@ mpc_controller_EXTERNAL_OBJECTS =
 controller/mpc_controller/libmpc_controller.a: controller/mpc_controller/CMakeFiles/mpc_controller.dir/convexMPC.cpp.o
 controller/mpc_controller/libmpc_controller.a: controller/mpc_controller/CMakeFiles/mpc_controller.dir/build.make
 controller/mpc_controller/libmpc_controller.a: controller/mpc_controller/CMakeFiles/mpc_controller.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/yuzy/workspace/learnCpp/myProject/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX static library libmpc_controller.a"
-	cd /home/yuzy/workspace/learnCpp/myProject/build/controller/mpc_controller && $(CMAKE_COMMAND) -P CMakeFiles/mpc_controller.dir/cmake_clean_target.cmake
-	cd /home/yuzy/workspace/learnCpp/myProject/build/controller/mpc_controller && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/mpc_controller.dir/link.txt --verbose=$(VERBOSE)
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/yuzy/workspace/myProject/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX static library libmpc_controller.a"
+	cd /home/yuzy/workspace/myProject/build/controller/mpc_controller && $(CMAKE_COMMAND) -P CMakeFiles/mpc_controller.dir/cmake_clean_target.cmake
+	cd /home/yuzy/workspace/myProject/build/controller/mpc_controller && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/mpc_controller.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
 controller/mpc_controller/CMakeFiles/mpc_controller.dir/build: controller/mpc_controller/libmpc_controller.a
@@ -90,10 +90,10 @@ controller/mpc_controller/CMakeFiles/mpc_controller.dir/build: controller/mpc_co
 .PHONY : controller/mpc_controller/CMakeFiles/mpc_controller.dir/build
 
 controller/mpc_controller/CMakeFiles/mpc_controller.dir/clean:
-	cd /home/yuzy/workspace/learnCpp/myProject/build/controller/mpc_controller && $(CMAKE_COMMAND) -P CMakeFiles/mpc_controller.dir/cmake_clean.cmake
+	cd /home/yuzy/workspace/myProject/build/controller/mpc_controller && $(CMAKE_COMMAND) -P CMakeFiles/mpc_controller.dir/cmake_clean.cmake
 .PHONY : controller/mpc_controller/CMakeFiles/mpc_controller.dir/clean
 
 controller/mpc_controller/CMakeFiles/mpc_controller.dir/depend:
-	cd /home/yuzy/workspace/learnCpp/myProject/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/yuzy/workspace/learnCpp/myProject /home/yuzy/workspace/learnCpp/myProject/controller/mpc_controller /home/yuzy/workspace/learnCpp/myProject/build /home/yuzy/workspace/learnCpp/myProject/build/controller/mpc_controller /home/yuzy/workspace/learnCpp/myProject/build/controller/mpc_controller/CMakeFiles/mpc_controller.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/yuzy/workspace/myProject/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/yuzy/workspace/myProject /home/yuzy/workspace/myProject/controller/mpc_controller /home/yuzy/workspace/myProject/build /home/yuzy/workspace/myProject/build/controller/mpc_controller /home/yuzy/workspace/myProject/build/controller/mpc_controller/CMakeFiles/mpc_controller.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : controller/mpc_controller/CMakeFiles/mpc_controller.dir/depend
 

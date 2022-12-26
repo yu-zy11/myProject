@@ -1,4 +1,5 @@
 #include "./controller/mpc_controller/convexMPC.h"
+#include "controller/common_data/common_data.h"
 #include "controller/gait/gait.h"
 #include <Eigen/Dense>
 #include <ctime>
@@ -25,17 +26,19 @@ int main() {
     std::cout << A_qpoases[i] << std::endl;
   }
   // test gait
-  __int64_t sec = 1;
-  __int64_t nsec = 10000000;
+  __int64_t sec = 0;
+  __int64_t nsec = 1000000;
   timespec req = {sec, nsec};
   Gait gait;
   int counter{0};
+  FusionData state;
+  commandData cmd;
   while (true) {
     counter++;
     gait.setGaitType(GaitType::TROT);
     if (counter % 10000 == 0) {
-      gait.update();
-      gait.printGaitInfo();
+      gait.update(state, cmd);
+      // gait.printGaitInfo();
       clock_nanosleep(CLOCK_MONOTONIC, 0, &req, nullptr);
     }
   }

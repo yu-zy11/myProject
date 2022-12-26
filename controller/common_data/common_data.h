@@ -26,6 +26,15 @@ struct LegData {
   Eigen::Matrix<float, 3, 12> foot_jacobian_in_body;
   Eigen::Matrix<float, 3, 12> foot_dot_jacobian;
 };
+struct GaitInfo {
+  float period;
+  float swing_duration;
+  float stance_duration;
+  // Eigen::Vector4f phase_offset;
+  // Eigen::Vector4f stance_ratio;
+  Eigen::Vector4f swing_phase;
+  Eigen::Vector4f stance_phase;
+};
 
 // topic: /locomotion
 struct FusionData {
@@ -33,28 +42,10 @@ struct FusionData {
 
   BodyData body;
   LegData leg;
+  GaitInfo gait;
 };
 
 struct commandData {
   BodyData body;
 };
-
-// struct GaitInfo {
-//   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-//   GaitInfo() { zero(); }
-
-//   void zero() {
-//     gait_flag = 0;
-//     contact_target.setOnes();
-//     swing_phase.setZero();
-//     stance_phase.setOnes();
-//   }
-
-//   int gait_flag; // 0: no cyclic gait, 1: cyclic gait, such as trot, walk and
-//   so
-//                  // on
-//   Vec4<float> contact_target;
-//   Vec4<float> swing_phase;
-//   Vec4<float> stance_phase;
-// };
 #endif

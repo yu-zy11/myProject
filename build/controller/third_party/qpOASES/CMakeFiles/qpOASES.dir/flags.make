@@ -6,5 +6,5 @@ CXX_FLAGS =  -D__NO_COPYRIGHT__ -Wall -pedantic -Wfloat-equal -Wshadow -DLINUX -
 
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/home/yuzy/workspace/learnCpp/myProject/./controller/third_party/qpOASES/include -I/usr/include/eigen3 -I/home/yuzy/workspace/learnCpp/myProject/controller/third_party/qpOASES/include 
+CXX_INCLUDES = -I/home/yuzy/workspace/myProject/./controller/third_party/qpOASES/include -I/usr/include/eigen3 -I/home/yuzy/workspace/myProject/controller/third_party/qpOASES/include 
 
