@@ -100,6 +100,7 @@ void Gait::update(FusionData &state, commandData &cmd) {
       current_gait_.period_ * (1 - current_gait_.stance_ratio_.sum() / 4.0);
   state.gait.stance_duration =
       current_gait_.period_ - state.gait.swing_duration;
+  state.gait.contact_state = foot_contact_;
 }
 
 void Gait::transition() {

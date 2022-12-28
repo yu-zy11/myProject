@@ -34,6 +34,7 @@ struct GaitInfo {
   // Eigen::Vector4f stance_ratio;
   Eigen::Vector4f swing_phase;
   Eigen::Vector4f stance_phase;
+  Eigen::Vector4i contact_state;
 };
 
 // topic: /locomotion
