@@ -6,17 +6,17 @@
 
 #IncludeRegexTransform: 
 
-/home/yuzy/workspace/myProject/controller/common_data/common_data.h
+/home/yuzy/workspace/learnCpp/myProject/controller/common_data/common_data.h
 eigen3/Eigen/Dense
 -
 
-/home/yuzy/workspace/myProject/controller/gait/gait.cpp
+/home/yuzy/workspace/learnCpp/myProject/controller/gait/gait.cpp
 gait.h
-/home/yuzy/workspace/myProject/controller/gait/gait.h
+/home/yuzy/workspace/learnCpp/myProject/controller/gait/gait.h
 
-/home/yuzy/workspace/myProject/controller/gait/gait.h
+/home/yuzy/workspace/learnCpp/myProject/controller/gait/gait.h
 ../common_data/common_data.h
-/home/yuzy/workspace/myProject/controller/common_data/common_data.h
+/home/yuzy/workspace/learnCpp/myProject/controller/common_data/common_data.h
 Eigen/Dense
 -
 iostream

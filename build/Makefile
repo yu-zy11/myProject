@@ -48,10 +48,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/yuzy/workspace/myProject
+CMAKE_SOURCE_DIR = /home/yuzy/workspace/learnCpp/myProject
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/yuzy/workspace/myProject/build
+CMAKE_BINARY_DIR = /home/yuzy/workspace/learnCpp/myProject/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -126,9 +126,9 @@ edit_cache/fast: edit_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/yuzy/workspace/myProject/build/CMakeFiles /home/yuzy/workspace/myProject/build/CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/yuzy/workspace/learnCpp/myProject/build/CMakeFiles /home/yuzy/workspace/learnCpp/myProject/build/CMakeFiles/progress.marks
 	$(MAKE) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/yuzy/workspace/myProject/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/yuzy/workspace/learnCpp/myProject/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -208,6 +208,19 @@ gait/fast:
 	$(MAKE) -f controller/gait/CMakeFiles/gait.dir/build.make controller/gait/CMakeFiles/gait.dir/build
 .PHONY : gait/fast
 
+#=============================================================================
+# Target rules for targets named robot_kinematics
+
+# Build rule for target.
+robot_kinematics: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 robot_kinematics
+.PHONY : robot_kinematics
+
+# fast build rule for target.
+robot_kinematics/fast:
+	$(MAKE) -f controller/library/CMakeFiles/robot_kinematics.dir/build.make controller/library/CMakeFiles/robot_kinematics.dir/build
+.PHONY : robot_kinematics/fast
+
 main.o: main.cpp.o
 
 .PHONY : main.o
@@ -251,6 +264,7 @@ help:
 	@echo "... qpOASES"
 	@echo "... mpc_controller"
 	@echo "... gait"
+	@echo "... robot_kinematics"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"

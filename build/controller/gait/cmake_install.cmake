@@ -1,4 +1,4 @@
-# Install script for directory: /home/yuzy/workspace/myProject/controller/gait
+# Install script for directory: /home/yuzy/workspace/learnCpp/myProject/controller/gait
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

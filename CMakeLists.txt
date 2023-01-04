@@ -13,7 +13,7 @@ include_directories(${EIGEN3_INCLUDE_DIR})
 
 add_executable(${PROJECT_NAME} main.cpp)
 find_package(Threads)
-target_link_libraries(${PROJECT_NAME} ${CMAKE_THREAD_LIBS_INIT} mpc_controller gait)
+target_link_libraries(${PROJECT_NAME} ${CMAKE_THREAD_LIBS_INIT} mpc_controller gait robot_kinematics)
 
 # target_link_libraries(${PROJECT_NAME} linearDynamics)
 

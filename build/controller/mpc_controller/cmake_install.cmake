@@ -1,4 +1,4 @@
-# Install script for directory: /home/yuzy/workspace/myProject/controller/mpc_controller
+# Install script for directory: /home/yuzy/workspace/learnCpp/myProject/controller/mpc_controller
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

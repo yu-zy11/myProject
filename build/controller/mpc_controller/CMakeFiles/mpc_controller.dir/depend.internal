@@ -33,10 +33,10 @@ controller/mpc_controller/CMakeFiles/mpc_controller.dir/convexMPC.cpp.o
  ../controller/third_party/qpOASES/include/qpOASES/extras/OQPinterface.hpp
  ../controller/third_party/qpOASES/include/qpOASES/extras/SolutionAnalysis.hpp
  ../controller/third_party/qpOASES/include/qpOASES/extras/SolutionAnalysis.ipp
- /home/yuzy/workspace/myProject/controller/common_data/common_data.h
- /home/yuzy/workspace/myProject/controller/mpc_controller/convexMPC.cpp
- /home/yuzy/workspace/myProject/controller/mpc_controller/convexMPC.h
- /home/yuzy/workspace/myProject/controller/mpc_controller/math_utils.h
+ /home/yuzy/workspace/learnCpp/myProject/controller/common_data/common_data.h
+ /home/yuzy/workspace/learnCpp/myProject/controller/mpc_controller/convexMPC.cpp
+ /home/yuzy/workspace/learnCpp/myProject/controller/mpc_controller/convexMPC.h
+ /home/yuzy/workspace/learnCpp/myProject/controller/mpc_controller/math_utils.h
  /usr/include/eigen3/Eigen/Cholesky
  /usr/include/eigen3/Eigen/Core
  /usr/include/eigen3/Eigen/Dense

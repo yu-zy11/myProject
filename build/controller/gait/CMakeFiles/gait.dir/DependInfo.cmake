@@ -4,7 +4,7 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "/home/yuzy/workspace/myProject/controller/gait/gait.cpp" "/home/yuzy/workspace/myProject/build/controller/gait/CMakeFiles/gait.dir/gait.cpp.o"
+  "/home/yuzy/workspace/learnCpp/myProject/controller/gait/gait.cpp" "/home/yuzy/workspace/learnCpp/myProject/build/controller/gait/CMakeFiles/gait.dir/gait.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 
@@ -16,7 +16,7 @@ set(CMAKE_CXX_TARGET_INCLUDE_PATH
 
 # Targets to which this target links.
 set(CMAKE_TARGET_LINKED_INFO_FILES
-  "/home/yuzy/workspace/myProject/build/controller/third_party/qpOASES/CMakeFiles/qpOASES.dir/DependInfo.cmake"
+  "/home/yuzy/workspace/learnCpp/myProject/build/controller/third_party/qpOASES/CMakeFiles/qpOASES.dir/DependInfo.cmake"
   )
 
 # Fortran module output directory.

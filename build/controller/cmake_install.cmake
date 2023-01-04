@@ -1,4 +1,4 @@
-# Install script for directory: /home/yuzy/workspace/myProject/controller
+# Install script for directory: /home/yuzy/workspace/learnCpp/myProject/controller
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -39,9 +39,10 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("/home/yuzy/workspace/myProject/build/controller/third_party/qpOASES/cmake_install.cmake")
-  include("/home/yuzy/workspace/myProject/build/controller/mpc_controller/cmake_install.cmake")
-  include("/home/yuzy/workspace/myProject/build/controller/gait/cmake_install.cmake")
+  include("/home/yuzy/workspace/learnCpp/myProject/build/controller/third_party/qpOASES/cmake_install.cmake")
+  include("/home/yuzy/workspace/learnCpp/myProject/build/controller/mpc_controller/cmake_install.cmake")
+  include("/home/yuzy/workspace/learnCpp/myProject/build/controller/gait/cmake_install.cmake")
+  include("/home/yuzy/workspace/learnCpp/myProject/build/controller/library/cmake_install.cmake")
 
 endif()
 

@@ -13,6 +13,7 @@ set(CMAKE_MAKEFILE_DEPENDS
   "CMakeFiles/3.16.3/CMakeSystem.cmake"
   "../controller/CMakeLists.txt"
   "../controller/gait/CMakeLists.txt"
+  "../controller/library/CMakeLists.txt"
   "../controller/mpc_controller/CMakeLists.txt"
   "../controller/third_party/qpOASES/CMakeLists.txt"
   "/usr/lib/cmake/eigen3/Eigen3Config.cmake"
@@ -58,6 +59,7 @@ set(CMAKE_MAKEFILE_PRODUCTS
   "controller/third_party/qpOASES/CMakeFiles/CMakeDirectoryInformation.cmake"
   "controller/mpc_controller/CMakeFiles/CMakeDirectoryInformation.cmake"
   "controller/gait/CMakeFiles/CMakeDirectoryInformation.cmake"
+  "controller/library/CMakeFiles/CMakeDirectoryInformation.cmake"
   )
 
 # Dependency information for all targets:
@@ -66,4 +68,5 @@ set(CMAKE_DEPEND_INFO_FILES
   "controller/third_party/qpOASES/CMakeFiles/qpOASES.dir/DependInfo.cmake"
   "controller/mpc_controller/CMakeFiles/mpc_controller.dir/DependInfo.cmake"
   "controller/gait/CMakeFiles/gait.dir/DependInfo.cmake"
+  "controller/library/CMakeFiles/robot_kinematics.dir/DependInfo.cmake"
   )

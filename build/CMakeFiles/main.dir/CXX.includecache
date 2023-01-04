@@ -202,23 +202,29 @@ qpOASES/extras/SolutionAnalysis.ipp
 
 ../controller/third_party/qpOASES/include/qpOASES/extras/SolutionAnalysis.ipp
 
-/home/yuzy/workspace/myProject/controller/common_data/common_data.h
+/home/yuzy/workspace/learnCpp/myProject/controller/common_data/common_data.h
 eigen3/Eigen/Dense
 -
 
-/home/yuzy/workspace/myProject/controller/gait/gait.h
+/home/yuzy/workspace/learnCpp/myProject/controller/gait/gait.h
 ../common_data/common_data.h
-/home/yuzy/workspace/myProject/controller/common_data/common_data.h
+/home/yuzy/workspace/learnCpp/myProject/controller/common_data/common_data.h
 Eigen/Dense
 -
 iostream
 -
 
-/home/yuzy/workspace/myProject/controller/mpc_controller/convexMPC.h
+/home/yuzy/workspace/learnCpp/myProject/controller/library/kinematics.h
+Eigen/Dense
+-
+vector
+-
+
+/home/yuzy/workspace/learnCpp/myProject/controller/mpc_controller/convexMPC.h
 ../common_data/common_data.h
-/home/yuzy/workspace/myProject/controller/common_data/common_data.h
+/home/yuzy/workspace/learnCpp/myProject/controller/common_data/common_data.h
 math_utils.h
-/home/yuzy/workspace/myProject/controller/mpc_controller/math_utils.h
+/home/yuzy/workspace/learnCpp/myProject/controller/mpc_controller/math_utils.h
 eigen3/Eigen/Dense
 -
 qpOASES.hpp
@@ -226,17 +232,19 @@ qpOASES.hpp
 string
 -
 
-/home/yuzy/workspace/myProject/controller/mpc_controller/math_utils.h
+/home/yuzy/workspace/learnCpp/myProject/controller/mpc_controller/math_utils.h
 eigen3/Eigen/Dense
 -
 
-/home/yuzy/workspace/myProject/main.cpp
+/home/yuzy/workspace/learnCpp/myProject/main.cpp
+./controller/library/kinematics.h
+/home/yuzy/workspace/learnCpp/myProject/controller/library/kinematics.h
 ./controller/mpc_controller/convexMPC.h
-/home/yuzy/workspace/myProject/controller/mpc_controller/convexMPC.h
+/home/yuzy/workspace/learnCpp/myProject/controller/mpc_controller/convexMPC.h
 controller/common_data/common_data.h
-/home/yuzy/workspace/myProject/controller/common_data/common_data.h
+/home/yuzy/workspace/learnCpp/myProject/controller/common_data/common_data.h
 controller/gait/gait.h
-/home/yuzy/workspace/myProject/controller/gait/gait.h
+/home/yuzy/workspace/learnCpp/myProject/controller/gait/gait.h
 Eigen/Dense
 -
 ctime
@@ -246,6 +254,8 @@ iostream
 qpOASES.hpp
 -
 unistd.h
+-
+vector
 -
 
 /usr/include/eigen3/Eigen/Cholesky
