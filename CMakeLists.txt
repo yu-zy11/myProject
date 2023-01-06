@@ -11,9 +11,20 @@ include_directories( "./controller/third_party/qpOASES/include")
 find_package(Eigen3 REQUIRED)
 include_directories(${EIGEN3_INCLUDE_DIR})
 
+find_package(pinocchio REQUIRED)
+include_directories("/opt/openrobots/include") #包含头文件目录
+link_directories("/opt/openrobots/lib")  #库文件目录
+
 add_executable(${PROJECT_NAME} main.cpp)
 find_package(Threads)
-target_link_libraries(${PROJECT_NAME} ${CMAKE_THREAD_LIBS_INIT} mpc_controller gait robot_kinematics)
+target_link_libraries(${PROJECT_NAME}
+PUBLIC
+${CMAKE_THREAD_LIBS_INIT}
+mpc_controller
+gait
+robot_kinematics
+pinocchio)
+
 
 # target_link_libraries(${PROJECT_NAME} linearDynamics)
 

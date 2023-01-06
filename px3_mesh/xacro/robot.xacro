@@ -1,0 +1,79 @@
+<?xml version="1.0"?>
+
+<robot name="px3" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <xacro:arg name="DEBUG" default="false"/>
+
+    <xacro:include filename="const.xacro"/>
+    <xacro:include filename="materials.xacro"/>
+    <xacro:include filename="leg_front.xacro"/>
+    <xacro:include filename="leg_hind.xacro"/>
+    <!-- <xacro:include filename="gazebo.xacro"/> -->
+
+    <!-- Debug mode will hung up the robot, use "true" or "false" to switch it. -->
+    <!-- <xacro:if value="$(arg DEBUG)">
+        <link name="world"/>
+        <joint name="base_static_joint" type="fixed">
+            <origin rpy="0 0 0" xyz="0 0 0"/>
+            <parent link="world"/>
+            <child link="base"/>
+        </joint>
+    </xacro:if> -->
+
+    <link name="base">
+        <inertial>
+            <origin rpy="0 0 0" xyz="0 0 0"/>
+            <mass value="${trunk_mass}"/>
+            <inertia
+                    ixx="${trunk_ixx}" ixy="${trunk_ixy}" ixz="${trunk_ixz}"
+                    iyy="${trunk_iyy}" iyz="${trunk_iyz}"
+                    izz="${trunk_izz}"/>
+        </inertial>
+    </link>
+
+    <joint name="floating_base" type="fixed">
+        <origin rpy="0 0 0" xyz="${h1_x/2} 0 ${h1_z}"/>
+        <parent link="base"/>
+        <child link="trunk"/>
+    </joint>
+
+    <link name="trunk">
+        <visual>
+            <origin rpy="0 0 0" xyz="7.6e-3 0 14.64e-3"/>
+            <geometry>
+                <mesh filename="../meshes/base.STL" scale="1 1 1"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin rpy="0 0 0" xyz="7.6e-3 0 14.64e-3"/>
+            <geometry>
+                <mesh filename="../meshes/base.STL" scale="1 1 1"/>
+            </geometry>
+        </collision>
+        <inertial>
+            <origin rpy="0 0 0" xyz="0 0 0"/>
+            <mass value="1"/>
+            <inertia
+                    ixx="1e-3" ixy="0.0" ixz="0.0"
+                    iyy="1e-3" iyz="0.0"
+                    izz="1e-3"/>
+        </inertial>
+    </link>
+
+    <xacro:leg_front name="fr" mirror="-1" mirror_dae="False" front_hind="1" front_hind_dae="True">
+        <origin rpy="0 0 0" xyz="${f1_x} ${-f1_y} ${f1_z}"/>
+    </xacro:leg_front>
+
+    <xacro:leg_front name="fl" mirror="1" mirror_dae="True" front_hind="1" front_hind_dae="True">
+        <origin rpy="0 0 0" xyz="${f1_x} ${f1_y} ${f1_z}"/>
+    </xacro:leg_front>
+
+    <xacro:leg_hind name="hr" mirror="-1" mirror_dae="False" front_hind="-1" front_hind_dae="False">
+        <origin rpy="0 0 0" xyz="${-h1_x} ${-h1_y} ${-h1_z}"/>
+    </xacro:leg_hind>
+
+    <xacro:leg_hind name="hl" mirror="1" mirror_dae="True" front_hind="-1" front_hind_dae="False">
+        <origin rpy="0 0 0" xyz="${-h1_x} ${h1_y} ${-h1_z}"/>
+    </xacro:leg_hind>
+
+</robot>

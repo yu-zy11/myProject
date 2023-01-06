@@ -9,6 +9,10 @@
 #include <qpOASES.hpp>
 #include <unistd.h>
 #include <vector>
+
+#include "pinocchio/algorithm/joint-configuration.hpp"
+#include "pinocchio/algorithm/kinematics.hpp"
+#include "pinocchio/parsers/urdf.hpp"
 using std::vector;
 /** Example for qpOASES main function using the SQProblem class. */
 using Vec3f = Eigen::Vector3f;
@@ -27,13 +31,17 @@ int main() {
   vector<Eigen::Matrix4f> max_vec;
   Eigen::Matrix4f test;
   ROBOTICS::Kinemetics kine;
-  int leg = 1;
+  int leg = 0;
   Vec3f q, p;
-  q << 0.1, 0.1, 0.5;
+  q << -0.716, 0.002, 1.294;
   kine.fkine(p, q, leg);
   std::cout << "P:\n" << p << std::endl;
   kine.ikine(q, p, leg);
   std::cout << "q:\n" << q << std::endl;
+
+  Eigen::Matrix3f jacob;
+  kine.jacobian(jacob, q, leg);
+  std::cout << "jacob:\n" << jacob << std::endl;
   qpOASES::real_t *A_qpoases;
   A_qpoases = mat.data();
   for (int i = 0; i < 12; i++) {
@@ -44,10 +52,11 @@ int main() {
   __int64_t nsec = 1000000;
   timespec req = {sec, nsec};
   Gait gait;
+  /*test clock sleep*/
   int counter{0};
   FusionData state;
   commandData cmd;
-  while (true) {
+  while (false) {
     counter++;
     gait.setGaitType(GaitType::TROT);
     if (counter % 10000 == 0) {
@@ -56,7 +65,11 @@ int main() {
       clock_nanosleep(CLOCK_MONOTONIC, 0, &req, nullptr);
     }
   }
-
+  /*test pinocchio*/
+  const std::string urdf_filename = std::string("px3_mesh/urdf/px3.urdf");
+  pinocchio::Model model;
+  pinocchio::urdf::buildModel(urdf_filename, model);
+  std::cout << "model name: " << model.name << std::endl;
   return 0;
 }
 

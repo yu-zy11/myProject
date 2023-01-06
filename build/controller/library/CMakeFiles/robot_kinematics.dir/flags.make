@@ -6,5 +6,5 @@ CXX_FLAGS = -g   -std=c++11
 
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/home/yuzy/workspace/learnCpp/myProject/./controller/third_party/qpOASES/include -I/usr/include/eigen3 
+CXX_INCLUDES = -I/home/yuzy/workspace/learnCpp/myProject/./controller/third_party/qpOASES/include -I/usr/include/eigen3 -I/opt/openrobots/include 
 

@@ -1,0 +1,1 @@
+rosrun xacro xacro robot.xacro > ../urdf/px3.urdf
