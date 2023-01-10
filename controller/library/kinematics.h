@@ -38,6 +38,7 @@ public:
   void ikine(Vec3f &q, Vec3f p, int leg);
 
   void jacobian(Mat3f &j, Vec3f q, int leg);
+  void dotjacobian(Mat3f &dj, Vec3f q, Vec3f dq, int leg);
   // void dot_jacobian();
 
 private:

@@ -89,18 +89,10 @@ void Kinemetics::ikine(Vec3f &q, Vec3f p, int leg) {
   theta[0] = nearZero(theta[0]);
   theta[1] = nearZero(theta[1]);
   // (fabs(theta[0]) < fabs(theta[1])) ? q[2] = theta[0] : q[2] = theta[1];
-  if (leg == 0 || leg == 1) {
-    if (theta[0] * theta[1] >= 0) {
-      (fabs(theta[0]) > fabs(theta[1])) ? q[2] = theta[1] : q[2] = theta[0];
-    } else {
-      (theta[0] < theta[1]) ? q[2] = theta[1] : q[2] = theta[0];
-    }
+  if (theta[0] * theta[1] >= 0) {
+    (fabs(theta[0]) > fabs(theta[1])) ? q[2] = theta[1] : q[2] = theta[0];
   } else {
-    if (theta[0] * theta[1] >= 0) {
-      (fabs(theta[0]) > fabs(theta[1])) ? q[2] = theta[1] : q[2] = theta[0];
-    } else {
-      (theta[0] > theta[1]) ? q[2] = theta[1] : q[2] = theta[0];
-    }
+    (theta[0] > theta[1]) ? q[2] = theta[1] : q[2] = theta[0];
   }
   // % get q0
   c4 = cos(q[2] + beta);
@@ -170,6 +162,57 @@ void Kinemetics::jacobian(Eigen::Matrix<float, 3, 3> &j, Vec3f q, int leg) {
   j(2, 1) = c1 * (ly * c2 + l2 * s2 + l3 * c3 * s2 + lx * s2 * s3);
   j(2, 2) = l3 * (c3 * s1 + c1 * c2 * s3) + lx * (s1 * s3 - c1 * c2 * c3);
 }
+void Kinemetics::dotjacobian(Mat3f &dj, Vec3f q, Vec3f dq, int leg) {
+  auto len = config_.len_[leg];
+  auto p_hip = config_.p_hip_[leg];
+  float l1 = len[0];
+  float l2 = len[1];
+  float l3 = len[2];
+  float lx = len[3];
+  float ly = len[4];
+  float s1 = sin(q[0]);
+  float c1 = cos(q[0]);
+  float s2 = sin(q[1]);
+  float c2 = cos(q[1]);
+  float s3 = sin(q[2]);
+  float c3 = cos(q[2]);
+  float dq1 = dq[0];
+  float dq2 = dq[1];
+  float dq3 = dq[2];
+  int s; // side sign
+  ((leg == 0) || (leg == 2)) ? s = -1 : s = 1;
+  dj(0, 0) =
+      dq3 * (l3 * (c3 * s1 + c1 * c2 * s3) + lx * (s1 * s3 - c1 * c2 * c3)) +
+      dq1 * (l3 * (c1 * s3 + c2 * c3 * s1) - lx * (c1 * c3 - c2 * s1 * s3) +
+             l2 * c2 * s1 - ly * s1 * s2) +
+      dq2 *
+          (ly * c1 * c2 + l2 * c1 * s2 + l3 * c1 * c3 * s2 + lx * c1 * s2 * s3);
+  dj(0, 1) = dq2 * s1 * (l2 * c2 - ly * s2 + l3 * c2 * c3 + lx * c2 * s3) +
+             dq1 * c1 * (ly * c2 + l2 * s2 + l3 * c3 * s2 + lx * s2 * s3) +
+             dq3 * s1 * s2 * (lx * c3 - l3 * s3);
+  dj(0, 2) =
+      dq2 * (lx * c3 * s1 * s2 - l3 * s1 * s2 * s3) +
+      dq1 * (l3 * (c3 * s1 + c1 * c2 * s3) + lx * (s1 * s3 - c1 * c2 * c3)) +
+      dq3 * (l3 * (c1 * s3 + c2 * c3 * s1) - lx * (c1 * c3 - c2 * s1 * s3));
+  dj(1, 0) = 0;
+  dj(1, 1) = dq3 * c2 * (lx * c3 - l3 * s3) -
+             dq2 * (ly * c2 + l2 * s2 + l3 * c3 * s2 + lx * s2 * s3);
+  dj(1, 2) = dq2 * c2 * (lx * c3 - l3 * s3) - dq3 * s2 * (l3 * c3 + lx * s3);
+  dj(2, 0) =
+      dq3 * (l3 * (c1 * c3 - c2 * s1 * s3) + lx * (c1 * s3 + c2 * c3 * s1)) -
+      dq1 * (l3 * (s1 * s3 - c1 * c2 * c3) - lx * (c3 * s1 + c1 * c2 * s3) -
+             l2 * c1 * c2 + ly * c1 * s2) -
+      dq2 *
+          (ly * c2 * s1 + l2 * s1 * s2 + l3 * c3 * s1 * s2 + lx * s1 * s2 * s3);
+  dj(2, 1) = dq2 * c1 * (l2 * c2 - ly * s2 + l3 * c2 * c3 + lx * c2 * s3) -
+             dq1 * s1 * (ly * c2 + l2 * s2 + l3 * c3 * s2 + lx * s2 * s3) +
+             dq3 * c1 * s2 * (lx * c3 - l3 * s3);
+  dj(2, 2) =
+      dq1 * (l3 * (c1 * c3 - c2 * s1 * s3) + lx * (c1 * s3 + c2 * c3 * s1)) -
+      dq3 * (l3 * (s1 * s3 - c1 * c2 * c3) - lx * (c3 * s1 + c1 * c2 * s3)) +
+      dq2 * (lx * c1 * c3 * s2 - l3 * c1 * s2 * s3);
+}
+
 float angleInPi(float theta) {
   float th = theta;
   while (th > pi)

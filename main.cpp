@@ -31,14 +31,16 @@ int main() {
   vector<Eigen::Matrix4f> max_vec;
   Eigen::Matrix4f test;
   ROBOTICS::Kinemetics kine;
-  int leg = 0;
+  int leg = 2;
   Vec3f q, p;
-  q << -0.716, 0.002, 1.294;
+  q << -0.716, 0.002, -1.294;
   kine.fkine(p, q, leg);
   std::cout << "P:\n" << p << std::endl;
+  p << -0.1875, -0.165, -0.42;
   kine.ikine(q, p, leg);
   std::cout << "q:\n" << q << std::endl;
-
+  kine.fkine(p, q, leg);
+  std::cout << "P:\n" << p << std::endl;
   Eigen::Matrix3f jacob;
   kine.jacobian(jacob, q, leg);
   std::cout << "jacob:\n" << jacob << std::endl;
