@@ -34,8 +34,8 @@
 /home/yuzy/workspace/learnCpp/myProject/build/controller/gait/CMakeFiles/gait.dir
 /home/yuzy/workspace/learnCpp/myProject/build/controller/library/CMakeFiles/install/strip.dir
 /home/yuzy/workspace/learnCpp/myProject/build/controller/library/CMakeFiles/install/local.dir
+/home/yuzy/workspace/learnCpp/myProject/build/controller/library/CMakeFiles/edit_cache.dir
 /home/yuzy/workspace/learnCpp/myProject/build/controller/library/CMakeFiles/install.dir
 /home/yuzy/workspace/learnCpp/myProject/build/controller/library/CMakeFiles/list_install_components.dir
 /home/yuzy/workspace/learnCpp/myProject/build/controller/library/CMakeFiles/rebuild_cache.dir
-/home/yuzy/workspace/learnCpp/myProject/build/controller/library/CMakeFiles/edit_cache.dir
-/home/yuzy/workspace/learnCpp/myProject/build/controller/library/CMakeFiles/robot_kinematics.dir
+/home/yuzy/workspace/learnCpp/myProject/build/controller/library/CMakeFiles/robotics.dir

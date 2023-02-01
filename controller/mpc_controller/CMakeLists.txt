@@ -4,7 +4,7 @@ add_library(${PROJECT_NAME}
   convexMPC.h
   math_utils.h
 )
-message("build "${PROJECT_NAME})
+message("build " ${PROJECT_NAME})
 target_link_libraries(${PROJECT_NAME}
   PUBLIC
     qpOASES

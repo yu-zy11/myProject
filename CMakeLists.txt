@@ -22,7 +22,7 @@ PUBLIC
 ${CMAKE_THREAD_LIBS_INIT}
 mpc_controller
 gait
-robot_kinematics
+robotics
 pinocchio)
 
 

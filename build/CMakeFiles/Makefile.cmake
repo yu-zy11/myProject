@@ -91,5 +91,5 @@ set(CMAKE_DEPEND_INFO_FILES
   "controller/third_party/qpOASES/CMakeFiles/qpOASES.dir/DependInfo.cmake"
   "controller/mpc_controller/CMakeFiles/mpc_controller.dir/DependInfo.cmake"
   "controller/gait/CMakeFiles/gait.dir/DependInfo.cmake"
-  "controller/library/CMakeFiles/robot_kinematics.dir/DependInfo.cmake"
+  "controller/library/CMakeFiles/robotics.dir/DependInfo.cmake"
   )

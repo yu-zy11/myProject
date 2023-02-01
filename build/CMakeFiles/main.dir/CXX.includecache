@@ -214,10 +214,20 @@ Eigen/Dense
 iostream
 -
 
+/home/yuzy/workspace/learnCpp/myProject/controller/library/dynamics.h
+
 /home/yuzy/workspace/learnCpp/myProject/controller/library/kinematics.h
 Eigen/Dense
 -
 vector
+-
+
+/home/yuzy/workspace/learnCpp/myProject/controller/library/robotics_math.h
+dynamics.h
+/home/yuzy/workspace/learnCpp/myProject/controller/library/dynamics.h
+Eigen/Dense
+-
+string
 -
 
 /home/yuzy/workspace/learnCpp/myProject/controller/mpc_controller/convexMPC.h
@@ -257,6 +267,8 @@ unistd.h
 -
 vector
 -
+controller/library/robotics_math.h
+/home/yuzy/workspace/learnCpp/myProject/controller/library/robotics_math.h
 pinocchio/algorithm/joint-configuration.hpp
 /home/yuzy/workspace/learnCpp/myProject/pinocchio/algorithm/joint-configuration.hpp
 pinocchio/algorithm/kinematics.hpp

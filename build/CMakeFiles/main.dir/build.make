@@ -82,7 +82,7 @@ main: CMakeFiles/main.dir/build.make
 main: controller/third_party/qpOASES/libs/libqpOASES.a
 main: controller/mpc_controller/libmpc_controller.a
 main: controller/gait/libgait.a
-main: controller/library/librobot_kinematics.a
+main: controller/library/librobotics.a
 main: controller/third_party/qpOASES/libs/libqpOASES.a
 main: CMakeFiles/main.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/yuzy/workspace/learnCpp/myProject/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable main"

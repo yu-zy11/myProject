@@ -80,6 +80,17 @@ install/local/fast: preinstall/fast
 	/usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
 .PHONY : install/local/fast
 
+# Special rule for the target edit_cache
+edit_cache:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
+	/usr/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
+.PHONY : edit_cache
+
+# Special rule for the target edit_cache
+edit_cache/fast: edit_cache
+
+.PHONY : edit_cache/fast
+
 # Special rule for the target install
 install: preinstall
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
@@ -112,17 +123,6 @@ rebuild_cache:
 rebuild_cache/fast: rebuild_cache
 
 .PHONY : rebuild_cache/fast
-
-# Special rule for the target edit_cache
-edit_cache:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
-	/usr/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
-.PHONY : edit_cache
-
-# Special rule for the target edit_cache
-edit_cache/fast: edit_cache
-
-.PHONY : edit_cache/fast
 
 # The main all target
 all: cmake_check_build_system
@@ -157,19 +157,19 @@ depend:
 .PHONY : depend
 
 # Convenience name for target.
-controller/library/CMakeFiles/robot_kinematics.dir/rule:
-	cd /home/yuzy/workspace/learnCpp/myProject/build && $(MAKE) -f CMakeFiles/Makefile2 controller/library/CMakeFiles/robot_kinematics.dir/rule
-.PHONY : controller/library/CMakeFiles/robot_kinematics.dir/rule
+controller/library/CMakeFiles/robotics.dir/rule:
+	cd /home/yuzy/workspace/learnCpp/myProject/build && $(MAKE) -f CMakeFiles/Makefile2 controller/library/CMakeFiles/robotics.dir/rule
+.PHONY : controller/library/CMakeFiles/robotics.dir/rule
 
 # Convenience name for target.
-robot_kinematics: controller/library/CMakeFiles/robot_kinematics.dir/rule
+robotics: controller/library/CMakeFiles/robotics.dir/rule
 
-.PHONY : robot_kinematics
+.PHONY : robotics
 
 # fast build rule for target.
-robot_kinematics/fast:
-	cd /home/yuzy/workspace/learnCpp/myProject/build && $(MAKE) -f controller/library/CMakeFiles/robot_kinematics.dir/build.make controller/library/CMakeFiles/robot_kinematics.dir/build
-.PHONY : robot_kinematics/fast
+robotics/fast:
+	cd /home/yuzy/workspace/learnCpp/myProject/build && $(MAKE) -f controller/library/CMakeFiles/robotics.dir/build.make controller/library/CMakeFiles/robotics.dir/build
+.PHONY : robotics/fast
 
 kinematics.o: kinematics.cpp.o
 
@@ -177,7 +177,7 @@ kinematics.o: kinematics.cpp.o
 
 # target to build an object file
 kinematics.cpp.o:
-	cd /home/yuzy/workspace/learnCpp/myProject/build && $(MAKE) -f controller/library/CMakeFiles/robot_kinematics.dir/build.make controller/library/CMakeFiles/robot_kinematics.dir/kinematics.cpp.o
+	cd /home/yuzy/workspace/learnCpp/myProject/build && $(MAKE) -f controller/library/CMakeFiles/robotics.dir/build.make controller/library/CMakeFiles/robotics.dir/kinematics.cpp.o
 .PHONY : kinematics.cpp.o
 
 kinematics.i: kinematics.cpp.i
@@ -186,7 +186,7 @@ kinematics.i: kinematics.cpp.i
 
 # target to preprocess a source file
 kinematics.cpp.i:
-	cd /home/yuzy/workspace/learnCpp/myProject/build && $(MAKE) -f controller/library/CMakeFiles/robot_kinematics.dir/build.make controller/library/CMakeFiles/robot_kinematics.dir/kinematics.cpp.i
+	cd /home/yuzy/workspace/learnCpp/myProject/build && $(MAKE) -f controller/library/CMakeFiles/robotics.dir/build.make controller/library/CMakeFiles/robotics.dir/kinematics.cpp.i
 .PHONY : kinematics.cpp.i
 
 kinematics.s: kinematics.cpp.s
@@ -195,8 +195,35 @@ kinematics.s: kinematics.cpp.s
 
 # target to generate assembly for a file
 kinematics.cpp.s:
-	cd /home/yuzy/workspace/learnCpp/myProject/build && $(MAKE) -f controller/library/CMakeFiles/robot_kinematics.dir/build.make controller/library/CMakeFiles/robot_kinematics.dir/kinematics.cpp.s
+	cd /home/yuzy/workspace/learnCpp/myProject/build && $(MAKE) -f controller/library/CMakeFiles/robotics.dir/build.make controller/library/CMakeFiles/robotics.dir/kinematics.cpp.s
 .PHONY : kinematics.cpp.s
+
+robotics_math.o: robotics_math.cpp.o
+
+.PHONY : robotics_math.o
+
+# target to build an object file
+robotics_math.cpp.o:
+	cd /home/yuzy/workspace/learnCpp/myProject/build && $(MAKE) -f controller/library/CMakeFiles/robotics.dir/build.make controller/library/CMakeFiles/robotics.dir/robotics_math.cpp.o
+.PHONY : robotics_math.cpp.o
+
+robotics_math.i: robotics_math.cpp.i
+
+.PHONY : robotics_math.i
+
+# target to preprocess a source file
+robotics_math.cpp.i:
+	cd /home/yuzy/workspace/learnCpp/myProject/build && $(MAKE) -f controller/library/CMakeFiles/robotics.dir/build.make controller/library/CMakeFiles/robotics.dir/robotics_math.cpp.i
+.PHONY : robotics_math.cpp.i
+
+robotics_math.s: robotics_math.cpp.s
+
+.PHONY : robotics_math.s
+
+# target to generate assembly for a file
+robotics_math.cpp.s:
+	cd /home/yuzy/workspace/learnCpp/myProject/build && $(MAKE) -f controller/library/CMakeFiles/robotics.dir/build.make controller/library/CMakeFiles/robotics.dir/robotics_math.cpp.s
+.PHONY : robotics_math.cpp.s
 
 # Help Target
 help:
@@ -206,14 +233,17 @@ help:
 	@echo "... depend"
 	@echo "... install/strip"
 	@echo "... install/local"
+	@echo "... edit_cache"
 	@echo "... install"
 	@echo "... list_install_components"
 	@echo "... rebuild_cache"
-	@echo "... edit_cache"
-	@echo "... robot_kinematics"
+	@echo "... robotics"
 	@echo "... kinematics.o"
 	@echo "... kinematics.i"
 	@echo "... kinematics.s"
+	@echo "... robotics_math.o"
+	@echo "... robotics_math.i"
+	@echo "... robotics_math.s"
 .PHONY : help
 
 

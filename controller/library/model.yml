@@ -1,0 +1,36 @@
+
+  joint0_position: [0.1875, -0.0875, 0.18]
+  joint1_position: [0.0, -0.0775, 0.0]
+  joint2_position: [0.0, 0.0, -0.3095]
+  foot0_position: [0, 0, -0.32]
+
+  joint3_position: [0.1875, 0.0875, 0.18]
+  joint4_position: [0.0, 0.0775, 0.0]
+  joint5_position: [0.0, 0.0, -0.3095]
+  foot1_position: [0, 0, -0.32]
+
+  joint6_position: [-0.1875, -0.0875, 0.0]
+  joint7_position: [0.0, -0.0775, 0.0]
+  joint8_position: [0.0, 0.0, -0.225]
+  foot2_position: [-0.01, 0, -0.26]
+
+  joint9_position: [-0.1875, 0.0875, 0.0]
+  joint10_position: [0.0, 0.0775, 0.0]
+  joint11_position: [0.0, 0.0, -0.225]
+  foot3_position: [-0.01, 0, -0.26]
+
+  joint0_axis: [0, 1, 0, 0 ,0, 0]
+  joint1_axis: [1, 0, 0, 0 ,0, 0]
+  joint2_axis: [0, 1, 0, 0 ,0, 0]
+
+  joint3_axis: [0, 1, 0, 0 ,0, 0]
+  joint4_axis: [1, 0, 0, 0 ,0, 0]
+  joint5_axis: [0, 1, 0, 0 ,0, 0]
+
+  joint6_axis: [0, 1, 0, 0 ,0, 0]
+  joint7_axis: [1, 0, 0, 0 ,0, 0]
+  joint8_axis: [0, 1, 0, 0 ,0, 0]
+
+  joint9_axis: [0, 1, 0, 0 ,0, 0]
+  joint10_axis: [1, 0, 0, 0 ,0, 0]
+  joint11_axis: [0, 1, 0, 0 ,0, 0]

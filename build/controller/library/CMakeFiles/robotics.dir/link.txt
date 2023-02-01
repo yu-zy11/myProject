@@ -1,0 +1,2 @@
+/usr/bin/ar qc librobotics.a  CMakeFiles/robotics.dir/kinematics.cpp.o CMakeFiles/robotics.dir/robotics_math.cpp.o
+/usr/bin/ranlib librobotics.a

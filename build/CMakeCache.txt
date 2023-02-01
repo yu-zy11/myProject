@@ -321,6 +321,15 @@ robot_kinematics_LIB_DEPENDS:STATIC=general;qpOASES;
 //Value Computed by CMake
 robot_kinematics_SOURCE_DIR:STATIC=/home/yuzy/workspace/learnCpp/myProject/controller/library
 
+//Value Computed by CMake
+robotics_BINARY_DIR:STATIC=/home/yuzy/workspace/learnCpp/myProject/build/controller/library
+
+//Dependencies for the target
+robotics_LIB_DEPENDS:STATIC=general;qpOASES;
+
+//Value Computed by CMake
+robotics_SOURCE_DIR:STATIC=/home/yuzy/workspace/learnCpp/myProject/controller/library
+
 //The directory containing a CMake configuration file for urdfdom.
 urdfdom_DIR:PATH=/usr/lib/x86_64-linux-gnu/urdfdom/cmake
 

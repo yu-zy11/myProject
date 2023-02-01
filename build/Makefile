@@ -209,17 +209,17 @@ gait/fast:
 .PHONY : gait/fast
 
 #=============================================================================
-# Target rules for targets named robot_kinematics
+# Target rules for targets named robotics
 
 # Build rule for target.
-robot_kinematics: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 robot_kinematics
-.PHONY : robot_kinematics
+robotics: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 robotics
+.PHONY : robotics
 
 # fast build rule for target.
-robot_kinematics/fast:
-	$(MAKE) -f controller/library/CMakeFiles/robot_kinematics.dir/build.make controller/library/CMakeFiles/robot_kinematics.dir/build
-.PHONY : robot_kinematics/fast
+robotics/fast:
+	$(MAKE) -f controller/library/CMakeFiles/robotics.dir/build.make controller/library/CMakeFiles/robotics.dir/build
+.PHONY : robotics/fast
 
 main.o: main.cpp.o
 
@@ -264,7 +264,7 @@ help:
 	@echo "... qpOASES"
 	@echo "... mpc_controller"
 	@echo "... gait"
-	@echo "... robot_kinematics"
+	@echo "... robotics"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"

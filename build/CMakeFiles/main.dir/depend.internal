@@ -35,7 +35,9 @@ CMakeFiles/main.dir/main.cpp.o
  ../controller/third_party/qpOASES/include/qpOASES/extras/SolutionAnalysis.ipp
  /home/yuzy/workspace/learnCpp/myProject/controller/common_data/common_data.h
  /home/yuzy/workspace/learnCpp/myProject/controller/gait/gait.h
+ /home/yuzy/workspace/learnCpp/myProject/controller/library/dynamics.h
  /home/yuzy/workspace/learnCpp/myProject/controller/library/kinematics.h
+ /home/yuzy/workspace/learnCpp/myProject/controller/library/robotics_math.h
  /home/yuzy/workspace/learnCpp/myProject/controller/mpc_controller/convexMPC.h
  /home/yuzy/workspace/learnCpp/myProject/controller/mpc_controller/math_utils.h
  /home/yuzy/workspace/learnCpp/myProject/main.cpp

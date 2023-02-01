@@ -118,7 +118,7 @@ controller/gait/clean: controller/gait/CMakeFiles/gait.dir/clean
 # Directory level rules for directory controller/library
 
 # Recursive "all" directory target.
-controller/library/all: controller/library/CMakeFiles/robot_kinematics.dir/all
+controller/library/all: controller/library/CMakeFiles/robotics.dir/all
 
 .PHONY : controller/library/all
 
@@ -128,7 +128,7 @@ controller/library/preinstall:
 .PHONY : controller/library/preinstall
 
 # Recursive "clean" directory target.
-controller/library/clean: controller/library/CMakeFiles/robot_kinematics.dir/clean
+controller/library/clean: controller/library/CMakeFiles/robotics.dir/clean
 
 .PHONY : controller/library/clean
 
@@ -175,7 +175,7 @@ controller/third_party/qpOASES/clean: controller/third_party/qpOASES/CMakeFiles/
 CMakeFiles/main.dir/all: controller/third_party/qpOASES/CMakeFiles/qpOASES.dir/all
 CMakeFiles/main.dir/all: controller/mpc_controller/CMakeFiles/mpc_controller.dir/all
 CMakeFiles/main.dir/all: controller/gait/CMakeFiles/gait.dir/all
-CMakeFiles/main.dir/all: controller/library/CMakeFiles/robot_kinematics.dir/all
+CMakeFiles/main.dir/all: controller/library/CMakeFiles/robotics.dir/all
 	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/depend
 	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/build
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/yuzy/workspace/learnCpp/myProject/build/CMakeFiles --progress-num=3,4 "Built target main"
@@ -183,7 +183,7 @@ CMakeFiles/main.dir/all: controller/library/CMakeFiles/robot_kinematics.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/main.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/yuzy/workspace/learnCpp/myProject/build/CMakeFiles 27
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/yuzy/workspace/learnCpp/myProject/build/CMakeFiles 28
 	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/main.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/yuzy/workspace/learnCpp/myProject/build/CMakeFiles 0
 .PHONY : CMakeFiles/main.dir/rule
@@ -280,31 +280,31 @@ controller/gait/CMakeFiles/gait.dir/clean:
 .PHONY : controller/gait/CMakeFiles/gait.dir/clean
 
 #=============================================================================
-# Target rules for target controller/library/CMakeFiles/robot_kinematics.dir
+# Target rules for target controller/library/CMakeFiles/robotics.dir
 
 # All Build rule for target.
-controller/library/CMakeFiles/robot_kinematics.dir/all: controller/third_party/qpOASES/CMakeFiles/qpOASES.dir/all
-	$(MAKE) -f controller/library/CMakeFiles/robot_kinematics.dir/build.make controller/library/CMakeFiles/robot_kinematics.dir/depend
-	$(MAKE) -f controller/library/CMakeFiles/robot_kinematics.dir/build.make controller/library/CMakeFiles/robot_kinematics.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/yuzy/workspace/learnCpp/myProject/build/CMakeFiles --progress-num=26,27 "Built target robot_kinematics"
-.PHONY : controller/library/CMakeFiles/robot_kinematics.dir/all
+controller/library/CMakeFiles/robotics.dir/all: controller/third_party/qpOASES/CMakeFiles/qpOASES.dir/all
+	$(MAKE) -f controller/library/CMakeFiles/robotics.dir/build.make controller/library/CMakeFiles/robotics.dir/depend
+	$(MAKE) -f controller/library/CMakeFiles/robotics.dir/build.make controller/library/CMakeFiles/robotics.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/yuzy/workspace/learnCpp/myProject/build/CMakeFiles --progress-num=26,27,28 "Built target robotics"
+.PHONY : controller/library/CMakeFiles/robotics.dir/all
 
 # Build rule for subdir invocation for target.
-controller/library/CMakeFiles/robot_kinematics.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/yuzy/workspace/learnCpp/myProject/build/CMakeFiles 21
-	$(MAKE) -f CMakeFiles/Makefile2 controller/library/CMakeFiles/robot_kinematics.dir/all
+controller/library/CMakeFiles/robotics.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/yuzy/workspace/learnCpp/myProject/build/CMakeFiles 22
+	$(MAKE) -f CMakeFiles/Makefile2 controller/library/CMakeFiles/robotics.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/yuzy/workspace/learnCpp/myProject/build/CMakeFiles 0
-.PHONY : controller/library/CMakeFiles/robot_kinematics.dir/rule
+.PHONY : controller/library/CMakeFiles/robotics.dir/rule
 
 # Convenience name for target.
-robot_kinematics: controller/library/CMakeFiles/robot_kinematics.dir/rule
+robotics: controller/library/CMakeFiles/robotics.dir/rule
 
-.PHONY : robot_kinematics
+.PHONY : robotics
 
 # clean rule for target.
-controller/library/CMakeFiles/robot_kinematics.dir/clean:
-	$(MAKE) -f controller/library/CMakeFiles/robot_kinematics.dir/build.make controller/library/CMakeFiles/robot_kinematics.dir/clean
-.PHONY : controller/library/CMakeFiles/robot_kinematics.dir/clean
+controller/library/CMakeFiles/robotics.dir/clean:
+	$(MAKE) -f controller/library/CMakeFiles/robotics.dir/build.make controller/library/CMakeFiles/robotics.dir/clean
+.PHONY : controller/library/CMakeFiles/robotics.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.
