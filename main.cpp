@@ -28,7 +28,7 @@ int main() {
   vector<int> max_vec(10);
   max_vec[1] = 10;
   std::cout << "max_vec" << max_vec[0] << max_vec[1] << std::endl;
-  ROBOTICS::Kinemetics kine(false);
+  ROBOTICS::Kinematics kine(false);
   Eigen::Matrix<float, 12, 1> qq;
   qq = Eigen::Matrix<float, 12, 1>::Random();
   qq.block(0, 0, 6, 1).setZero();
@@ -36,7 +36,7 @@ int main() {
   qq.block(0, 0, 9, 1) << 0.9509, 0.7223, 0.4001, 0.8319, 0.1343, 0.0605,
       0.0842, 0.1639, 0.3242;
   kine.setJointPosition(qq);
-  kine.fkine();
+  kine.update();
   kine.jacobian();
   Vec3f pp;
   kine.fkine(pp, qq.block(9, 0, 3, 1), 1);

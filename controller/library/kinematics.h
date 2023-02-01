@@ -2,7 +2,7 @@
 #define KINEMATICS_H
 #include <Eigen/Dense>
 #include <vector>
-#define DEBUG_KINE
+// #define DEBUG_KINE
 namespace ROBOTICS {
 using std::vector;
 using Mat4f = Eigen::Matrix4f;
@@ -18,7 +18,7 @@ constexpr float pi{3.1415926};
  *@param Alist_:screw of each joint in body frame,if joint i rotates along axis
  * y,then alist<<0 1 0 0 0 0;
  *@param joint_seq_:sequence of each link,0 repsents base
- *@param parent_seq_:parent sequence of each joint
+ *@param joint_parent_:parent sequence of each joint
  *@param p_hip_:hip positions for each leg
  *
  */
@@ -30,9 +30,9 @@ struct KineConfig {
   vector<Vec6f> Alist;
 
   vector<int> joint_seq;
-  vector<int> parent_seq;
-  vector<int> child_seq;
-  vector<int> foot_link;
+  vector<int> joint_parent;
+  vector<int> foot_seq;
+  vector<int> foot_parent;
   vector<Mat4f> Tlist_foot;
 
   vector<Vec3f> p_hip;
@@ -40,8 +40,10 @@ struct KineConfig {
   vector<Vec5f> len_; // [l1(>0) l2(>0) l3(>0) lx ly]
 };
 struct KineData {
-  vector<Mat4f> Ttree;
+  vector<Mat4f> T_tree;
   vector<Mat4f> T_foot;
+  vector<Vec6f> V_tree;
+  vector<Vec6f> V_foot;
   Eigen::Matrix<float, -1, 1> q;
   Eigen::Matrix<float, -1, 1> dq;
   vector<Eigen::Matrix<float, 6, -1>> jacobian_foot;
@@ -50,16 +52,19 @@ struct KineData {
   Eigen::Matrix<float, -1, -1> dot_jacobian_whole;
 };
 
-class Kinemetics {
+class Kinematics {
 public:
-  Kinemetics(bool is_floating_base) {
+  Kinematics(bool is_floating_base) {
     config_.use_floating_Base = is_floating_base;
     init();
   }
   void setJointPosition(const Eigen::Matrix<float, -1, 1> q);
   void setJointVelocity(const Eigen::Matrix<float, -1, 1> dq);
-  void updateData();
-  void fkine();
+  void getFootPosition(Eigen::Matrix<float, -1, 1> &p);
+  void getFootJacobian(Eigen::Matrix<float, -1, -1> &jacobian) {
+    jacobian = data_.jacobian_whole;
+  };
+  void update();
   void jacobian();
   // void dotJacobian();
   void fkine(Vec3f &p, Vec3f q, int leg);
@@ -72,6 +77,8 @@ private:
   void addFloatingBase();
   void init();
   void clearConfig();
+  void updatePosition();
+  void updateVelocity(); // recursive Newton-Euler
   KineConfig config_;
   KineData data_;
   Vec3f q_last_;
