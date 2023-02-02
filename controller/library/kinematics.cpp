@@ -4,7 +4,7 @@
 #include <algorithm>
 #include <iostream>
 namespace ROBOTICS {
-
+using namespace Math;
 float angleInPi(float theta);
 float nearZero(float theta);
 #define ZERO 1e-6
@@ -20,12 +20,12 @@ void Kinematics::init() {
   foot_parent << 2, 5, 8, 11;
 
   config_.joint_num = joint_seq.rows();
-  for (int i = 0; i < config_.joint_num; i++) {
+  for (int i = 0; i < config_.joint_num; ++i) {
     config_.joint_seq.push_back(joint_seq[i]);
     config_.joint_parent.push_back(joint_parent[i]);
   }
   config_.foot_num = foot_parent.rows();
-  for (int i = 0; i < config_.foot_num; i++) {
+  for (int i = 0; i < config_.foot_num; ++i) {
     config_.foot_seq.push_back(foot_seq[i]);
     config_.foot_parent.push_back(foot_parent[i]);
   }
@@ -65,7 +65,7 @@ void Kinematics::init() {
   foot_position[3] << -0.01, 0, -0.26;
   // set Alist and Tlist for joints
   Mat4f Tlist_tmp;
-  for (int i = 0; i < config_.joint_num; i++) {
+  for (int i = 0; i < config_.joint_num; ++i) {
     config_.Alist.push_back(joint_axis[i]);
     Tlist_tmp = Mat4f::Identity();
     Tlist_tmp.block(0, 3, 3, 1) = joint_position[i];
@@ -73,7 +73,7 @@ void Kinematics::init() {
   }
   // set Alist and Tlist for foots
   config_.Tlist_foot.clear();
-  for (int i = 0; i < config_.foot_num; i++) {
+  for (int i = 0; i < config_.foot_num; ++i) {
     Tlist_tmp = Mat4f::Identity();
     Tlist_tmp.block(0, 3, 3, 1) = foot_position[i];
     config_.Tlist_foot.push_back(Tlist_tmp);
@@ -86,27 +86,27 @@ void Kinematics::init() {
   std::cout << "use_floating_Base: " << config_.use_floating_Base << std::endl;
   std::cout << "joint number: " << config_.joint_num << std::endl;
   std::cout << "joint sequence: \n";
-  for (int i = 0; i < config_.joint_num; i++) {
+  for (int i = 0; i < config_.joint_num; ++i) {
     std::cout << config_.joint_seq[i] << " ";
   }
   std::cout << "\n joint parent: \n";
-  for (int i = 0; i < config_.joint_num; i++) {
+  for (int i = 0; i < config_.joint_num; ++i) {
     std::cout << config_.joint_parent[i] << " ";
   }
   std::cout << std::endl << "Alist: \n";
-  for (int i = 0; i < config_.joint_num; i++) {
+  for (int i = 0; i < config_.joint_num; ++i) {
     std::cout << "i=" << i << "\n" << config_.Alist[i].transpose() << std::endl;
   }
   std::cout << "Tlist: \n";
-  for (int i = 0; i < config_.joint_num; i++) {
+  for (int i = 0; i < config_.joint_num; ++i) {
     std::cout << "i=" << i << "\n" << config_.Tlist[i] << std::endl;
   }
   std::cout << "foot parent: \n";
-  for (int i = 0; i < config_.foot_num; i++) {
+  for (int i = 0; i < config_.foot_num; ++i) {
     std::cout << " " << config_.foot_parent[i] << std::endl;
   }
   std::cout << "foot Tlist: \n";
-  for (int i = 0; i < config_.foot_num; i++) {
+  for (int i = 0; i < config_.foot_num; ++i) {
     std::cout << "i=" << i << "\n" << config_.Tlist_foot[i] << std::endl;
   }
 #endif
@@ -125,17 +125,28 @@ void Kinematics::init() {
   config_.len_.push_back(len);
   config_.len_.push_back(len);
   // std::cout << "config_.len size:\n" << config_.len_.size() << std::endl;
-
+  resize();
   // std::cout << "============init Kinematics finished==============\n";
 }
 void Kinematics::update() {
   updatePosition();
-  jacobian();
+  // jacobian();
+}
+void Kinematics::resize() {
+  data_.T_foot.clear();
+  data_.T_foot.resize(config_.foot_num);
+  data_.V_foot.resize(config_.foot_num);
+  data_.T_tree.resize(config_.joint_num);
+  data_.V_tree.resize(config_.joint_num);
+  // data_.jacobian_foot.clear();
+  data_.jacobian_foot.resize(config_.foot_num);
+  data_.jacobian_whole.resize(6 * config_.foot_num, config_.joint_num);
+  data_.dot_jacobian_whole.resize(6 * config_.foot_num, config_.joint_num);
+  data_.dot_jacobian_foot.resize(config_.foot_num);
 }
 void Kinematics::getFootPosition(Eigen::Matrix<float, -1, 1> &p) {
-  Eigen::Matrix<float, -1, 1> p_tmp;
   p.resize(config_.foot_num * 3, 1);
-  for (int i = 0; i < config_.foot_num; i++) {
+  for (int i = 0; i < config_.foot_num; ++i) {
     p.block(3 * i, 0, 3, 1) = data_.T_foot[i].block(0, 3, 3, 1);
   }
 }
@@ -160,7 +171,7 @@ void Kinematics::addFloatingBase() {
   config_.joint_num += 6;
   config_.joint_seq.resize(config_.joint_num);
   config_.joint_parent.resize(config_.joint_num);
-  for (int i = 0; i < config_.joint_num; i++) {
+  for (int i = 0; i < config_.joint_num; ++i) {
     if (i < 6) {
       config_.joint_seq[i] = i;
       config_.joint_parent[i] = i - 1;
@@ -169,11 +180,11 @@ void Kinematics::addFloatingBase() {
       config_.joint_parent[i] = joint_parent_tmp[i - 6] + 6;
     }
   }
-  for (int i = 0; i < config_.foot_num; i++) {
+  for (int i = 0; i < config_.foot_num; ++i) {
     config_.foot_parent[i] += 6;
   }
   // set Alist and Tlist
-  for (int i = 0; i < 6; i++) {
+  for (int i = 0; i < 6; ++i) {
     config_.Alist.insert(config_.Alist.begin(), Alist_float[5 - i]);
     config_.Tlist.insert(config_.Tlist.begin(), Tlist_float[5 - i]);
   }
@@ -355,41 +366,37 @@ void Kinematics::clearConfig() {
   config_.Alist.clear();
   config_.joint_seq.clear();
   config_.joint_parent.clear();
-  config_.child_seq.clear();
   config_.foot_parent.clear();
   data_.T_tree.clear();
   data_.T_foot.clear();
+  data_.V_foot.clear();
+  data_.V_tree.clear();
 }
-void Kinematics::setJointPosition(const Eigen::Matrix<float, -1, 1> q) {
+void Kinematics::setJointPosition(const Eigen::Matrix<float, -1, 1> &q) {
   assert(q.rows() == config_.joint_num &&
          "wrong dimension of q in setJointPosition");
   data_.q = q;
 }
-void Kinematics::setJointVelocity(const Eigen::Matrix<float, -1, 1> dq) {
+void Kinematics::setJointVelocity(const Eigen::Matrix<float, -1, 1> &dq) {
   assert(dq.rows() == config_.joint_num &&
          "wrong dimension of dq in setJointVelocity");
   data_.dq = dq;
 }
 void Kinematics::updatePosition() {
-  int dim = config_.joint_num;
-  assert(dim == config_.Alist.size() && "wrong dimension of q or Alist");
-  data_.T_tree = config_.Tlist;
-  Mat4f rotm4;
-  for (int i = 0; i < dim; i++) {
-    rotm4 = Math::exp2rotm(config_.Alist[i], data_.q[i]);
-    data_.T_tree[i] = config_.Tlist[i] * rotm4;
+  assert(config_.joint_num == config_.Alist.size() &&
+         "wrong dimension of Alist");
+  // Ttree
+  for (int i = 0; i < config_.joint_num; ++i) {
+    data_.T_tree[i] = config_.Tlist[i] * exp2rotm(config_.Alist[i], data_.q[i]);
 #ifdef DEBUG_KINE
-    std::cout << "i=" << i << "rotm4:\n" << rotm4 << std::endl;
     std::cout << "data_.T_tree[i]:\n" << data_.T_tree[i] << std::endl;
 #endif
   }
   // foot position
-  Mat4f T_tmp = Mat4f::Identity();
-  data_.T_foot.clear();
-  for (int i = 0; i < config_.foot_num; i++) {
+  for (int i = 0; i < config_.foot_num; ++i) {
     int link = config_.foot_parent[i];
-    data_.T_foot.push_back(config_.Tlist_foot[i]);
-    for (int j = 0; j <= config_.joint_num; j++) {
+    data_.T_foot[i] = config_.Tlist_foot[i];
+    for (int j = 0; j <= config_.joint_num; ++j) {
       data_.T_foot[i] = data_.T_tree[link] * data_.T_foot[i];
       link = config_.joint_parent[link];
       if (link == -1) {
@@ -405,41 +412,39 @@ void Kinematics::updatePosition() {
 void Kinematics::updateVelocity() {
   Eigen::Matrix<float, 4, 4> Ttmp;
   int parent_id;
+  assert(data_.dq.rows() == config_.joint_num &&
+         "wrong dimension of dq in updateVelocity");
   data_.V_tree[0] = config_.Alist[0] * data_.dq[0];
   // get velocity for joint in joint frame
-  for (int i = 1; i < config_.joint_num; i++) {
+  for (int i = 1; i < config_.joint_num; ++i) {
     Ttmp = data_.T_tree[i];
     parent_id = config_.joint_parent[i];
-    data_.V_tree[i] =
-        Math::AdT(Math::invTransM(Ttmp)) * data_.V_tree[parent_id] +
-        config_.Alist[i] * data_.dq[i];
+    data_.V_tree[i] = AdT(invTransM(Ttmp)) * data_.V_tree[parent_id] +
+                      config_.Alist[i] * data_.dq[i];
   }
   // get velocity for each foot in body frame
-  for (int i = 0; i < config_.foot_num; i++) {
+  for (int i = 0; i < config_.foot_num; ++i) {
     Ttmp = config_.Tlist_foot[i];
     parent_id = config_.foot_parent[i];
-    data_.V_foot[i] =
-        Math::AdT(Math::invTransM(Ttmp)) * data_.V_tree[parent_id];
+    data_.V_foot[i] = AdT(invTransM(Ttmp)) * data_.V_tree[parent_id];
   }
 }
 
 // calculate jacobian for each foot,and combine them to be on whole body
 // jacobian.
 void Kinematics::jacobian() {
-  data_.jacobian_foot.clear();
-  data_.jacobian_foot.resize(config_.foot_num);
+  // data_.jacobian_foot.clear();
+  // data_.jacobian_foot.resize(config_.foot_num);
   /* calculate jacobian for each single foot */
-  for (int foot = 0; foot < config_.foot_num; foot++) {
+  for (int foot = 0; foot < config_.foot_num; ++foot) {
     data_.jacobian_foot[foot].resize(6, config_.joint_num);
     int link = config_.foot_parent[foot];
     Eigen::Matrix<float, 4, 4> T_foot_2_inertia;
     T_foot_2_inertia = data_.T_foot[foot];
     T_foot_2_inertia.block(0, 3, 3, 1) << 0, 0, 0;
-    // std::cout << "T_foot_2_inertia:\n" << T_foot_2_inertia << std::endl;
     Eigen::Matrix<float, 4, 4> Ttmp, T_child;
     Ttmp = config_.Tlist_foot[foot]; // tcp for foot
     T_child.setIdentity();
-    // std::cout << "T_child:\n" << T_child << std::endl;
     // if joint i is not this foot's parent joint,then column i of jacobian is
     // zero
     for (int i = config_.joint_num - 1; i >= 0; i--) {
@@ -447,26 +452,21 @@ void Kinematics::jacobian() {
       // of jacobian is zero
       if (i != link || link == -1) {
         data_.jacobian_foot[foot].block(0, i, 6, 1) = Vec6f::Zero();
-        // std::cout << "i=" << i << "jacobian_foot i" <<
-        // data_.jacobian_foot[foot].block(0, i, 6, 1) << std::endl;
         continue;
       } else {
         Ttmp = T_child * Ttmp;
         // get column i of jacobian in inertia frame
         data_.jacobian_foot[foot].block(0, i, 6, 1) =
-            Math::AdT(T_foot_2_inertia) * Math::AdT(Math::invTransM(Ttmp)) *
-            config_.Alist[link];
+            AdT(T_foot_2_inertia) * AdT(invTransM(Ttmp)) * config_.Alist[link];
         // update T_child and link
         T_child = data_.T_tree[link];
         link = config_.joint_parent[link];
       }
-      // std::cout << "i=" << i << "jacobian_foot i" <<
-      // data_.jacobian_foot[foot].block(0, i, 6, 1) << std::endl;
     }
   }
   /*combine jacobians to a bigger one*/
-  data_.jacobian_whole.resize(6 * config_.foot_num, config_.joint_num);
-  for (int i = 0; i < config_.foot_num; i++) {
+  // data_.jacobian_whole.resize(6 * config_.foot_num, config_.joint_num);
+  for (int i = 0; i < config_.foot_num; ++i) {
     data_.jacobian_whole.block(6 * i, 0, 6, config_.joint_num) =
         data_.jacobian_foot[i];
   }
@@ -474,7 +474,69 @@ void Kinematics::jacobian() {
   std::cout << "data_.jacobian_whole\n" << data_.jacobian_whole << std::endl;
 #endif
 }
-// void Kinematics::dotJacobian() {}
+// refer to designing document 20230202
+void Kinematics::dotJacobian() {
+  updateVelocity();
+  // data_.dot_jacobian_foot.clear();
+  // data_.dot_jacobian_foot.resize(config_.foot_num);
+  /* calculate jacobian for each single foot */
+  for (int foot = 0; foot < config_.foot_num; ++foot) {
+    data_.dot_jacobian_foot[foot].resize(6, config_.joint_num);
+    int link = config_.foot_parent[foot];
+    // formulation(9)
+    Vec3f pe, pi, ve, vi, wi, delta_p, delta_v;
+    Eigen::Matrix3f Ri;
+    Ri = data_.T_foot[foot].block(0, 0, 3, 3);
+    pe = data_.T_foot[foot].block(0, 3, 3, 1);
+    ve = Ri * data_.V_foot[foot].block(3, 0, 3, 1);
+    Eigen::Matrix<float, 4, 4> Ttmp, T_i;
+    T_i = data_.T_foot[foot] * invTransM(config_.Tlist_foot[foot]);
+    Ttmp.setIdentity();
+    // if joint i is not this foot's parent joint,then column i of jacobian is
+    // zero
+    for (int i = config_.joint_num - 1; i >= 0; i--) {
+      // link=-1 means there are not parent joints for foot anymore,so column i
+      // of dot_jacobian is zero
+      if (i != link || link == -1) {
+        data_.dot_jacobian_foot[foot].block(0, i, 6, 1) = Vec6f::Zero();
+        continue;
+      } else {
+        T_i = T_i * invTransM(Ttmp);
+        Ri = T_i.block(0, 0, 3, 3);
+        pi = T_i.block(0, 3, 3, 1);
+        vi = Ri * data_.V_tree[i].block(3, 0, 3, 1);
+        wi = Ri * data_.V_tree[i].block(0, 0, 3, 1);
+        delta_p = pi - pe;
+        delta_v = vi - ve;
+        Eigen::Matrix<float, 6, 6> j_tmp;
+        j_tmp.setZero();
+        j_tmp.block(0, 0, 3, 3) = vec2so3(wi) * Ri;
+        j_tmp.block(3, 3, 3, 3) = j_tmp.block(0, 0, 3, 3);
+        j_tmp.block(3, 0, 3, 3) =
+            vec2so3(delta_v) * Ri + vec2so3(delta_p) * vec2so3(wi) * Ri;
+        data_.dot_jacobian_foot[foot].block(0, i, 6, 1) =
+            j_tmp * config_.Alist[i];
+        // update T_child and link
+        Ttmp = data_.T_tree[link];
+        link = config_.joint_parent[link];
+      }
+    }
+  }
+  /*combine dot jacobians to a bigger one*/
+  // data_.dot_jacobian_whole.resize(6 * config_.foot_num, config_.joint_num);
+  for (int i = 0; i < config_.foot_num; ++i) {
+#ifdef DEBUG_KINE
+    std::cout << "data_.dot_jacobian_foot\n"
+              << data_.dot_jacobian_foot[i] << std::endl;
+#endif
+    data_.dot_jacobian_whole.block(6 * i, 0, 6, config_.joint_num) =
+        data_.dot_jacobian_foot[i];
+  }
+#ifdef DEBUG_KINE
+  std::cout << "data_.dot_jacobian_whole\n"
+            << data_.dot_jacobian_whole << std::endl;
+#endif
+}
 //
 float angleInPi(float theta) {
   float th = theta;

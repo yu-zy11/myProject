@@ -25,19 +25,58 @@ using Vec3f = Eigen::Vector3f;
 
 int main() {
 
-  vector<int> max_vec(10);
-  max_vec[1] = 10;
-  std::cout << "max_vec" << max_vec[0] << max_vec[1] << std::endl;
-  ROBOTICS::Kinematics kine(false);
-  Eigen::Matrix<float, 12, 1> qq;
-  qq = Eigen::Matrix<float, 12, 1>::Random();
+  Eigen::Matrix3f eye3 = Eigen::Matrix3f::Identity();
+  std::cout << "eye3" << eye3 << std::endl;
+  ROBOTICS::Kinematics kine(true);
+  Eigen::Matrix<float, 18, 1> qq;
+  qq = Eigen::Matrix<float, 18, 1>::Random();
   qq.block(0, 0, 6, 1).setZero();
   qq.setZero();
-  qq.block(0, 0, 9, 1) << 0.9509, 0.7223, 0.4001, 0.8319, 0.1343, 0.0605,
+  qq.block(6, 0, 9, 1) << 0.9509, 0.7223, 0.4001, 0.8319, 0.1343, 0.0605,
       0.0842, 0.1639, 0.3242;
+  Eigen::Matrix<float, 18, 1> dq;
+  time_t begin, end;
+  begin = clock();
+  Eigen::Matrix4f m1, m2, m3;
+  m1.setIdentity();
+  m2.setIdentity();
+  m3 = m1;
+  end = clock();
+  std::cout << "time=" << end - begin << std::endl;
+
+  begin = clock();
+  dq.setZero();
+  dq.block(6, 0, 9, 1) << 0.9509f, 0.7223, 0.4001, 0.8319, 0.1343, 0.0605,
+      0.0842, 0.1639, 0.3242;
+  end = clock();
+  std::cout << "time0=" << (end - begin) << std::endl;
+  begin = clock();
   kine.setJointPosition(qq);
+  end = clock();
+  std::cout << "time1=" << (end - begin) << std::endl;
+  begin = clock();
+  kine.setJointVelocity(dq);
+  end = clock();
+  std::cout << "time2=" << (end - begin) << std::endl;
+  begin = clock();
   kine.update();
+  end = clock();
+  std::cout << "time3=" << (end - begin) << std::endl;
+  begin = clock();
   kine.jacobian();
+  end = clock();
+  std::cout << "time4=" << end - begin << std::endl;
+  begin = clock();
+  kine.dotJacobian();
+  end = clock();
+  std::cout << "time5=" << end - begin << std::endl;
+  begin = clock();
+  Eigen::Matrix<float, -1, -1> dot_jacobian;
+  kine.getFootDotJacobian(dot_jacobian);
+  end = clock();
+  std::cout << "time6=" << end - begin << std::endl;
+  std::cout << "dot_jacobian:\n" << dot_jacobian << std::endl;
+
   Vec3f pp;
   kine.fkine(pp, qq.block(9, 0, 3, 1), 1);
   std::cout << "P" << pp << std::endl;

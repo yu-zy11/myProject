@@ -26,6 +26,12 @@ Eigen/Dense
 vector
 -
 
+/home/yuzy/workspace/learnCpp/myProject/controller/library/robotics_math.cpp
+robotics_math.h
+/home/yuzy/workspace/learnCpp/myProject/controller/library/robotics_math.h
+iostream
+-
+
 /home/yuzy/workspace/learnCpp/myProject/controller/library/robotics_math.h
 dynamics.h
 /home/yuzy/workspace/learnCpp/myProject/controller/library/dynamics.h
