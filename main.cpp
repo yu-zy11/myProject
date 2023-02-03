@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "controller/library/robotics_math.h"
+#include "controller/library/test/test_kinematics.cpp"
 #include "pinocchio/algorithm/joint-configuration.hpp"
 #include "pinocchio/algorithm/kinematics.hpp"
 #include "pinocchio/parsers/urdf.hpp"
@@ -24,6 +25,7 @@ using Vec3f = Eigen::Vector3f;
 #endif
 template <typename T> using Mat4 = Eigen::Matrix<T, 4, 4>;
 int main() {
+  // bool success = testKinematics();
   ROBOTICS::Kinematics kine(true);
   Eigen::Matrix<float, 18, 1> qq;
   qq = Eigen::Matrix<float, 18, 1>::Random();

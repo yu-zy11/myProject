@@ -242,6 +242,14 @@ Eigen/Dense
 string
 -
 
+/home/yuzy/workspace/learnCpp/myProject/controller/library/test/test_kinematics.cpp
+../kinematics.h
+/home/yuzy/workspace/learnCpp/myProject/controller/library/kinematics.h
+../robot_model.h
+/home/yuzy/workspace/learnCpp/myProject/controller/library/robot_model.h
+Eigen/Dense
+-
+
 /home/yuzy/workspace/learnCpp/myProject/controller/mpc_controller/convexMPC.h
 ../common_data/common_data.h
 /home/yuzy/workspace/learnCpp/myProject/controller/common_data/common_data.h
@@ -281,6 +289,8 @@ vector
 -
 controller/library/robotics_math.h
 /home/yuzy/workspace/learnCpp/myProject/controller/library/robotics_math.h
+controller/library/test/test_kinematics.cpp
+/home/yuzy/workspace/learnCpp/myProject/controller/library/test/test_kinematics.cpp
 pinocchio/algorithm/joint-configuration.hpp
 /home/yuzy/workspace/learnCpp/myProject/pinocchio/algorithm/joint-configuration.hpp
 pinocchio/algorithm/kinematics.hpp

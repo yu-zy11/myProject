@@ -53,6 +53,8 @@ template <typename T> struct KineData {
   vector<Vec6<T>> V_foot;
   Vecx<T> q;
   Vecx<T> dq;
+  Vecx<T> q_last;
+  Vecx<T> dq_last;
   vector<Mat6x<T>> jacobian_foot;
   vector<Mat6x<T>> dot_jacobian_foot;
   Matxx<T> jacobian_whole;
@@ -65,6 +67,12 @@ public:
     config.use_floating_base = is_floating_base;
     init();
   }
+  Kinematics(bool floating, RobotModel &rmodel) {
+    model = rmodel;
+    config.use_floating_base = floating;
+    init();
+  }
+
   void update(const Vecx<ktype> &q, const Vecx<ktype> &dq);
   void getFootPosition(Vec6<ktype> &p, const int &index);
   void getFootJacobian(Matxx<ktype> &j);

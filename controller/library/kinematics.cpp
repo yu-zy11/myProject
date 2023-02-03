@@ -97,9 +97,21 @@ void Kinematics::update(const Vecx<ktype> &q, const Vecx<ktype> &dq) {
          "wrong dimension of q dq in update");
   data_.q = q;
   data_.dq = dq;
+  for (int i = 0; i < config.joint_num; ++i) {
+    if (std::isnan(q[i])) {
+      data_.q[i] = data_.q_last[i];
+      std::cout << "warning! q i is nan in kine" << std::endl;
+    }
+    if (std::isnan(dq[i])) {
+      data_.dq[i] = data_.dq_last[i];
+      std::cout << "warning, dq i is nan in kine" << std::endl;
+    }
+  }
   updateTtree();
   updateFootPosition();
   updateVtree();
+  data_.q_last = data_.q;
+  data_.dq_last = data_.dq;
 }
 void Kinematics::resize() {
   data_.T_foot.resize(config.foot_num);
@@ -116,6 +128,7 @@ void Kinematics::getFootPosition(Vec6<ktype> &p, const int &index) {
   assert(index <= config.foot_num && "wonrg index in getFootPosition");
   p.block(0, 0, 3, 1) = data_.T_foot[index].block(0, 3, 3, 1);
   Mat3<ktype> rot = data_.T_foot[index].block(0, 0, 3, 3);
+  std::cout << "rot:" << rot << std::endl;
   p.block(3, 0, 3, 1) = rot2eul(rot); // rpy
 }
 void Kinematics::addFloatingBase() {

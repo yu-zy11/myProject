@@ -39,6 +39,7 @@ CMakeFiles/main.dir/main.cpp.o: ../controller/library/kinematics.h
 CMakeFiles/main.dir/main.cpp.o: ../controller/library/robot_model.h
 CMakeFiles/main.dir/main.cpp.o: ../controller/library/robotic_types.h
 CMakeFiles/main.dir/main.cpp.o: ../controller/library/robotics_math.h
+CMakeFiles/main.dir/main.cpp.o: ../controller/library/test/test_kinematics.cpp
 CMakeFiles/main.dir/main.cpp.o: ../controller/mpc_controller/convexMPC.h
 CMakeFiles/main.dir/main.cpp.o: ../controller/mpc_controller/math_utils.h
 CMakeFiles/main.dir/main.cpp.o: ../main.cpp
