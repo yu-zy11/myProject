@@ -82,6 +82,28 @@ inline Eigen::Matrix<T, 6, 6> AdT(const Eigen::Matrix<T, 4, 4> &mat) {
   aT.block(3, 0, 3, 3) = vec2so3(P) * R;
   return aT;
 }
+// rot2eul
+template <typename T>
+inline Eigen::Matrix<T, 3, 1> rot2eul(Eigen::Matrix<T, 3, 3> rot) {
+  Eigen::Matrix<T, 3, 1> rpy, tmp;
+  tmp = rot.eulerAngles(2, 1, 0);
+  rpy << tmp[2], tmp[1], tmp[0];
+  return rpy;
+}
+//// note: euler is in sequence of zyx,but rpy= [x,y,z]
+template <typename T>
+inline Eigen::Matrix<T, 3, 3> eul2rot(Eigen::Matrix<T, 3, 1> rpy) {
+  T c3 = cos(rpy[2]);
+  T s3 = sin(rpy[2]);
+  T c2 = cos(rpy[1]);
+  T s2 = sin(rpy[1]);
+  T c1 = cos(rpy[0]);
+  T s1 = sin(rpy[0]);
+  Eigen::Matrix<T, 3, 3> rotm;
+  rotm << c2 * c3, c3 * s1 * s2 - c1 * s3, s1 * s3 + c1 * c3 * s2, c2 * s3,
+      c1 * c3 + s1 * s2 * s3, c1 * s2 * s3 - c3 * s1, -s2, c2 * s1, c1 * c2;
+  return rotm;
+}
 
 } // namespace Math
 } // namespace ROBOTICS

@@ -22,11 +22,16 @@ using Vec3f = Eigen::Vector3f;
 #define PINOCCHIO_MODEL_DIR                                                    \
   "/home/yuzy/workspace/learnCpp/myProject/model/laikago"
 #endif
-
+template <typename T> using Mat4 = Eigen::Matrix<T, 4, 4>;
 int main() {
-
   Eigen::Matrix3f eye3 = Eigen::Matrix3f::Identity();
+  Eigen::Vector3f euler, euler1;
+  eye3 << 0.5455, -0.7497, 0.3747, 0.6874, 0.6560, 0.3116, -0.4794, 0.0876,
+      0.8732;
+  euler1 = ROBOTICS::Math::rot2eul(eye3);
+  eye3 = ROBOTICS::Math::eul2rot(euler1);
   std::cout << "eye3" << eye3 << std::endl;
+  std::cout << "euler1" << euler1 << std::endl;
   ROBOTICS::Kinematics kine(true);
   Eigen::Matrix<float, 18, 1> qq;
   qq = Eigen::Matrix<float, 18, 1>::Random();
@@ -51,30 +56,19 @@ int main() {
   end = clock();
   std::cout << "time0=" << (end - begin) << std::endl;
   begin = clock();
-  kine.setJointPosition(qq);
-  end = clock();
-  std::cout << "time1=" << (end - begin) << std::endl;
-  begin = clock();
-  kine.setJointVelocity(dq);
-  end = clock();
-  std::cout << "time2=" << (end - begin) << std::endl;
-  begin = clock();
-  kine.update();
+  kine.update(qq, dq);
   end = clock();
   std::cout << "time3=" << (end - begin) << std::endl;
   begin = clock();
-  kine.jacobian();
+  Eigen::Matrix<float, -1, -1> j;
+  kine.getFootJacobian(j);
   end = clock();
   std::cout << "time4=" << end - begin << std::endl;
-  begin = clock();
-  kine.dotJacobian();
-  end = clock();
-  std::cout << "time5=" << end - begin << std::endl;
   begin = clock();
   Eigen::Matrix<float, -1, -1> dot_jacobian;
   kine.getFootDotJacobian(dot_jacobian);
   end = clock();
-  std::cout << "time6=" << end - begin << std::endl;
+  std::cout << "time5=" << end - begin << std::endl;
   std::cout << "dot_jacobian:\n" << dot_jacobian << std::endl;
 
   Vec3f pp;

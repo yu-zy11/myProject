@@ -5,6 +5,8 @@ controller/library/CMakeFiles/robotics.dir/kinematics.cpp.o
  /home/yuzy/workspace/learnCpp/myProject/controller/library/dynamics.h
  /home/yuzy/workspace/learnCpp/myProject/controller/library/kinematics.cpp
  /home/yuzy/workspace/learnCpp/myProject/controller/library/kinematics.h
+ /home/yuzy/workspace/learnCpp/myProject/controller/library/robot_model.h
+ /home/yuzy/workspace/learnCpp/myProject/controller/library/robotic_types.h
  /home/yuzy/workspace/learnCpp/myProject/controller/library/robotics_math.h
  /usr/include/eigen3/Eigen/Cholesky
  /usr/include/eigen3/Eigen/Core

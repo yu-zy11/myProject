@@ -217,9 +217,21 @@ iostream
 /home/yuzy/workspace/learnCpp/myProject/controller/library/dynamics.h
 
 /home/yuzy/workspace/learnCpp/myProject/controller/library/kinematics.h
+robot_model.h
+/home/yuzy/workspace/learnCpp/myProject/controller/library/robot_model.h
+robotic_types.h
+/home/yuzy/workspace/learnCpp/myProject/controller/library/robotic_types.h
 Eigen/Dense
 -
 vector
+-
+
+/home/yuzy/workspace/learnCpp/myProject/controller/library/robot_model.h
+robotic_types.h
+/home/yuzy/workspace/learnCpp/myProject/controller/library/robotic_types.h
+
+/home/yuzy/workspace/learnCpp/myProject/controller/library/robotic_types.h
+Eigen/Dense
 -
 
 /home/yuzy/workspace/learnCpp/myProject/controller/library/robotics_math.h

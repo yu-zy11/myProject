@@ -4,6 +4,8 @@
 controller/library/CMakeFiles/robotics.dir/kinematics.cpp.o: ../controller/library/dynamics.h
 controller/library/CMakeFiles/robotics.dir/kinematics.cpp.o: ../controller/library/kinematics.cpp
 controller/library/CMakeFiles/robotics.dir/kinematics.cpp.o: ../controller/library/kinematics.h
+controller/library/CMakeFiles/robotics.dir/kinematics.cpp.o: ../controller/library/robot_model.h
+controller/library/CMakeFiles/robotics.dir/kinematics.cpp.o: ../controller/library/robotic_types.h
 controller/library/CMakeFiles/robotics.dir/kinematics.cpp.o: ../controller/library/robotics_math.h
 controller/library/CMakeFiles/robotics.dir/kinematics.cpp.o: /usr/include/eigen3/Eigen/Cholesky
 controller/library/CMakeFiles/robotics.dir/kinematics.cpp.o: /usr/include/eigen3/Eigen/Core
