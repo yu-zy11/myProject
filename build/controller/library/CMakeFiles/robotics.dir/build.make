@@ -70,32 +70,17 @@ controller/library/CMakeFiles/robotics.dir/kinematics.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/robotics.dir/kinematics.cpp.s"
 	cd /home/yuzy/workspace/learnCpp/myProject/build/controller/library && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/yuzy/workspace/learnCpp/myProject/controller/library/kinematics.cpp -o CMakeFiles/robotics.dir/kinematics.cpp.s
 
-controller/library/CMakeFiles/robotics.dir/robotics_math.cpp.o: controller/library/CMakeFiles/robotics.dir/flags.make
-controller/library/CMakeFiles/robotics.dir/robotics_math.cpp.o: ../controller/library/robotics_math.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/yuzy/workspace/learnCpp/myProject/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object controller/library/CMakeFiles/robotics.dir/robotics_math.cpp.o"
-	cd /home/yuzy/workspace/learnCpp/myProject/build/controller/library && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/robotics.dir/robotics_math.cpp.o -c /home/yuzy/workspace/learnCpp/myProject/controller/library/robotics_math.cpp
-
-controller/library/CMakeFiles/robotics.dir/robotics_math.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/robotics.dir/robotics_math.cpp.i"
-	cd /home/yuzy/workspace/learnCpp/myProject/build/controller/library && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/yuzy/workspace/learnCpp/myProject/controller/library/robotics_math.cpp > CMakeFiles/robotics.dir/robotics_math.cpp.i
-
-controller/library/CMakeFiles/robotics.dir/robotics_math.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/robotics.dir/robotics_math.cpp.s"
-	cd /home/yuzy/workspace/learnCpp/myProject/build/controller/library && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/yuzy/workspace/learnCpp/myProject/controller/library/robotics_math.cpp -o CMakeFiles/robotics.dir/robotics_math.cpp.s
-
 # Object files for target robotics
 robotics_OBJECTS = \
-"CMakeFiles/robotics.dir/kinematics.cpp.o" \
-"CMakeFiles/robotics.dir/robotics_math.cpp.o"
+"CMakeFiles/robotics.dir/kinematics.cpp.o"
 
 # External object files for target robotics
 robotics_EXTERNAL_OBJECTS =
 
 controller/library/librobotics.a: controller/library/CMakeFiles/robotics.dir/kinematics.cpp.o
-controller/library/librobotics.a: controller/library/CMakeFiles/robotics.dir/robotics_math.cpp.o
 controller/library/librobotics.a: controller/library/CMakeFiles/robotics.dir/build.make
 controller/library/librobotics.a: controller/library/CMakeFiles/robotics.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/yuzy/workspace/learnCpp/myProject/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking CXX static library librobotics.a"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/yuzy/workspace/learnCpp/myProject/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX static library librobotics.a"
 	cd /home/yuzy/workspace/learnCpp/myProject/build/controller/library && $(CMAKE_COMMAND) -P CMakeFiles/robotics.dir/cmake_clean_target.cmake
 	cd /home/yuzy/workspace/learnCpp/myProject/build/controller/library && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/robotics.dir/link.txt --verbose=$(VERBOSE)
 

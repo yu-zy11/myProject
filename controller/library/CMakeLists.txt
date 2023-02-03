@@ -9,8 +9,8 @@ endif(CMAKE_COMPILER_IS_GNUCC)
 
 add_library(${PROJECT_NAME}
 kinematics.cpp
-robotics_math.cpp
 robotics_math.h
+robot_model.h
 )
 message("building " ${PROJECT_NAME})
 # C++ 调试编译时使用的标志

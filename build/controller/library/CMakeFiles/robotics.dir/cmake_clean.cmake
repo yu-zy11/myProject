@@ -1,6 +1,5 @@
 file(REMOVE_RECURSE
   "CMakeFiles/robotics.dir/kinematics.cpp.o"
-  "CMakeFiles/robotics.dir/robotics_math.cpp.o"
   "librobotics.a"
   "librobotics.pdb"
 )

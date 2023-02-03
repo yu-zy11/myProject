@@ -5,7 +5,6 @@ set(CMAKE_DEPENDS_LANGUAGES
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
   "/home/yuzy/workspace/learnCpp/myProject/controller/library/kinematics.cpp" "/home/yuzy/workspace/learnCpp/myProject/build/controller/library/CMakeFiles/robotics.dir/kinematics.cpp.o"
-  "/home/yuzy/workspace/learnCpp/myProject/controller/library/robotics_math.cpp" "/home/yuzy/workspace/learnCpp/myProject/build/controller/library/CMakeFiles/robotics.dir/robotics_math.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 

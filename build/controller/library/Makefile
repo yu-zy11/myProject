@@ -198,33 +198,6 @@ kinematics.cpp.s:
 	cd /home/yuzy/workspace/learnCpp/myProject/build && $(MAKE) -f controller/library/CMakeFiles/robotics.dir/build.make controller/library/CMakeFiles/robotics.dir/kinematics.cpp.s
 .PHONY : kinematics.cpp.s
 
-robotics_math.o: robotics_math.cpp.o
-
-.PHONY : robotics_math.o
-
-# target to build an object file
-robotics_math.cpp.o:
-	cd /home/yuzy/workspace/learnCpp/myProject/build && $(MAKE) -f controller/library/CMakeFiles/robotics.dir/build.make controller/library/CMakeFiles/robotics.dir/robotics_math.cpp.o
-.PHONY : robotics_math.cpp.o
-
-robotics_math.i: robotics_math.cpp.i
-
-.PHONY : robotics_math.i
-
-# target to preprocess a source file
-robotics_math.cpp.i:
-	cd /home/yuzy/workspace/learnCpp/myProject/build && $(MAKE) -f controller/library/CMakeFiles/robotics.dir/build.make controller/library/CMakeFiles/robotics.dir/robotics_math.cpp.i
-.PHONY : robotics_math.cpp.i
-
-robotics_math.s: robotics_math.cpp.s
-
-.PHONY : robotics_math.s
-
-# target to generate assembly for a file
-robotics_math.cpp.s:
-	cd /home/yuzy/workspace/learnCpp/myProject/build && $(MAKE) -f controller/library/CMakeFiles/robotics.dir/build.make controller/library/CMakeFiles/robotics.dir/robotics_math.cpp.s
-.PHONY : robotics_math.cpp.s
-
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -241,9 +214,6 @@ help:
 	@echo "... kinematics.o"
 	@echo "... kinematics.i"
 	@echo "... kinematics.s"
-	@echo "... robotics_math.o"
-	@echo "... robotics_math.i"
-	@echo "... robotics_math.s"
 .PHONY : help
 
 

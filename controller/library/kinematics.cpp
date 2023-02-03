@@ -25,6 +25,7 @@ void Kinematics::init() {
   //
   Mat4<ktype> Tlist_tmp;
   Vec3<ktype> rpy;
+  Tlist_tmp.setIdentity();
   for (int i = 0; i < config.joint_num; ++i) {
     config.Alist.push_back(model.joint_axis_[i]);
 
@@ -114,7 +115,7 @@ void Kinematics::resize() {
 void Kinematics::getFootPosition(Vec6<ktype> &p, const int &index) {
   assert(index <= config.foot_num && "wonrg index in getFootPosition");
   p.block(0, 0, 3, 1) = data_.T_foot[index].block(0, 3, 3, 1);
-  Mat3<ktype> rot = data_.T_foot[index].block(0, 0, 3, 0);
+  Mat3<ktype> rot = data_.T_foot[index].block(0, 0, 3, 3);
   p.block(3, 0, 3, 1) = rot2eul(rot); // rpy
 }
 void Kinematics::addFloatingBase() {
@@ -156,30 +157,30 @@ void Kinematics::addFloatingBase() {
     config.Tlist.insert(config.Tlist.begin(), Tlist_float[5 - i]);
   }
 }
-void Kinematics::fkine(Vec3<ktype> &p, Vec3<ktype> q, int leg) {
-  auto len = config.len_[leg];
-  auto p_hip = config.p_hip_[leg];
-  float l1 = len[0];
-  float l2 = len[1];
-  float l3 = len[2];
-  float lx = len[3];
-  float ly = len[4];
-  int s; // side sign
-  ((leg == 0) || (leg == 2)) ? s = -1 : s = 1;
-  float s1 = sin(q[0]);
-  float c1 = cos(q[0]);
-  float s2 = sin(q[1]);
-  float c2 = cos(q[1]);
-  float s3 = sin(q[2]);
-  float c3 = cos(q[2]);
-  float px = lx * (c1 * c3 - c2 * s1 * s3) - l3 * (c1 * s3 + c2 * c3 * s1) -
-             l2 * c2 * s1 + ly * s1 * s2;
-  float py = l1 * s + ly * c2 + l2 * s2 + l3 * c3 * s2 + lx * s2 * s3;
-  float pz = l3 * (s1 * s3 - c1 * c2 * c3) - lx * (c3 * s1 + c1 * c2 * s3) -
-             l2 * c1 * c2 + ly * c1 * s2;
-  p << px, py, pz;
-  p += p_hip;
-}
+// void Kinematics::fkine(Vec3<ktype> &p, Vec3<ktype> q, int leg) {
+//   auto len = config.len_[leg];
+//   auto p_hip = config.p_hip_[leg];
+//   float l1 = len[0];
+//   float l2 = len[1];
+//   float l3 = len[2];
+//   float lx = len[3];
+//   float ly = len[4];
+//   int s; // side sign
+//   ((leg == 0) || (leg == 2)) ? s = -1 : s = 1;
+//   float s1 = sin(q[0]);
+//   float c1 = cos(q[0]);
+//   float s2 = sin(q[1]);
+//   float c2 = cos(q[1]);
+//   float s3 = sin(q[2]);
+//   float c3 = cos(q[2]);
+//   float px = lx * (c1 * c3 - c2 * s1 * s3) - l3 * (c1 * s3 + c2 * c3 * s1) -
+//              l2 * c2 * s1 + ly * s1 * s2;
+//   float py = l1 * s + ly * c2 + l2 * s2 + l3 * c3 * s2 + lx * s2 * s3;
+//   float pz = l3 * (s1 * s3 - c1 * c2 * c3) - lx * (c3 * s1 + c1 * c2 * s3) -
+//              l2 * c1 * c2 + ly * c1 * s2;
+//   p << px, py, pz;
+//   p += p_hip;
+// }
 
 void Kinematics::ikine(Vec3<ktype> &q, Vec3<ktype> p, int leg) {
   auto len = config.len_[leg];
@@ -250,86 +251,59 @@ void Kinematics::ikine(Vec3<ktype> &q, Vec3<ktype> p, int leg) {
                                                              : q_last_ = q;
 }
 
-void Kinematics::jacobian(Mat3<ktype> &j, Vec3<ktype> q, int leg) {
-  auto len = config.len_[leg];
-  auto p_hip = config.p_hip_[leg];
-  float l1 = len[0];
-  float l2 = len[1];
-  float l3 = len[2];
-  float lx = len[3];
-  float ly = len[4];
-  float s1 = sin(q[0]);
-  float c1 = cos(q[0]);
-  float s2 = sin(q[1]);
-  float c2 = cos(q[1]);
-  float s3 = sin(q[2]);
-  float c3 = cos(q[2]);
-  int s; // side sign
-  ((leg == 0) || (leg == 2)) ? s = -1 : s = 1;
-  j(0, 0) = l3 * (s1 * s3 - c1 * c2 * c3) - lx * (c3 * s1 + c1 * c2 * s3) -
-            l2 * c1 * c2 + ly * c1 * s2;
-  j(0, 1) = s1 * (ly * c2 + l2 * s2 + l3 * c3 * s2 + lx * s2 * s3);
-  j(0, 2) = -l3 * (c1 * c3 - c2 * s1 * s3) - lx * (c1 * s3 + c2 * c3 * s1);
-  j(1, 0) = 0;
-  j(1, 1) = l2 * c2 - ly * s2 + l3 * c2 * c3 + lx * c2 * s3;
-  j(1, 2) = s2 * (lx * c3 - l3 * s3);
-  j(2, 0) = l3 * (c1 * s3 + c2 * c3 * s1) - lx * (c1 * c3 - c2 * s1 * s3) +
-            l2 * c2 * s1 - ly * s1 * s2;
-  j(2, 1) = c1 * (ly * c2 + l2 * s2 + l3 * c3 * s2 + lx * s2 * s3);
-  j(2, 2) = l3 * (c3 * s1 + c1 * c2 * s3) + lx * (s1 * s3 - c1 * c2 * c3);
-}
-
-void Kinematics::dotjacobian(Mat3<ktype> &dj, Vec3<ktype> q, Vec3<ktype> dq,
-                             int leg) {
-  auto len = config.len_[leg];
-  auto p_hip = config.p_hip_[leg];
-  float l1 = len[0];
-  float l2 = len[1];
-  float l3 = len[2];
-  float lx = len[3];
-  float ly = len[4];
-  float s1 = sin(q[0]);
-  float c1 = cos(q[0]);
-  float s2 = sin(q[1]);
-  float c2 = cos(q[1]);
-  float s3 = sin(q[2]);
-  float c3 = cos(q[2]);
-  float dq1 = dq[0];
-  float dq2 = dq[1];
-  float dq3 = dq[2];
-  int s; // side sign
-  ((leg == 0) || (leg == 2)) ? s = -1 : s = 1;
-  dj(0, 0) =
-      dq3 * (l3 * (c3 * s1 + c1 * c2 * s3) + lx * (s1 * s3 - c1 * c2 * c3)) +
-      dq1 * (l3 * (c1 * s3 + c2 * c3 * s1) - lx * (c1 * c3 - c2 * s1 * s3) +
-             l2 * c2 * s1 - ly * s1 * s2) +
-      dq2 *
-          (ly * c1 * c2 + l2 * c1 * s2 + l3 * c1 * c3 * s2 + lx * c1 * s2 * s3);
-  dj(0, 1) = dq2 * s1 * (l2 * c2 - ly * s2 + l3 * c2 * c3 + lx * c2 * s3) +
-             dq1 * c1 * (ly * c2 + l2 * s2 + l3 * c3 * s2 + lx * s2 * s3) +
-             dq3 * s1 * s2 * (lx * c3 - l3 * s3);
-  dj(0, 2) =
-      dq2 * (lx * c3 * s1 * s2 - l3 * s1 * s2 * s3) +
-      dq1 * (l3 * (c3 * s1 + c1 * c2 * s3) + lx * (s1 * s3 - c1 * c2 * c3)) +
-      dq3 * (l3 * (c1 * s3 + c2 * c3 * s1) - lx * (c1 * c3 - c2 * s1 * s3));
-  dj(1, 0) = 0;
-  dj(1, 1) = dq3 * c2 * (lx * c3 - l3 * s3) -
-             dq2 * (ly * c2 + l2 * s2 + l3 * c3 * s2 + lx * s2 * s3);
-  dj(1, 2) = dq2 * c2 * (lx * c3 - l3 * s3) - dq3 * s2 * (l3 * c3 + lx * s3);
-  dj(2, 0) =
-      dq3 * (l3 * (c1 * c3 - c2 * s1 * s3) + lx * (c1 * s3 + c2 * c3 * s1)) -
-      dq1 * (l3 * (s1 * s3 - c1 * c2 * c3) - lx * (c3 * s1 + c1 * c2 * s3) -
-             l2 * c1 * c2 + ly * c1 * s2) -
-      dq2 *
-          (ly * c2 * s1 + l2 * s1 * s2 + l3 * c3 * s1 * s2 + lx * s1 * s2 * s3);
-  dj(2, 1) = dq2 * c1 * (l2 * c2 - ly * s2 + l3 * c2 * c3 + lx * c2 * s3) -
-             dq1 * s1 * (ly * c2 + l2 * s2 + l3 * c3 * s2 + lx * s2 * s3) +
-             dq3 * c1 * s2 * (lx * c3 - l3 * s3);
-  dj(2, 2) =
-      dq1 * (l3 * (c1 * c3 - c2 * s1 * s3) + lx * (c1 * s3 + c2 * c3 * s1)) -
-      dq3 * (l3 * (s1 * s3 - c1 * c2 * c3) - lx * (c3 * s1 + c1 * c2 * s3)) +
-      dq2 * (lx * c1 * c3 * s2 - l3 * c1 * s2 * s3);
-}
+// void Kinematics::dotjacobian(Mat3<ktype> &dj, Vec3<ktype> q, Vec3<ktype> dq,
+//                              int leg) {
+//   auto len = config.len_[leg];
+//   auto p_hip = config.p_hip_[leg];
+//   float l1 = len[0];
+//   float l2 = len[1];
+//   float l3 = len[2];
+//   float lx = len[3];
+//   float ly = len[4];
+//   float s1 = sin(q[0]);
+//   float c1 = cos(q[0]);
+//   float s2 = sin(q[1]);
+//   float c2 = cos(q[1]);
+//   float s3 = sin(q[2]);
+//   float c3 = cos(q[2]);
+//   float dq1 = dq[0];
+//   float dq2 = dq[1];
+//   float dq3 = dq[2];
+//   int s; // side sign
+//   ((leg == 0) || (leg == 2)) ? s = -1 : s = 1;
+//   dj(0, 0) =
+//       dq3 * (l3 * (c3 * s1 + c1 * c2 * s3) + lx * (s1 * s3 - c1 * c2 * c3)) +
+//       dq1 * (l3 * (c1 * s3 + c2 * c3 * s1) - lx * (c1 * c3 - c2 * s1 * s3) +
+//              l2 * c2 * s1 - ly * s1 * s2) +
+//       dq2 *
+//           (ly * c1 * c2 + l2 * c1 * s2 + l3 * c1 * c3 * s2 + lx * c1 * s2 *
+//           s3);
+//   dj(0, 1) = dq2 * s1 * (l2 * c2 - ly * s2 + l3 * c2 * c3 + lx * c2 * s3) +
+//              dq1 * c1 * (ly * c2 + l2 * s2 + l3 * c3 * s2 + lx * s2 * s3) +
+//              dq3 * s1 * s2 * (lx * c3 - l3 * s3);
+//   dj(0, 2) =
+//       dq2 * (lx * c3 * s1 * s2 - l3 * s1 * s2 * s3) +
+//       dq1 * (l3 * (c3 * s1 + c1 * c2 * s3) + lx * (s1 * s3 - c1 * c2 * c3)) +
+//       dq3 * (l3 * (c1 * s3 + c2 * c3 * s1) - lx * (c1 * c3 - c2 * s1 * s3));
+//   dj(1, 0) = 0;
+//   dj(1, 1) = dq3 * c2 * (lx * c3 - l3 * s3) -
+//              dq2 * (ly * c2 + l2 * s2 + l3 * c3 * s2 + lx * s2 * s3);
+//   dj(1, 2) = dq2 * c2 * (lx * c3 - l3 * s3) - dq3 * s2 * (l3 * c3 + lx * s3);
+//   dj(2, 0) =
+//       dq3 * (l3 * (c1 * c3 - c2 * s1 * s3) + lx * (c1 * s3 + c2 * c3 * s1)) -
+//       dq1 * (l3 * (s1 * s3 - c1 * c2 * c3) - lx * (c3 * s1 + c1 * c2 * s3) -
+//              l2 * c1 * c2 + ly * c1 * s2) -
+//       dq2 *
+//           (ly * c2 * s1 + l2 * s1 * s2 + l3 * c3 * s1 * s2 + lx * s1 * s2 *
+//           s3);
+//   dj(2, 1) = dq2 * c1 * (l2 * c2 - ly * s2 + l3 * c2 * c3 + lx * c2 * s3) -
+//              dq1 * s1 * (ly * c2 + l2 * s2 + l3 * c3 * s2 + lx * s2 * s3) +
+//              dq3 * c1 * s2 * (lx * c3 - l3 * s3);
+//   dj(2, 2) =
+//       dq1 * (l3 * (c1 * c3 - c2 * s1 * s3) + lx * (c1 * s3 + c2 * c3 * s1)) -
+//       dq3 * (l3 * (s1 * s3 - c1 * c2 * c3) - lx * (c3 * s1 + c1 * c2 * s3)) +
+//       dq2 * (lx * c1 * c3 * s2 - l3 * c1 * s2 * s3);
+// }
 void Kinematics::clear() {
   config.Tlist.clear();
   config.Alist.clear();

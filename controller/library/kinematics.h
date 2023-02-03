@@ -70,10 +70,10 @@ public:
   void getFootJacobian(Matxx<ktype> &j);
   void getFootDotJacobian(Matxx<ktype> &dot_jacobian);
 
-  void fkine(Vec3<ktype> &p, Vec3<ktype> q, int leg);
+  // void fkine(Vec3<ktype> &p, Vec3<ktype> q, int leg);
   void ikine(Vec3<ktype> &q, Vec3<ktype> p, int leg);
-  void jacobian(Mat3<ktype> &j, Vec3<ktype> q, int leg);
-  void dotjacobian(Mat3<ktype> &dj, Vec3<ktype> q, Vec3<ktype> dq, int leg);
+  // void jacobian(Mat3<ktype> &j, Vec3<ktype> q, int leg);
+  // void dotjacobian(Mat3<ktype> &dj, Vec3<ktype> q, Vec3<ktype> dq, int leg);
 
 private:
   void init();
