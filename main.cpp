@@ -25,7 +25,7 @@ using Vec3f = Eigen::Vector3f;
 #endif
 template <typename T> using Mat4 = Eigen::Matrix<T, 4, 4>;
 int main() {
-  // bool success = testKinematics();
+  bool success = testKinematics();
   ROBOTICS::Kinematics kine(true);
   Eigen::Matrix<float, 18, 1> qq;
   qq = Eigen::Matrix<float, 18, 1>::Random();

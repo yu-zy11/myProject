@@ -223,6 +223,8 @@ robotic_types.h
 /home/yuzy/workspace/learnCpp/myProject/controller/library/robotic_types.h
 Eigen/Dense
 -
+Eigen/StdVector
+-
 vector
 -
 
