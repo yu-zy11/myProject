@@ -6,6 +6,7 @@ import casadi as ca
 import numpy as np
 import sys, os
 import torch
+
 # import window_jumper
 import time
 
@@ -63,11 +64,16 @@ class RobotState:
         # counter
         self.counter = 0
         # quick stop
-        self.quick_stop_=False
-        self.body_height=0.45
-        self.root_pos_des_rel=np.zeros(3)
-        self.root_pos_des_abs=np.zeros(3)
-        self.root_acc_quick_stop=np.zeros(3)
+        self.quick_stop_ = False
+        self.body_height = 0.45
+        self.root_pos_des_rel = np.zeros(3)
+        self.root_pos_des_abs = np.zeros(3)
+        self.root_acc_quick_stop = np.zeros(3)
+        self.contact_target_last = np.zeros(4, dtype=bool)
+        self.gait_changed_num = 0
+        self.gait_type_last_stop = 1
+        # test
+        self.stop_type = 0
 
         # state
         self.root_pos = np.zeros(3)
@@ -136,14 +142,10 @@ class RobotState:
         self.torque = np.zeros(12)
         self.foot_pos_start = default_foot_pos.copy()
         self.foot_pos_end = default_foot_pos.copy()
-        self.kp_kin = np.array([[1000.0, 1000.0, 5000.0],
-                                [1000.0, 1000.0, 5000.0],
-                                [1000.0, 1000.0, 5000.0],
-                                [1000.0, 1000.0, 5000.0]])
-        self.km_kin = np.array([0.1, 0.1, 0.02,
-                                0.1, 0.1, 0.02,
-                                0.1, 0.1, 0.02,
-                                0.1, 0.1, 0.02])
+        self.kp_kin = np.array(
+            [[1000.0, 1000.0, 5000.0], [1000.0, 1000.0, 5000.0], [1000.0, 1000.0, 5000.0], [1000.0, 1000.0, 5000.0]]
+        )
+        self.km_kin = np.array([0.1, 0.1, 0.02, 0.1, 0.1, 0.02, 0.1, 0.1, 0.02, 0.1, 0.1, 0.02])
         self.kp_root_lin = np.array([0000.0, 0000.0, 10000.0])
         self.kd_root_lin = np.array([500.0, 500.0, 500.0])
         self.kp_root_ang = np.array([200.0, 200.0, 20.0])
@@ -184,7 +186,7 @@ class RobotState:
         r = R.from_euler('z', self.root_euler[2])
         self.rot_mat_z = r.as_matrix()
 
-        self.root_lin_vel_rel = self.root_lin_vel @ self.rot_mat_z #body to world
+        self.root_lin_vel_rel = self.root_lin_vel @ self.rot_mat_z  # body to world
         self.root_ang_vel_rel = self.root_ang_vel @ self.rot_mat
 
         self.calf_contact_force = net_contact_force[calf_index].numpy()
@@ -202,8 +204,9 @@ class RobotState:
 
         # terrain estimation
         for i in range(4):
-            if self.counter == 0 or \
-                    (self.contact_target[i] and np.linalg.norm(self.foot_contact_force[i]) > contact_force_low):
+            if self.counter == 0 or (
+                self.contact_target[i] and np.linalg.norm(self.foot_contact_force[i]) > contact_force_low
+            ):
                 self.contact_pos_world[i] = self.foot_pos_world[i]
         contact_pos_abs = self.contact_pos_world @ self.rot_mat_z
         contact_pos_x = contact_pos_abs[:, 0]
@@ -231,16 +234,16 @@ class RobotState:
             visual_ros.append_data(self.root_lin_vel[i])
         for i in range(12):  # 39-50
             visual_ros.append_data(self.grf_last[i])
-        
-        quick_stop_ros.append_data(self.quick_stop_) #0
-        quick_stop_ros.append_data(self.gait_type) #1
-        for i in range(3): # 2-4
-            quick_stop_ros.append_data(self.root_pos_des_rel[i]) #
-        for i in range(3):#5-7
-            quick_stop_ros.append_data(self.root_pos_des_abs[i]) #
-        for i in range(3):#8-10
+
+        quick_stop_ros.append_data(self.quick_stop_)  # 0
+        quick_stop_ros.append_data(self.gait_type)  # 1
+        for i in range(3):  # 2-4
+            quick_stop_ros.append_data(self.root_pos_des_rel[i])  #
+        for i in range(3):  # 5-7
+            quick_stop_ros.append_data(self.root_pos_des_abs[i])  #
+        for i in range(3):  # 8-10
             quick_stop_ros.append_data(self.root_lin_vel_target[i])
-        for i in range(3):#11-13
+        for i in range(3):  # 11-13
             quick_stop_ros.append_data(self.root_acc_quick_stop[i])
 
     def update_user(self):
@@ -262,13 +265,29 @@ class RobotState:
                     self.gait_type = 1
                 else:
                     self.gait_type = 2
-                        #quick stop
-            self.quick_stop_=False
-            if self.joy_value[7] == 1:  
-                self.quick_stop_=True
-                if np.linalg.norm(self.root_pos_des_rel)<0.03:
-                    self.gait_type=0
-                
+
+                    # quick stop
+            self.quick_stop_ = False
+            if self.joy_value[7] == 1:
+                self.quick_stop_ = True
+                if np.linalg.norm(self.root_pos_des_rel) < 0.03 and np.linalg.norm(self.root_lin_vel_rel) < 0.15:
+                    self.gait_type = 0
+                    self.stop_type = 1
+
+                direct = self.root_pos_des_rel[0:2] * self.root_lin_vel_rel[0:2]
+                if np.linalg.norm(self.root_lin_vel_rel) < 0.15 and np.all(direct >= 0):
+                    self.gait_type = 0
+                    self.stop_type = 2
+                elif self.gait_type_last_stop == 0:
+                    self.gait_type = 0
+                    self.stop_type = 3
+                self.gait_type_last_stop = self.gait_type
+            else:
+                self.quick_stop_ = False
+                self.gait_changed_num = 0
+                self.stop_type = 0
+                self.gait_type_last_stop = 1
+
         else:
             self.root_lin_vel_target[:] = [0.0, 0.0, 0.0]
             self.root_ang_vel_target[:] = [0.0, 0.0, 0.0]
@@ -289,8 +308,7 @@ class RobotState:
 
     def update_plan(self):
         # contact plan
-        if self.counter == 0 or \
-                (self.gait_type != self.gait_type_last and np.all(self.foot_state != FOOT_SW)):
+        if self.counter == 0 or (self.gait_type != self.gait_type_last and np.all(self.foot_state != FOOT_SW)):
             self.foot_counter_st = np.zeros(4, dtype=float)
             self.foot_counter_sw = np.zeros(4, dtype=float)
             # TODO: add walking gait
@@ -326,15 +344,24 @@ class RobotState:
                 if self.foot_counter_st[i] >= count_per_phase:
                     foot_state_next[i] = FOOT_STD
             elif self.foot_state[i] == FOOT_STD:
-                if np.all(self.foot_state[self.foot_to_sw] == FOOT_STD) and \
-                        np.all(self.foot_state != FOOT_SW) and i in self.foot_to_sw:
+                if (
+                    np.all(self.foot_state[self.foot_to_sw] == FOOT_STD)
+                    and np.all(self.foot_state != FOOT_SW)
+                    and i in self.foot_to_sw
+                ):
                     foot_state_next[i] = FOOT_SW
             elif self.foot_state[i] == FOOT_SW:
-                if (self.foot_counter_sw[i] >= count_per_phase * 0.5 and
-                    np.linalg.norm(self.foot_contact_force[i]) >= contact_force_low) or \
-                        (self.foot_counter_sw[i] >= count_per_phase and
-                         np.linalg.norm(self.calf_contact_force[i]) >= contact_force_low) or \
-                        self.foot_counter_sw[i] >= count_per_phase * 3.0:
+                if (
+                    (
+                        self.foot_counter_sw[i] >= count_per_phase * 0.5
+                        and np.linalg.norm(self.foot_contact_force[i]) >= contact_force_low
+                    )
+                    or (
+                        self.foot_counter_sw[i] >= count_per_phase
+                        and np.linalg.norm(self.calf_contact_force[i]) >= contact_force_low
+                    )
+                    or self.foot_counter_sw[i] >= count_per_phase * 3.0
+                ):
                     foot_state_next[i] = FOOT_ST
                 if self.foot_counter_sw[i] >= count_per_phase * 3.0:
                     print("Dangerous switch at {}".format(i))
@@ -361,8 +388,7 @@ class RobotState:
                 sequence = walk_sequence_forward
             elif np.pi / 4 <= direction < np.pi * 3 / 4:
                 sequence = walk_sequence_left
-            elif np.pi * 3 / 4 <= direction <= np.pi or \
-                    -np.pi < direction < -np.pi * 3 / 4:
+            elif np.pi * 3 / 4 <= direction <= np.pi or -np.pi < direction < -np.pi * 3 / 4:
                 sequence = walk_sequence_backward
             elif -np.pi * 3 / 4 <= direction < -np.pi / 4:
                 sequence = walk_sequence_right
@@ -389,18 +415,22 @@ class RobotState:
         self.kd_foot_y = 0.1
         self.kf_foot_y = 0.3 if self.gait_type in [0, 1] else 0.1
         self.kp_pitch_z = 0.15
-        delta_foot_x = self.kp_foot_x * (self.root_pos[0] - self.root_pos_target[0]) + \
-                       self.kd_foot_x * (self.root_lin_vel_rel[0] - self.root_lin_vel_target[0]) + \
-                       self.kf_foot_x * self.root_lin_vel_rel[0]
-        delta_foot_y = self.kp_foot_y * (self.root_pos[1] - self.root_pos_target[1]) + \
-                       self.kd_foot_y * (self.root_lin_vel_rel[1] - self.root_lin_vel_target[1]) + \
-                       self.kf_foot_y * self.root_lin_vel_rel[1]
-        
-        if (self.quick_stop_):
-            self.body_height=-np.mean(default_foot_pos[:,2])
+        delta_foot_x = (
+            self.kp_foot_x * (self.root_pos[0] - self.root_pos_target[0])
+            + self.kd_foot_x * (self.root_lin_vel_rel[0] - self.root_lin_vel_target[0])
+            + self.kf_foot_x * self.root_lin_vel_rel[0]
+        )
+        delta_foot_y = (
+            self.kp_foot_y * (self.root_pos[1] - self.root_pos_target[1])
+            + self.kd_foot_y * (self.root_lin_vel_rel[1] - self.root_lin_vel_target[1])
+            + self.kf_foot_y * self.root_lin_vel_rel[1]
+        )
+
+        if self.quick_stop_:
+            self.body_height = -np.mean(default_foot_pos[:, 2])
             delta_foot_x = self.root_lin_vel_rel[0] * np.sqrt(self.body_height / 9.80)
             delta_foot_y = self.root_lin_vel_rel[1] * np.sqrt(self.body_height / 9.80)
-        
+
         # TODO: add height change based on terrain roll
         delta_foot_z = self.kp_pitch_z * np.sin(self.terrain_pitch) * np.array([-1, -1, 1, 1])
         delta_foot_z += -delta_foot_x * np.tan(self.terrain_pitch)
@@ -410,7 +440,7 @@ class RobotState:
         self.foot_pos_rel_target[:, 2] += delta_foot_z
         self.foot_pos_rel_target[:, 2] += -self.joy_value[2]
         self.foot_pos_abs_target = self.foot_pos_rel_target @ self.rot_mat_z.T
-        self.foot_pos_world_target =self.foot_pos_abs_target+ self.root_pos
+        self.foot_pos_world_target = self.foot_pos_abs_target + self.root_pos
 
     def update_command(self):
         # foot control
@@ -455,7 +485,7 @@ class RobotState:
         if np.any(self.foot_counter_sw >= count_per_phase):
             self.root_pos_delta_z += self.root_vel_delta_z * sim_dt
         else:
-            self.root_pos_delta_z *= (1 - root_height_filter_rate)
+            self.root_pos_delta_z *= 1 - root_height_filter_rate
         self.root_pos_target[2] += self.root_pos_delta_z
 
         # grf control
@@ -467,12 +497,12 @@ class RobotState:
         # merge torque
         for i in range(4):
             if self.contact_target[i]:
-                self.torque[3 * i:3 * i + 3] = torque_grf[3 * i:3 * i + 3]
+                self.torque[3 * i : 3 * i + 3] = torque_grf[3 * i : 3 * i + 3]
             else:
                 if self.foot_counter_sw[i] < count_per_phase:
-                    self.torque[3 * i:3 * i + 3] = torque_kin[3 * i:3 * i + 3]
+                    self.torque[3 * i : 3 * i + 3] = torque_kin[3 * i : 3 * i + 3]
                 else:
-                    self.torque[3 * i:3 * i + 3] = torque_down[3 * i:3 * i + 3]
+                    self.torque[3 * i : 3 * i + 3] = torque_down[3 * i : 3 * i + 3]
 
         # self.torque = torque_kin
         # self.torque = torque_down
@@ -489,24 +519,15 @@ class RobotState:
         # kp[0+6] = visual_ros.user_input.data[0]
         # kp[1+6] = visual_ros.user_input.data[1]
         # kp[2+6] = visual_ros.user_input.data[2]
-        # global dof_props
-        # dof_props["damping"][0+6] = visual_ros.user_input.data[3]
-        # dof_props["damping"][1+6] = visual_ros.user_input.data[4]
-        # dof_props["damping"][2+6] = visual_ros.user_input.data[5]
-        # gym.set_actor_dof_properties(env, actor_handle, dof_props)
-        # A = visual_ros.user_input.data[6]
-        # omega = visual_ros.user_input.data[7]
-        # joint_pos_target = default_dof_position.copy()
-        # move_index = int(np.clip(visual_ros.user_input.data[8], 0, 2))
-        # self.torque = kp * (joint_pos_target - self.joint_pos)
-        # for i in range(12):  # 75-86
-        #     visual_ros.append_data(joint_pos_target[i])
 
         if state_zero_torque:
             self.torque[:] = 0
 
-        self.torque = np.clip(self.torque, -dof_props["effort"] + self.joint_vel * dof_props["damping"],
-                              dof_props["effort"] + self.joint_vel * dof_props["damping"])
+        self.torque = np.clip(
+            self.torque,
+            -dof_props["effort"] + self.joint_vel * dof_props["damping"],
+            dof_props["effort"] + self.joint_vel * dof_props["damping"],
+        )
         torch_torque = torch.from_numpy(self.torque).to(torch.float)
         gym.set_dof_actuation_force_tensor(sim, gymtorch.unwrap_tensor(torch_torque))
 
@@ -547,7 +568,7 @@ class RobotState:
             gymutil.draw_line(p1.p, p2.p, color, gym, viewer, env)
 
         # draw root that projects on the ground
-        root_project_pose = gym.get_rigid_transform(env, 0) #0:base
+        root_project_pose = gym.get_rigid_transform(env, 0)  # 0:base
         root_project_pose.p.z = foot_radius + self.terrain_height
         gymutil.draw_lines(sphere_red, gym, viewer, env, root_project_pose)
 
@@ -558,19 +579,17 @@ class RobotState:
         root_est_project_pose.p.z = foot_radius + self.terrain_height
         gymutil.draw_lines(sphere_blue, gym, viewer, env, root_est_project_pose)
 
-        #self.foot_pos_world_target
+        # self.foot_pos_world_target
         foot_target = gymapi.Transform()
         foot_pos = gymapi.Transform()
         for i in range(4):
-            foot_target.p = gymapi.Vec3(*self.foot_pos_world_target[i,:])
+            foot_target.p = gymapi.Vec3(*self.foot_pos_world_target[i, :])
             foot_target.p.z = foot_radius + self.terrain_height
             gymutil.draw_lines(sphere_grey, gym, viewer, env, foot_target)
-            #self.foot_pos_abs#
+            # self.foot_pos_abs#
             # foot_pos.p=gymapi.Vec3(*self.foot_pos_world[i,:])
             # # foot_pos.p.z = foot_radius + self.terrain_height
             # gymutil.draw_lines(sphere_red, gym, viewer, env, foot_pos)
-
-
 
         # Draw GRF
         for i in range(4):
@@ -579,7 +598,7 @@ class RobotState:
             gymutil.draw_line(pi.p, pi.p + gymapi.Vec3(*(0.002 * self.foot_contact_force[i])), color, gym, viewer, env)
 
             # If in contact, draw red if not in contact draw blue
-            if (np.linalg.norm(self.foot_contact_force[i]) > 0):
+            if np.linalg.norm(self.foot_contact_force[i]) > 0:
                 gymutil.draw_lines(sphere_red, gym, viewer, env, pi)
             else:
                 gymutil.draw_lines(sphere_blue, gym, viewer, env, pi)
@@ -587,42 +606,51 @@ class RobotState:
     def _root_control(self):
         # TODO: fix the 180 degree bug
         euler_error = self.root_euler_target - self.root_euler
-        #test
-        if self.contact_target.sum()==4:
-            self.root_pos_des_rel=np.average(self.foot_pos_rel,axis=0)
-        elif (self.contact_target[0]==1 and self.contact_target[3]==1):
-            self.root_pos_des_rel=(self.foot_pos_rel[0,:]+self.foot_pos_rel[3,:])/2
-        elif (self.contact_target[1]==1 and self.contact_target[2]==1):
-            self.root_pos_des_rel=(self.foot_pos_rel[1,:]+self.foot_pos_rel[2,:])/2
+        # test
+        if self.contact_target.sum() == 4:
+            self.root_pos_des_rel = np.average(self.foot_pos_rel, axis=0)
+        elif self.contact_target[0] == 1 and self.contact_target[3] == 1:
+            self.root_pos_des_rel = (self.foot_pos_rel[0, :] + self.foot_pos_rel[3, :]) / 2
+        elif self.contact_target[1] == 1 and self.contact_target[2] == 1:
+            self.root_pos_des_rel = (self.foot_pos_rel[1, :] + self.foot_pos_rel[2, :]) / 2
         else:
-            self.root_pos_des_rel=self.root_pos_des_rel
-        self.root_pos_des_abs=self.rot_mat_z@self.root_pos_des_rel+self.root_pos
-        #test end
+            self.root_pos_des_rel = self.root_pos_des_rel
+        self.root_pos_des_abs = self.rot_mat_z @ self.root_pos_des_rel + self.root_pos
+        # test end
         root_acc_target = np.zeros(6)
-        if(self.quick_stop_):
-            if self.contact_target.sum()==4:
-                self.root_pos_des_rel=np.average(self.foot_pos_rel,axis=0)
-            elif (self.contact_target[0]==1 and self.contact_target[3]==1):
-                self.root_pos_des_rel=(self.foot_pos_rel[0,:]+self.foot_pos_rel[3,:])/2
-            elif (self.contact_target[1]==1 and self.contact_target[2]==1):
-                self.root_pos_des_rel=(self.foot_pos_rel[1,:]+self.foot_pos_rel[2,:])/2
+        if self.quick_stop_:
+            if self.contact_target.sum() == 4:
+                self.root_pos_des_rel = np.average(self.foot_pos_rel, axis=0)
+            elif self.contact_target[0] == 1 and self.contact_target[3] == 1:
+                self.root_pos_des_rel = (self.foot_pos_rel[0, :] + self.foot_pos_rel[3, :]) / 2
+            elif self.contact_target[1] == 1 and self.contact_target[2] == 1:
+                self.root_pos_des_rel = (self.foot_pos_rel[1, :] + self.foot_pos_rel[2, :]) / 2
             else:
-                self.root_pos_des_rel=self.root_pos_des_rel
-            self.root_pos_des_rel[2]=0
-            self.root_lin_vel_target[0] = np.sqrt(self.body_height/ 9.80) * self.root_pos_des_rel[0]
-            self.root_lin_vel_target[1] = np.sqrt(self.body_height/ 9.80) * self.root_pos_des_rel[1]
-            self.root_acc_quick_stop[0] = -9.81 / self.body_height * self.root_pos_des_rel[0]
-            self.root_acc_quick_stop[1] = -9.81 / self.body_height * self.root_pos_des_rel[1]
-            self.root_acc_quick_stop[2]=0
-            root_acc_target[0:3] += self.rot_mat_z@self.root_acc_quick_stop
+                self.root_pos_des_rel = self.root_pos_des_rel
+            self.root_pos_des_rel[2] = 0
+
+            if not np.array_equal(self.contact_target_last, self.contact_target):
+                self.gait_changed_num += 1
+                print("self.gait_changed_num:", self.gait_changed_num)
+                print("self.stop_type:", self.stop_type)
+
+            if self.gait_changed_num >= 2:
+                self.root_lin_vel_target[0] = np.sqrt(9.80 / self.body_height) * self.root_pos_des_rel[0]
+                self.root_lin_vel_target[1] = np.sqrt(9.80 / self.body_height) * self.root_pos_des_rel[1]
+                self.root_acc_quick_stop[0] = -9.81 / self.body_height * self.root_pos_des_rel[0]
+                self.root_acc_quick_stop[1] = -9.81 / self.body_height * self.root_pos_des_rel[1]
+                self.root_acc_quick_stop[2] = 0
+                root_acc_target[0:3] += self.rot_mat_z @ self.root_acc_quick_stop
+            self.contact_target_last = self.contact_target.copy()
 
             # self.root_pos_target = self.root_pos + f.rotation_matrix_body_to_world * self.root_lin_vel_target * 0.01 +
-    #                 0.5 * root_acc_target.segment(0, 3) * 0.002 * 0.002;
-    # root_pos_target_.segment(0, 2) = root_pos_body.segment(0, 2);
+        #                 0.5 * root_acc_target.segment(0, 3) * 0.002 * 0.002;
+        # root_pos_target_.segment(0, 2) = root_pos_body.segment(0, 2);
 
         root_acc_target[0:3] += self.kp_root_lin * (self.root_pos_target - self.root_pos)
-        root_acc_target[0:3] += (self.kd_root_lin * (self.root_lin_vel_target - self.root_lin_vel_rel)) @ \
-                                self.rot_mat_z.T
+        root_acc_target[0:3] += (
+            self.kd_root_lin * (self.root_lin_vel_target - self.root_lin_vel_rel)
+        ) @ self.rot_mat_z.T
         root_acc_target[3:6] += self.kp_root_ang * euler_error
         root_acc_target[3:6] += self.kd_root_ang * (self.root_ang_vel_target - self.root_ang_vel_rel)
 
@@ -645,18 +673,20 @@ class RobotState:
         inv_inertia_mat = np.zeros([6, 12])
         inv_inertia_mat[0:3, :] = np.tile(np.eye(3), 4)
         for i in range(4):
-            inv_inertia_mat[3:6, i * 3: i * 3 + 3] = self.rot_mat_z.T @ skew(self.foot_pos_abs[i, :] - com_offset)
+            inv_inertia_mat[3:6, i * 3 : i * 3 + 3] = self.rot_mat_z.T @ skew(self.foot_pos_abs[i, :] - com_offset)
 
         acc_weight = np.array([1.0, 1.0, 1.0, 10.0, 10.0, 10.0])
         grf_weight = 1e-3
         grf_diff_weight = 1e-2
-        grf = self.qp.casadi_solve(inv_inertia_mat,
-                                   root_acc_target,
-                                   acc_weight,
-                                   grf_weight,
-                                   grf_diff_weight,
-                                   self.grf_last,
-                                   self.contact_target)
+        grf = self.qp.casadi_solve(
+            inv_inertia_mat,
+            root_acc_target,
+            acc_weight,
+            grf_weight,
+            grf_diff_weight,
+            self.grf_last,
+            self.contact_target,
+        )
         self.grf_last = grf.flatten()  # Store this solve to use in the next solve
         return grf
 
@@ -664,27 +694,39 @@ class RobotState:
         foot_pos_target = np.zeros([4, 3])
 
         for i in range(4):
-            bezier_x = np.array([foot_pos_start[i, 0],
-                                 foot_pos_start[i, 0],
-                                 foot_pos_final[i, 0],
-                                 foot_pos_final[i, 0],
-                                 foot_pos_final[i, 0]])
+            bezier_x = np.array(
+                [
+                    foot_pos_start[i, 0],
+                    foot_pos_start[i, 0],
+                    foot_pos_final[i, 0],
+                    foot_pos_final[i, 0],
+                    foot_pos_final[i, 0],
+                ]
+            )
             foot_pos_target[i, 0] = bezier_curve(bezier_time[i], bezier_x)
 
         for i in range(4):
-            bezier_y = np.array([foot_pos_start[i, 1],
-                                 foot_pos_start[i, 1],
-                                 foot_pos_final[i, 1],
-                                 foot_pos_final[i, 1],
-                                 foot_pos_final[i, 1]])
+            bezier_y = np.array(
+                [
+                    foot_pos_start[i, 1],
+                    foot_pos_start[i, 1],
+                    foot_pos_final[i, 1],
+                    foot_pos_final[i, 1],
+                    foot_pos_final[i, 1],
+                ]
+            )
             foot_pos_target[i, 1] = bezier_curve(bezier_time[i], bezier_y)
 
         for i in range(4):
-            bezier_z = np.array([foot_pos_start[i, 2],
-                                 foot_pos_start[i, 2],
-                                 foot_pos_final[i, 2],
-                                 foot_pos_final[i, 2],
-                                 foot_pos_final[i, 2]])
+            bezier_z = np.array(
+                [
+                    foot_pos_start[i, 2],
+                    foot_pos_start[i, 2],
+                    foot_pos_final[i, 2],
+                    foot_pos_final[i, 2],
+                    foot_pos_final[i, 2],
+                ]
+            )
             bezier_z[1] += 0.0
             bezier_z[2] += np.minimum(0.4, 3 * (default_root_state[2] + self.joy_value[2] - self.gait_stop_height))
             foot_pos_target[i, 2] = bezier_curve(bezier_time[i], bezier_z)
@@ -693,9 +735,7 @@ class RobotState:
 
 
 def skew(v):
-    return np.array([[0, -v[2], v[1]],
-                     [v[2], 0, -v[0]],
-                     [-v[1], v[0], 0]])
+    return np.array([[0, -v[2], v[1]], [v[2], 0, -v[0]], [-v[1], v[0], 0]])
 
 
 def bezier_curve(alpha, param):
@@ -827,17 +867,18 @@ default_root_state = init_root_state.copy()
 default_root_state[0:3] = [0.0, 0.0, 0.45]
 
 knee_sign = np.sign(dof_props["lower"] + dof_props["upper"])
-default_dof_position = np.array([0.0, 0.6, 1.2,
-                                 0.0, 0.6, 1.2,
-                                 0.0, 0.6, 1.2,
-                                 0.0, 0.6, 1.2]) * knee_sign
+default_dof_position = np.array([0.0, 0.6, 1.2, 0.0, 0.6, 1.2, 0.0, 0.6, 1.2, 0.0, 0.6, 1.2]) * knee_sign
 
 default_dof_velocity = np.zeros(12)
 
-default_foot_pos = np.array([[+0.2375, +0.12, -default_root_state[2] - 0.01],
-                             [+0.2375, -0.12, -default_root_state[2] - 0.01],
-                             [-0.2375, +0.12, -default_root_state[2] - 0.01],
-                             [-0.2375, -0.12, -default_root_state[2] - 0.01]])
+default_foot_pos = np.array(
+    [
+        [+0.2375, +0.12, -default_root_state[2] - 0.01],
+        [+0.2375, -0.12, -default_root_state[2] - 0.01],
+        [-0.2375, +0.12, -default_root_state[2] - 0.01],
+        [-0.2375, -0.12, -default_root_state[2] - 0.01],
+    ]
+)
 default_foot_pos[:] += com_offset
 
 init_terrain_state = np.zeros(13)
@@ -914,8 +955,7 @@ dof_velocity = dof_state[:, 1]
 attractor_active = False
 attractor_properties = gymapi.AttractorProperties()
 attractor_properties.rigid_handle = gym.get_actor_root_rigid_body_handle(env, actor_handle)
-attractor_properties.target = gymapi.Transform(gymapi.Vec3(*init_root_state[0:3]),
-                                               gymapi.Quat(*init_root_state[3:7]))
+attractor_properties.target = gymapi.Transform(gymapi.Vec3(*init_root_state[0:3]), gymapi.Quat(*init_root_state[3:7]))
 attractor_properties.stiffness = 1e6 if attractor_active else 0
 attractor_properties.damping = 1e4 if attractor_active else 0
 attractor_properties.axes = gymapi.AXIS_ALL
@@ -930,11 +970,11 @@ robot_state.reset()
 
 # simulate
 while not gym.query_viewer_has_closed(viewer):
-    begin_time=time.time()
+    begin_time = time.time()
     # step the physics
     gym.simulate(sim)
     gym.fetch_results(sim, True)
-    
+
     cam_pos.x = 0.0 + robot_state.root_pos[0]
     cam_pos.y = 1.0 + robot_state.root_pos[1]
     cam_target.x = 0.0 + robot_state.root_pos[0]
@@ -1030,10 +1070,10 @@ while not gym.query_viewer_has_closed(viewer):
 
     # Wait for dt to elapse in real time.
     # This synchronizes the physics simulation with the rendering rate.
-    end_time=time.time()
+    end_time = time.time()
     # print("time",end_time-begin_time)
-    while end_time<begin_time+sim_dt:
-        end_time=time.time()
+    while end_time < begin_time + sim_dt:
+        end_time = time.time()
 
 print("Done")
 
