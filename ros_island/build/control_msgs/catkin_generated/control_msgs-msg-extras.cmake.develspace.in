@@ -1,0 +1,2 @@
+set(control_msgs_MESSAGE_FILES "/home/yu/ros_island/control_msgs/msg/motion_control/foot_state.msg;/home/yu/ros_island/control_msgs/msg/motion_control/foot_cmd.msg;/home/yu/ros_island/control_msgs/msg/motion_control/imu_data.msg;/home/yu/ros_island/control_msgs/msg/motion_control/joint_cmd.msg;/home/yu/ros_island/control_msgs/msg/motion_control/joint_state.msg;/home/yu/ros_island/control_msgs/msg/motion_control/trunk_cmd.msg;/home/yu/ros_island/control_msgs/msg/motion_control/trunk_state.msg")
+set(control_msgs_SERVICE_FILES "")
