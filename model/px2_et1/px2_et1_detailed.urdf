@@ -1,0 +1,1009 @@
+<?xml version="1.0"?>
+<robot name="pxi_robot">
+  <material name="BlueGrey">
+    <color rgba="0.3 0.3 0.3 0.5" />
+  </material>
+  <material name="White">
+    <color rgba="1.0 1.0 1.0 1.0" />
+  </material>
+  <material name="red">
+    <color rgba="0.8 0.0 0.0 1.0" />
+  </material>
+
+  <link name="base_link">
+    <!-- No head  -->
+    <!-- <inertial>
+      <origin
+          rpy="0 0 0"
+          xyz="0.016998 -0.000331 0.001318" />
+      <mass value="25.25" />
+      <inertia
+          ixx="278395.26E-06"
+          ixy="152.889E-06"
+          ixz="22651.99E-06"
+          iyy="846723.829E-06"
+          iyz="-3102.74E-06"
+          izz="820125.4E-06" />
+    </inertial>
+    <visual>
+      <origin
+          rpy="0 0 0"
+          xyz="0 0 0" />
+      <geometry>
+        <mesh filename="package://px_control_sim/description/meshes/quadruped/px2_et1/base_link_withouthead.stl" />
+      </geometry>
+      <material name="White" />
+    </visual> -->
+    <!-- No head  -->
+
+    <!--  With head  -->
+    <inertial>
+      <origin
+          rpy="0 0 0"
+          xyz="0.047667 -0.000272 0.063558" />  <!-- 0.047667 -0.000272 0.063558  -0.005 -0.005272 0.063558-->
+
+      <mass value="29.96" />
+      <inertia
+          ixx="1025387.025E-06"
+          ixy="424.514E-06"
+          ixz="346767.5E-06"
+          iyy="1741046.826E-06"
+          iyz="-2423.749E-06"
+          izz="1007097.4E-06"/>
+    </inertial>
+    <visual>
+      <origin
+          rpy="0 0 0"
+          xyz="0 0 0" />
+      <geometry>
+	      <mesh filename="package://px_control_sim/description/meshes/quadruped/px2_et1/base_link.stl" />
+      </geometry>
+      <material name="White" />
+    </visual>
+    <!--  With head  -->
+    <collision>
+      <origin
+          rpy="0 0 0"
+          xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://px_control_sim/description/meshes/quadruped/px2_et1/base_link.stl" />
+      </geometry>
+    </collision>
+  </link>
+
+
+
+  <!-- fr leg and foot  -->
+  <joint
+      name="fr1_j"
+      type="revolute">
+    <origin
+        rpy="0 0 0"
+        xyz="0.2375 -0.077 0"/>
+    <limit
+        effort="600"
+        lower="-0.7"
+        upper="0.7"
+        velocity="60"/>
+    <dynamics
+        damping="0.0"
+        friction="0.0"/>
+    <parent link="base_link"/>
+    <child link="fr1_l"/>
+    <axis xyz="1 0 0"/>
+  </joint>
+
+  <link name="fr1_l">
+    <inertial>
+      <origin rpy="0.0 0.0 0.0"  xyz="0.00354500 -0.02670851 0.01474453"/>
+       <mass value="2.43400000"/>
+       <inertia
+       ixx="0.00321402"
+       ixy="-0.00033409"
+       ixz="0.00012876"
+       iyy="0.00479807"
+       iyz="-0.00091474"
+       izz="0.00231670"/>
+   </inertial>
+
+
+    <visual>
+      <origin
+          rpy="0 0 0"
+          xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://px_control_sim/description/meshes/quadruped/px2_et1/fr1_l.stl" />
+      </geometry>
+      <material name="BlueGrey"/>
+    </visual>
+  </link>
+
+
+  <joint
+      name="fr2_j"
+      type="revolute">
+    <origin
+        rpy="0 0 0"
+        xyz="0 -0.1135 0"/>
+    <limit
+        effort="600"
+        lower="-2.68"
+        upper="0.55"
+        velocity="60"/>
+    <dynamics
+        damping="0.0"
+        friction="0.0"/>
+    <parent link="fr1_l"/>
+    <child link="fr2_l"/>
+    <axis xyz="0 1 0"/>
+  </joint>
+
+  <link name="fr2_l">
+    <inertial>
+      <origin rpy="0.0 0.0 0.0"  xyz="-0.01006663 0.07000000 -0.03263688"/>
+       <mass value="3.52777512"/>
+       <inertia
+       ixx="0.02304818"
+       ixy="-0.00812031"
+       ixz="0.00857186"
+       iyy="0.01819604"
+       iyz="0.01150724"
+       izz="0.01694995"/>
+   </inertial>
+
+
+
+    <visual>
+      <origin
+          rpy="0 0 0"
+          xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://px_control_sim/description/meshes/quadruped/px2_et1/fr2_l.stl" />
+      </geometry>
+      <material name="BlueGrey"/>
+    </visual>
+    <collision>
+      <origin
+          rpy="0 0 0"
+          xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://px_control_sim/description/meshes/quadruped/px2_et1/fr2_l.stl" />
+      </geometry>
+    </collision>
+  </link>
+
+
+  <joint
+      name="fr3_j"
+      type="revolute">
+    <origin
+        rpy="0 0 0"
+        xyz="0 0 -0.226"/>
+    <limit
+        effort="600"
+        lower="0"
+        upper="2.44"
+        velocity="60"/>
+    <dynamics
+        damping="0.0"
+        friction="0.0"/>
+    <parent link="fr2_l"/>
+    <child link="fr3_l"/>
+    <axis xyz="0 1 0"/>
+  </joint>
+
+  <link name="fr3_l">
+    <inertial>
+      <origin rpy="0.0 0.0 0.0"  xyz="0.02000000 0.02000000 -0.14000000"/>
+       <mass value="0.65000000"/>
+       <inertia
+       ixx="0.04129213"
+       ixy="0.00174881"
+       ixz="-0.00079350"
+       iyy="0.00713905"
+       iyz="0.01553705"
+       izz="0.03433171"/>
+   </inertial>
+
+
+    <visual>
+      <origin
+          rpy="0 0 0"
+          xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://px_control_sim/description/meshes/quadruped/px2_et1/fr3_l.stl" />
+      </geometry>
+      <material name="BlueGrey"/>
+    </visual>
+    <collision>
+      <origin
+          rpy="0 0 0"
+          xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://px_control_sim/description/meshes/quadruped/px2_et1/fr3_l.stl" />
+      </geometry>
+    </collision>
+  </link>
+
+
+  <joint
+      name="fr_foot_fixed"
+      type="fixed">
+    <origin
+        rpy="0 0 0"
+        xyz="0 0 -0.310"/>
+    <parent link="fr3_l"/>
+    <child link="fr_foot"/>
+  </joint>
+
+  <link name="fr_foot">
+    <visual>
+      <origin
+          rpy="0 0 0"
+          xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://px_control_sim/description/meshes/quadruped/px2_et1/fr_foot.stl" />
+      </geometry>
+      <material name="red"/>
+    </visual>
+    <collision>
+      <origin
+          rpy="0 0 0"
+          xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://px_control_sim/description/meshes/quadruped/px2_et1/fr_foot.stl" />
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.06"/>
+      <inertia
+          ixx="8.64E-05"
+          ixy="0.0"
+          ixz="0.0"
+          iyy="8.64E-05"
+          iyz="0.0"
+          izz="8.64E-05"/>
+    </inertial>
+  </link>
+
+
+
+
+  <!-- FH leg and foot  -->
+  <joint
+      name="fl1_j"
+      type="revolute">
+    <origin
+        rpy="0 0 0"
+        xyz="0.2375 0.077 0"/>
+    <limit
+        effort="600"
+        lower="-0.7"
+        upper="0.7"
+        velocity="60"/>
+    <dynamics
+        damping="0.0"
+        friction="0.0"/>
+    <parent link="base_link"/>
+    <child link="fl1_l"/>
+    <axis xyz="1 0 0"/>
+  </joint>
+
+  <link name="fl1_l">
+    <inertial>
+      <origin rpy="0.0 0.0 0.0"  xyz="0.00354500 0.02767545 0.01481412"/>
+       <mass value="2.43400000"/>
+       <inertia
+       ixx="0.00346267"
+       ixy="0.00034243"
+       ixz="0.00013490"
+       iyy="0.00479307"
+       iyz="0.00102061"
+       izz="0.00218870"/>
+   </inertial>
+
+    <visual>
+      <origin
+          rpy="0 0 0"
+          xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://px_control_sim/description/meshes/quadruped/px2_et1/fl1_l.stl" />
+      </geometry>
+      <material name="BlueGrey"/>
+    </visual>
+  </link>
+
+
+  <joint
+      name="fl2_j"
+      type="revolute">
+    <origin
+        rpy="0 0 0"
+        xyz="0 0.1135 0"/>
+    <limit
+        effort="600"
+        lower="-2.68"
+        upper="0.55"
+        velocity="60"/>
+    <dynamics
+        damping="0.0"
+        friction="0.0"/>
+    <parent link="fl1_l"/>
+    <child link="fl2_l"/>
+    <axis xyz="0 1 0"/>
+  </joint>
+
+  <link name="fl2_l">
+    <inertial>
+      <origin rpy="0.0 0.0 0.0"  xyz="-0.00868983 -0.06626073 -0.02000000"/>
+       <mass value="3.41600002"/>
+       <inertia
+       ixx="0.02373014"
+       ixy="0.00294241"
+       ixz="0.00414242"
+       iyy="0.01686029"
+       iyz="-0.01120326"
+       izz="0.00904576"/>
+   </inertial>
+
+    <visual>
+      <origin
+          rpy="0 0 0"
+          xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://px_control_sim/description/meshes/quadruped/px2_et1/fl2_l.stl" />
+      </geometry>
+      <material name="BlueGrey"/>
+    </visual>
+    <collision>
+      <origin
+          rpy="0 0 0"
+          xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://px_control_sim/description/meshes/quadruped/px2_et1/fl2_l.stl" />
+      </geometry>
+    </collision>
+  </link>
+
+
+  <joint
+      name="fl3_j"
+      type="revolute">
+    <origin
+        rpy="0 0 0"
+        xyz="0 0 -0.226"/>
+    <limit
+        effort="600"
+        lower="0"
+        upper="2.44"
+        velocity="60"/>
+    <dynamics
+        damping="0.0"
+        friction="0.0"/>
+    <parent link="fl2_l"/>
+    <child link="fl3_l"/>
+    <axis xyz="0 1 0"/>
+  </joint>
+
+  <link name="fl3_l">
+    <inertial>
+      <origin rpy="0.0 0.0 0.0"  xyz="-0.02000000 -0.02000000 -0.14000000"/>
+       <mass value="0.65000000"/>
+       <inertia
+       ixx="0.04869590"
+       ixy="-0.00533855"
+       ixz="-0.00109553"
+       iyy="0.00257770"
+       iyz="-0.00958912"
+       izz="0.04733802"/>
+   </inertial>
+    <visual>
+      <origin
+          rpy="0 0 0"
+          xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://px_control_sim/description/meshes/quadruped/px2_et1/fl3_l.stl" />
+      </geometry>
+      <material name="BlueGrey"/>
+    </visual>
+    <collision>
+      <origin
+          rpy="0 0 0"
+          xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://px_control_sim/description/meshes/quadruped/px2_et1/fl3_l.stl" />
+      </geometry>
+    </collision>
+  </link>
+
+
+  <joint
+    name="fl_foot_fixed"
+    type="fixed">
+    <origin
+      rpy="0 0 0"
+      xyz="0 0 -0.310"/>
+    <parent link="fl3_l"/>
+    <child link="fl_foot"/>
+  </joint>
+
+  <link name="fl_foot">
+    <visual>
+      <origin
+          rpy="0 0 0"
+          xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://px_control_sim/description/meshes/quadruped/px2_et1/fl_foot.stl" />
+      </geometry>
+      <material name="red"/>
+    </visual>
+    <collision>
+      <origin
+          rpy="0 0 0"
+          xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://px_control_sim/description/meshes/quadruped/px2_et1/fl_foot.stl" />
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.06"/>
+      <inertia
+          ixx="8.64E-05"
+          ixy="0.0"
+          ixz="0.0"
+          iyy="8.64E-05"
+          iyz="0.0"
+          izz="8.64E-05" />
+    </inertial>
+  </link>
+
+
+
+
+  <!-- HR leg and foot  -->
+  <joint
+      name="hr1_j"
+      type="revolute">
+    <origin
+        rpy="0 0 0"
+        xyz="-0.2375 -0.077 0"/>
+    <limit
+        effort="600"
+        lower="-0.7"
+        upper="0.7"
+        velocity="60"/>
+    <dynamics
+        damping="0.0"
+        friction="0.0"/>
+    <parent link="base_link"/>
+    <child link="hr1_l"/>
+    <axis xyz="1 0 0"/>
+  </joint>
+
+  <link name="hr1_l">
+    <inertial>
+      <origin rpy="0.0 0.0 0.0"  xyz="-0.00354500 -0.02835054 -0.00906841"/>
+       <mass value="2.43400000"/>
+       <inertia
+       ixx="0.00339356"
+       ixy="0.00034826"
+       ixz="0.00007117"
+       iyy="0.00512706"
+       iyz="0.00060306"
+       izz="0.00209664"/>
+   </inertial>
+    <visual>
+      <origin
+          rpy="0 0 0"
+          xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://px_control_sim/description/meshes/quadruped/px2_et1/hr1_l.stl" />
+      </geometry>
+      <material name="BlueGrey"/>
+    </visual>
+  </link>
+
+
+  <joint
+      name="hr2_j"
+      type="revolute">
+    <origin
+        rpy="0 0 0"
+        xyz="0 -0.1135 0"/>
+    <limit
+        effort="600"
+        lower="0.0"
+        upper="3.14"
+        velocity="60"/>
+    <dynamics
+        damping="0.0"
+        friction="0.0"/>
+    <parent link="hr1_l"/>
+    <child link="hr2_l"/>
+    <axis xyz="0 1 0"/>
+  </joint>
+
+  <link name="hr2_l">
+    <inertial>
+      <origin rpy="0.0 0.0 0.0"  xyz="-0.01915785 0.07000000 -0.02319471"/>
+       <mass value="3.43466580"/>
+       <inertia
+       ixx="0.01329830"
+       ixy="0.00436303"
+       ixz="-0.00303999"
+       iyy="0.00647249"
+       iyz="0.00623755"
+       izz="0.01107863"/>
+   </inertial>
+
+    <visual>
+      <origin
+          rpy="0 0 0"
+          xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://px_control_sim/description/meshes/quadruped/px2_et1/hr2_l.stl" />
+      </geometry>
+      <material name="BlueGrey"/>
+    </visual>
+    <collision>
+      <origin
+          rpy="0 0 0"
+          xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://px_control_sim/description/meshes/quadruped/px2_et1/hr2_l.stl" />
+      </geometry>
+    </collision>
+  </link>
+
+
+  <joint
+      name="hr3_j"
+      type="revolute">
+    <origin
+        rpy="0 0 0"
+        xyz="0 0 -0.255"/>
+    <limit
+        effort="600"
+        lower="-2.68"
+        upper="0.48"
+        velocity="60"/>
+    <dynamics
+        damping="0.00"
+        friction="0.0"/>
+    <parent link="hr2_l"/>
+    <child link="hr3_l"/>
+    <axis xyz="0 1 0"/>
+  </joint>
+
+  <link name="hr3_l">
+    <inertial>
+      <origin rpy="0.0 0.0 0.0"  xyz="0.02000000 0.02000000 -0.14000000"/>
+       <mass value="0.68133420"/>
+       <inertia
+       ixx="0.04367088"
+       ixy="-0.00389027"
+       ixz="0.00057731"
+       iyy="0.00129519"
+       iyz="0.00634106"
+       izz="0.04308406"/>
+   </inertial>
+
+
+
+
+    <visual>
+      <origin
+          rpy="0 0 0"
+          xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://px_control_sim/description/meshes/quadruped/px2_et1/hr3_l.stl" />
+      </geometry>
+      <material name="BlueGrey"/>
+    </visual>
+    <collision>
+      <origin
+          rpy="0 0 0"
+          xyz="0 0 0"/>
+      <geometry>
+         <mesh filename="package://px_control_sim/description/meshes/quadruped/px2_et1/hr3_l.stl" />
+      </geometry>
+    </collision>
+  </link>
+
+
+
+
+  <joint
+      name="hr_foot_fixed"
+      type="fixed">
+    <origin
+        rpy="0 0 0"
+        xyz="0 0 -0.310"/>
+    <parent link="hr3_l"/>
+    <child link="hr_foot"/>
+  </joint>
+
+
+  <link name="hr_foot">
+    <visual>
+      <origin
+          rpy="0 0 0"
+          xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://px_control_sim/description/meshes/quadruped/px2_et1/hr_foot.stl" />
+      </geometry>
+      <material name="red"/>
+    </visual>
+    <collision>
+      <origin
+          rpy="0 0 0"
+          xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://px_control_sim/description/meshes/quadruped/px2_et1/hr_foot.stl" />
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.06"/>
+      <inertia
+          ixx="8.64E-05"
+          ixy="0.0"
+          ixz="0.0"
+          iyy="8.64E-05"
+          iyz="0.0"
+          izz="8.64E-05"/>
+    </inertial>
+  </link>
+
+
+
+  <!-- HL leg and foot  -->
+  <joint
+      name="hl1_j"
+      type="revolute">
+    <origin rpy="0 0 0"xyz="-0.2375 0.077 0"/>
+    <limit
+        effort="600"
+        lower="-0.7"
+        upper="0.7"
+        velocity="60"/>
+    <dynamics
+        damping="0"
+        friction="0"/>
+    <parent link="base_link"/>
+    <child link="hl1_l"/>
+    <axis xyz="1 0 0"/>
+  </joint>
+
+  <link name="hl1_l">
+    <inertial>
+      <origin rpy="0.0 0.0 0.0"  xyz="-0.00354500 0.01810231 -0.00375517"/>
+       <mass value="2.43400000"/>
+       <inertia
+       ixx="0.00209447"
+       ixy="-0.00025983"
+       ixz="0.00003948"
+       iyy="0.00529290"
+       iyz="-0.00012167"
+       izz="0.00325537"/>
+   </inertial>
+
+    <visual>
+      <origin
+          rpy="0 0 0"
+          xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://px_control_sim/description/meshes/quadruped/px2_et1/hl1_l.stl" />
+      </geometry>
+      <material name="BlueGrey"/>
+    </visual>
+  </link>
+
+
+  <joint
+      name="hl2_j"
+      type="revolute">
+    <origin
+        rpy="0 0 0"
+        xyz="0 0.1135 0"/>
+    <limit
+        effort="600"
+        lower="0.0"
+        upper="3.14"
+        velocity="60"/>
+    <dynamics
+        damping="0.0"
+        friction="0.0"/>
+    <parent link="hl1_l"/>
+    <child link="hl2_l"/>
+    <axis xyz="0 1 0"/>
+  </joint>
+
+  <link name="hl2_l">
+    <inertial>
+      <origin rpy="0.0 0.0 0.0"  xyz="-0.00316594 -0.07000000 -0.03437227"/>
+       <mass value="3.50883670"/>
+       <inertia
+       ixx="0.02277768"
+       ixy="-0.01099773"
+       ixz="-0.01287567"
+       iyy="0.02575791"
+       iyz="-0.01124877"
+       izz="0.02219645"/>
+   </inertial>
+
+    <visual>
+      <origin
+          rpy="0 0 0"
+          xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://px_control_sim/description/meshes/quadruped/px2_et1/hl2_l.stl" />
+      </geometry>
+      <material name="BlueGrey"/>
+    </visual>
+    <collision>
+      <origin
+          rpy="0 0 0"
+          xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://px_control_sim/description/meshes/quadruped/px2_et1/hl2_l.stl" />
+      </geometry>
+    </collision>
+  </link>
+
+
+  <joint
+      name="hl3_j"
+      type="revolute">
+    <origin
+        rpy="0 0 0"
+        xyz="0 0 -0.255"/>
+    <limit
+        effort="600"
+        lower="-2.68"
+        upper="0.48"
+        velocity="60"/>
+    <dynamics
+        damping="0.0"
+        friction="0.0"/>
+    <parent link="hl2_l"/>
+    <child link="hl3_l"/>
+    <axis xyz="0 1 0"/>
+  </joint>
+
+  <link name="hl3_l">
+    <inertial>
+      <origin rpy="0.0 0.0 0.0"  xyz="-0.01675929 -0.02000000 -0.14000000"/>
+       <mass value="0.67000000"/>
+       <inertia
+       ixx="0.03800121"
+       ixy="0.00335080"
+       ixz="0.00104929"
+       iyy="0.00371807"
+       iyz="-0.01083723"
+       izz="0.03493201"/>
+   </inertial>
+
+    <visual>
+      <origin
+          rpy="0 0 0"
+          xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://px_control_sim/description/meshes/quadruped/px2_et1/hl3_l.stl" />
+      </geometry>
+      <material name="BlueGrey"/>
+    </visual>
+    <collision>
+      <origin
+          rpy="0 0 0"
+          xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://px_control_sim/description/meshes/quadruped/px2_et1/hl3_l.stl" />
+      </geometry>
+    </collision>
+  </link>
+
+
+
+
+  <joint
+      name="hl_foot_fixed"
+      type="fixed">
+    <origin
+        rpy="0 0 0"
+        xyz="0 0 -0.310"/>
+    <parent link="hl3_l"/>
+    <child link="hl_foot"/>
+  </joint>
+
+
+  <link name="hl_foot">
+    <visual>
+      <origin
+          rpy="0 0 0"
+          xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://px_control_sim/description/meshes/quadruped/px2_et1/hl_foot.stl" />
+      </geometry>
+      <material name="red"/>
+    </visual>
+    <collision>
+      <origin
+          rpy="0 0 0"
+          xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://px_control_sim/description/meshes/quadruped/px2_et1/hl_foot.stl" />
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.06"/>
+      <inertia
+          ixx="8.64E-05"
+          ixy="0.0"
+          ixz="0.0"
+          iyy="8.64E-05"
+          iyz="0.0"
+          izz="8.64E-05"/>
+    </inertial>
+  </link>
+
+
+  <!-- gazebo config -->
+  <!-- fl leg -->
+  <gazebo reference="fl1_l">
+    <mu1>0.2</mu1>
+    <mu2>0.2</mu2>
+    <material>Gazebo/DarkGrey</material>
+  </gazebo>
+  <gazebo reference="fl2_l">
+    <mu1>0.2</mu1>
+    <mu2>0.2</mu2>
+    <self_collide>0</self_collide>
+    <material>Gazebo/DarkGrey</material>
+    <kp value="1000000.0"/>
+    <kd value="1.0"/>
+  </gazebo>
+  <gazebo reference="fl3_l">
+    <mu1>0.2</mu1>
+    <mu2>0.2</mu2>
+    <self_collide>0</self_collide>
+  </gazebo>
+  <gazebo reference="fl_foot">
+    <selfCollide>false</selfCollide>
+    <material>Gazebo/DarkGrey</material>
+    <mu1>0.6</mu1>
+    <mu2>0.6</mu2>
+    <kp value="1000000.0"/>
+    <kd value="1.0"/>
+    <fdir1>0 0 0</fdir1>
+    <maxVel>0.0</maxVel>
+    <minDepth>0.001</minDepth>
+    <sensor name="fl_foot_contact_sensor"type="contact">
+      <always_on>true</always_on>
+      <update_rate>500</update_rate>
+      <contact>
+        <collision>fl3_l_fixed_joint_lump__fl_foot_collision</collision>
+      </contact>
+    </sensor>
+  </gazebo>
+
+  <!-- fr leg -->
+  <gazebo reference="fr1_l">
+    <mu1>0.2</mu1>
+    <mu2>0.2</mu2>
+    <material>Gazebo/DarkGrey</material>
+  </gazebo>
+  <gazebo reference="fr2_l">
+    <mu1>0.2</mu1>
+    <mu2>0.2</mu2>
+    <self_collide>0</self_collide>
+    <material>Gazebo/DarkGrey</material>
+    <kp value="1000000.0"/>
+    <kd value="1.0"/>
+  </gazebo>
+  <gazebo reference="fr3_l">
+    <mu1>0.2</mu1>
+    <mu2>0.2</mu2>
+    <self_collide>0</self_collide>
+  </gazebo>
+  <gazebo reference="fr_foot">
+    <selfCollide>false</selfCollide>
+    <material>Gazebo/DarkGrey</material>
+    <mu1>0.6</mu1>
+    <mu2>0.6</mu2>
+    <kp value="1000000.0"/>
+    <kd value="1.0"/>
+    <fdir1>0 0 0</fdir1>
+    <maxVel>0.0</maxVel>
+    <minDepth>0.001</minDepth>
+    <sensor name="fr_foot_contact_sensor"type="contact">
+      <always_on>true</always_on>
+      <update_rate>500</update_rate>
+      <contact>
+        <collision>fr3_l_fixed_joint_lump__fr_foot_collision</collision>
+      </contact>
+    </sensor>
+  </gazebo>
+
+  <!-- hl leg -->
+  <gazebo reference="hl1_l">
+    <mu1>0.2</mu1>
+    <mu2>0.2</mu2>
+    <material>Gazebo/DarkGrey</material>
+  </gazebo>
+  <gazebo reference="hl2_l">
+    <mu1>0.2</mu1>
+    <mu2>0.2</mu2>
+    <self_collide>0</self_collide>
+    <material>Gazebo/DarkGrey</material>
+    <kp value="1000000.0"/>
+    <kd value="1.0"/>
+  </gazebo>
+  <gazebo reference="hl3_l">
+    <mu1>0.2</mu1>
+    <mu2>0.2</mu2>
+    <self_collide>0</self_collide>
+  </gazebo>
+  <gazebo reference="hl_foot">
+    <selfCollide>false</selfCollide>
+    <material>Gazebo/DarkGrey</material>
+    <mu1>0.6</mu1>
+    <mu2>0.6</mu2>
+    <kp value="1000000.0"/>
+    <kd value="1.0"/>
+    <fdir1>0 0 0</fdir1>
+    <maxVel>0.0</maxVel>
+    <minDepth>0.001</minDepth>
+    <sensor name="hl_foot_contact_sensor"type="contact">
+      <always_on>true</always_on>
+      <update_rate>500</update_rate>
+      <contact>
+        <collision>hl3_l_fixed_joint_lump__hl_foot_collision</collision>
+      </contact>
+    </sensor>
+  </gazebo>
+
+  <!-- hr leg -->
+  <gazebo reference="hr1_l">
+    <mu1>0.2</mu1>
+    <mu2>0.2</mu2>
+    <material>Gazebo/DarkGrey</material>
+  </gazebo>
+  <gazebo reference="hr2_l">
+    <mu1>0.2</mu1>
+    <mu2>0.2</mu2>
+    <self_collide>0</self_collide>
+    <material>Gazebo/DarkGrey</material>
+    <kp value="1000000.0"/>
+    <kd value="1.0"/>
+  </gazebo>
+  <gazebo reference="hr3_l">
+    <mu1>0.2</mu1>
+    <mu2>0.2</mu2>
+    <self_collide>0</self_collide>
+  </gazebo>
+  <gazebo reference="hr_foot">
+    <selfCollide>false</selfCollide>
+    <material>Gazebo/DarkGrey</material>
+    <mu1>0.6</mu1>
+    <mu2>0.6</mu2>
+    <kp value="1000000.0"/>
+    <kd value="1.0"/>
+    <fdir1>0 0 0</fdir1>
+    <maxVel>0.0</maxVel>
+    <minDepth>0.001</minDepth>
+    <sensor name="hr_foot_contact_sensor"type="contact">
+      <always_on>true</always_on>
+      <update_rate>500</update_rate>
+      <contact>
+        <collision>hr3_l_fixed_joint_lump__hr_foot_collision</collision>
+      </contact>
+    </sensor>
+  </gazebo>
+
+  <gazebo>
+    <plugin
+        filename="quadruped/libquadruped_control_plugin_ros.so"
+        name="quadruped_control_plugin"/>
+  </gazebo>
+
+</robot>

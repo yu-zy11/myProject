@@ -1,0 +1,23 @@
+<?xml version="1.0" ?>
+<robot name="laikago_simple">
+  <link name="trunk">
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="../meshes/trunk.dae" scale="1 1 1"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0.01675"/>
+      <geometry>
+        <box size="0.5616 0.172 0.1875"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.002284 0 0.025165"/>
+      <mass value="13.733"/>
+      <inertia ixx="0.073348887" ixy="0" ixz="0" iyy="0.250684593" iyz="0" izz="0.254469458"/>
+    </inertial>
+  </link>
+</robot>
+

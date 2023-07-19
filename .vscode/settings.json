@@ -93,7 +93,8 @@
         "concepts": "cpp",
         "numbers": "cpp",
         "semaphore": "cpp",
-        "stop_token": "cpp"
+        "stop_token": "cpp",
+        "dense": "cpp"
     },
     "clang-tidy.buildPath": "build",
     "clang-tidy.fixOnSave": true,
