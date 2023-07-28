@@ -17,6 +17,17 @@
 //   "meshes"
 #endif
 
+template <typename T>
+Eigen::Matrix<T, 3, 3> omega2rpyrate(Eigen::Matrix<T, 3, 1> rpy) {
+  T c3 = cos(rpy[2]);
+  T s3 = sin(rpy[2]);
+  T c2 = cos(rpy[1]);
+  T s2 = sin(rpy[1]);
+  Eigen::Matrix<T, 3, 3> mat_omega2rpy;
+  mat_omega2rpy << c3 / c2, s3 / c2, 0, -s3, c3, 0, c3 * s2 / c2, s3 * s2 / c2, 1;
+  return mat_omega2rpy;
+}
+
 int main(int argc, char **argv) {
   using namespace pinocchio;
   PinocchioInterface<double> pino;
@@ -32,9 +43,22 @@ int main(int argc, char **argv) {
   qc.setZero();
   vc.resize(nv, 1);
   vc.setZero();
-  // qc[3] = 3.1415926 / 2;
+  qc[3] = 3.1415926 / 2;
+  qc[4] = 2.1415926 / 2;
+  qc[5] = 1.1415926 / 2;
   vc[3] = 1;
+  vc[4] = 2;
+  vc[5] = 3;
   pino.updatePinocchioData(qc, vc);
+  Eigen::Matrix<double, 3, 3> ori_body = pino.getFrameOrientation(0);
+  Eigen::Matrix<double, -1, 1> vel_body = pino.getFrameVelocity(0);
+  Eigen::Matrix<double, 3, 1> rpy;
+  rpy << qc[5], qc[4], qc[3];
+  Eigen::Matrix<double, 3, 3> mat_rate = omega2rpyrate(rpy);
+  Eigen::Matrix<double, 3, 1> euler_rate = mat_rate * vel_body.segment(3, 3);
+  std::cout << "ori_body:\n" << ori_body << std::endl;
+  std::cout << "vel_body:\n" << vel_body << std::endl;
+  std::cout << "euler_rate:\n" << euler_rate << std::endl;
   std::cout << "qc:" << qc.transpose() << std::endl;
   std::cout << "vc:" << vc.transpose() << std::endl;
   Eigen::Matrix<double, 6, -1> jacob_world = pino.getFrameJabobianRelativeToBodyWorldFrame(4);

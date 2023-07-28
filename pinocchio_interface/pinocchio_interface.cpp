@@ -52,7 +52,7 @@ template <typename T>
 void PinocchioInterface<T>::updatePinocchioData(const Eigen::Matrix<T, -1, 1>& q, const Eigen::Matrix<T, -1, 1>& v) {
   qpos_ = q;
   qvel_ = v;
-  pinocchio::forwardKinematics(*robotModelPtr_, *robotDataPtr_, q);
+  pinocchio::forwardKinematics(*robotModelPtr_, *robotDataPtr_, qpos_, qvel_);
   pinocchio::updateFramePlacements(*robotModelPtr_, *robotDataPtr_);
   // pinocchio::crba(*robotModelPtr_, *robotDataPtr_, q);
   // pinocchio::computeMinverse(*robotModelPtr_, *robotDataPtr_, q);
@@ -152,7 +152,29 @@ Eigen::Matrix<T, 3, 1> PinocchioInterface<T>::getFramePosition(int leg) {
 };
 
 template <typename T>
-Eigen::Matrix<T, -1, 1> PinocchioInterface<T>::getFrameVelocity(int link){};
+Eigen::Matrix<T, 3, 3> PinocchioInterface<T>::getFrameOrientation(int index) {
+  if (index >= link_index_.size()) {
+    std::cout << "[pinocchio_interface]leg must less than foot number,change leg from:" << index << " to " << link_index_.size() << std::endl;
+    index = link_index_.size();
+  }
+  const auto id = link_index_[index];
+  Eigen::Matrix<T, 3, 3> ori = robotDataPtr_->oMf[id].rotation();
+  return ori;
+};
+
+template <typename T>
+Eigen::Matrix<T, 6, 1> PinocchioInterface<T>::getFrameVelocity(int index) {
+  if (index >= link_index_.size()) {
+    std::cout << "[pinocchio_interface]leg must less than foot number,change leg from:" << index << " to " << link_index_.size() << std::endl;
+    index = link_index_.size();
+  }
+  const auto id = link_index_[index];
+  Eigen::Matrix<T, 6, 1> vel;
+  auto vel_tmp = pinocchio::getFrameVelocity(*robotModelPtr_, *robotDataPtr_, id, pinocchio::ReferenceFrame::LOCAL_WORLD_ALIGNED);
+  // std::cout << "vel_tmp:" << vel_tmp.angular() << std::endl;
+  vel << vel_tmp.linear(), vel_tmp.angular();
+  return vel;
+};
 
 template <typename T>
 void PinocchioInterface<T>::setLinkName(const std::vector<std::string>& foot_name) {

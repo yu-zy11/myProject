@@ -107,13 +107,18 @@ class PinocchioInterface {
   /** Get the link position vectors.including 0:trunk,1-4:legs
    * @note requires pinocchioInterface to be updated with: updatePinocchioData()
    */
-  Eigen::Matrix<T, 3, 1> getFramePosition(int leg);
+  Eigen::Matrix<T, 3, 1> getFramePosition(int index);
 
-  /** Get the end effector velocity vectors.
+  /** Get the link orietation vectors.including 0:trunk,1-4:legs
+   * @note requires pinocchioInterface to be updated with: updatePinocchioData()
+   */
+  Eigen::Matrix<T, 3, 3> getFrameOrientation(int index);
+
+  /** Get the end effector velocity vectors.[vel omega]
    * @note requires pinocchioInterface to be updated with:
    *       pinocchio::forwardKinematics(model, data, q, v)
    */
-  Eigen::Matrix<T, -1, 1> getFrameVelocity(int link);
+  Eigen::Matrix<T, 6, 1> getFrameVelocity(int link);
 
   /** Get the end effector velocity vectors.
    * @note requires pinocchioInterface to be updated with:
