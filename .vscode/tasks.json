@@ -4,7 +4,7 @@
         {
             "type": "shell",
             "label": "CMake: build",
-            "command": "cd ./build ;cmake .. ;make -j64",
+            "command": "cd ./build ;cmake .. ;make -j6",
             "group": "build",
             "problemMatcher": [],
             "detail": "CMake template build task"

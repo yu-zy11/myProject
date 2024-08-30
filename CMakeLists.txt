@@ -6,15 +6,17 @@ project(main)
 # link_libraries(linearDynamics)
 # link_libraries(qpOASES)
 
-# include_directories( "./controller/third_party/qpOASES/include")
+# include_directories( "./pinocchio_interface")
 add_subdirectory("pinocchio_interface")
+add_subdirectory("model")
 find_package(Eigen3 REQUIRED)
-include_directories(${EIGEN3_INCLUDE_DIR})
-
 find_package(pinocchio REQUIRED)
-include_directories("/opt/openrobots/include") #包含头文件目录
-link_directories("/opt/openrobots/lib")  #库文件目录
-include_directories("./pinocchio_interfacce")
+include_directories(
+    ${EIGEN3_INCLUDE_DIR}
+    ${pinocchio_INCLUDE_DIRS}
+    "./pinocchio_interface"
+    "./model"
+)
 
 add_executable(${PROJECT_NAME} pinocchio_test.cpp)
 find_package(Threads)
@@ -25,7 +27,8 @@ ${CMAKE_THREAD_LIBS_INIT}
 # gait
 # robotics
 pinocchio
-pinocchio_interface)
+pinocchio_interface
+model)
 
 
 # target_link_libraries(${PROJECT_NAME} linearDynamics)
