@@ -11,7 +11,7 @@
 #include <eigen3/Eigen/StdVector>
 #include <vector>
 
-#define A01_URDF_RELATIVE_PATH "/home/work/workspace/biped_robot/config/model/SA01p.urdf"
+#define A01_URDF_RELATIVE_PATH "/home/ubuntu/workspace/myProject/model/SA01p.urdf"
 // clang-format on
 
 enum class RobotType { SA01a, SA01b };

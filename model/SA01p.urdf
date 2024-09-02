@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by
-Stephen Brawner (brawner@gmail.com) 
+Stephen Brawner (brawner@gmail.com)
      Commit Version: 1.6.0-1-g15f4949  Build Version: 1.6.7594.29634
      For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
 <robot
@@ -412,7 +412,8 @@ Stephen Brawner (brawner@gmail.com)
   </joint>
 
    <joint name="leg_l7_joint" type="fixed">
-    <origin xyz="0.06567 0.00592 -0.0495" rpy="0 0 0"/>
+    <origin xyz="0.06567 0.0 -0.0495" rpy="0 0 0"/>
+    <!-- <origin xyz="0.06567 0.00592 -0.0495" rpy="0 0 0"/> -->
     <parent link="leg_l6_link"/>
     <child  link="leg_l_foot_center"/>
   </joint>
@@ -803,7 +804,8 @@ Stephen Brawner (brawner@gmail.com)
   </joint>
 
   <joint name="leg_r7_joint" type="fixed">
-    <origin xyz="0.06567 -0.00592 -0.0495" rpy="0 0 0"/>
+    <origin xyz="0.06567 0.0 -0.0495" rpy="0 0 0"/>
+    <!-- <origin xyz="0.06567 -0.00592 -0.0495" rpy="0 0 0"/> -->
     <parent link="leg_r6_link"/>
     <child  link="leg_r_foot_center"/>
   </joint>
