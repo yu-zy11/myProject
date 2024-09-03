@@ -18,6 +18,7 @@
 #include <pinocchio/spatial/inertia.hpp>
 #include <string>
 #include <vector>
+
 // clang-format on
 /**
  * Pinocchio interface class loading urdf and contatining robot model and data.
@@ -45,6 +46,17 @@ class PinocchioInterface {
    * */
   int getLinkID(const std::string& link_name);
 
+  /**
+   * get the parent joint id of a link in pinocchio model
+   * @param [in] link_name: link name in urdf
+   * */
+  int getLinkParentJointID(const std::string& link_name);
+
+  /**
+   * get joint index in pinocchio model by joint name
+   * @param [in] joint_name: joint name in urdf
+   * @return joint index in pinocchio model
+   * */
   int getJointID(const std::string& joint_name);
 
   /** Get the total mass of robot.*/
@@ -57,6 +69,24 @@ class PinocchioInterface {
   Eigen::VectorXd getJointVelocityLimit() { return model_ptr_->velocityLimit; }
 
   Eigen::VectorXd getJointTorqueLimit() { return model_ptr_->effortLimit; }
+
+  std::vector<int> getAllJointParentIDsExceptBase(std::vector<int> joint_ids);
+
+  /**
+   * @brief transfer joint id to jacobian columns
+   * @param [in] joint_id: joint id
+   * @return  columns in jacobian matrix.jacobian is full jacobian matrix in cluding floating base
+   *
+   * For a robot with a floating base, the size of jacobian is 6 + nq,
+   * where nq is the number of joints. The first 6 columns of jacobian are the
+   * derivatives of the floating base, and the last nq columns are the
+   * derivatives of the other joints. So we need to add 6 to the joint id to
+   * get the correct jacobian column.
+   *
+   * However, the two extra joints for cloating base are replaced by base dof n the jacobian, so we need
+   * to subtract the number of extra joints from the joint id.
+   */
+  int JointIdToJacobianColumns(const int& joint_id) { return joint_id - floating_base_joint_num_ + base_dof_; };
 
   /**
    * calculate pinocchio  kinematics data,include cartesian position, velocity, jacobian and jacobian derivatives.
@@ -115,11 +145,11 @@ class PinocchioInterface {
   Eigen::Vector3d getCenterOfMass();
 
   /** Get link inertia
-   * @param [in] joint_index:index of link's parent joint,for floating base is 1
+   * @param [in] joint_index:index of link's index joint,for floating base is 1
    */
   double getLinkMass(int joint_index);
   /** Get link inertia
-   * @param [in] joint_index:index of link's parent joint,for floating base is 1
+   * @param [in] joint_index:index of link's index joint,for floating base is 1
    */
   Eigen::Matrix3d getLinkInertia(int joint_index);
 
@@ -127,6 +157,14 @@ class PinocchioInterface {
    * @param [out] model_nv_:degree of freedom
    */
   int getDoF() { return model_ptr_->nv; }
+
+  /**
+   * @brief get the degree of freedom of base link
+   * @return [int] the degree of freedom of base link
+   * @note: for fixed base robot, it is 0
+   *        for floating base robot,it is 6
+   */
+  int getBaseDoF() { return base_dof_; }
 
   // void convertVectorDouble2TemplateType(const Eigen::Matrix<double, -1, 1>& m, Eigen::Matrix<double, -1, 1>& m_des);
 
@@ -146,6 +184,8 @@ class PinocchioInterface {
    */
   void resetLinkCoM(int index, Eigen::Vector3d com);
 
+  int getExtraJointNumber() { return floating_base_joint_num_; }
+
  private:
   /**
    * load urdf and construct robot
@@ -156,6 +196,8 @@ class PinocchioInterface {
   void createFloatingBaseModel(const std::string& urdfFilePath, Model& model, bool print_info);
   std::shared_ptr<Model> model_ptr_;
   std::unique_ptr<Data> data_ptr_;
+  int floating_base_joint_num_{2};
+  int base_dof_{6};
 };
 
 #endif

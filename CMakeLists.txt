@@ -8,17 +8,17 @@ project(main)
 
 # include_directories( "./pinocchio_interface")
 add_subdirectory("pinocchio_interface")
-add_subdirectory("model")
+add_subdirectory("modelDynamics")
 find_package(Eigen3 REQUIRED)
 find_package(pinocchio REQUIRED)
 include_directories(
     ${EIGEN3_INCLUDE_DIR}
     ${pinocchio_INCLUDE_DIRS}
     "./pinocchio_interface"
-    "./model"
+    "./modelDynamics"
 )
 
-add_executable(${PROJECT_NAME} pinocchio_test.cpp)
+add_executable(${PROJECT_NAME} robot_pinocchio_test.cpp)
 find_package(Threads)
 target_link_libraries(${PROJECT_NAME}
 PUBLIC
@@ -28,7 +28,7 @@ ${CMAKE_THREAD_LIBS_INIT}
 # robotics
 pinocchio
 pinocchio_interface
-model)
+robot_dynamics)
 
 
 # target_link_libraries(${PROJECT_NAME} linearDynamics)

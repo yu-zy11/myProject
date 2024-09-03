@@ -95,7 +95,9 @@
         "semaphore": "cpp",
         "stop_token": "cpp",
         "dense": "cpp",
-        "specialfunctions": "cpp"
+        "specialfunctions": "cpp",
+        "qr": "cpp",
+        "*.ipp": "cpp"
     },
     "clang-tidy.buildPath": "build",
     "clang-tidy.fixOnSave": true,

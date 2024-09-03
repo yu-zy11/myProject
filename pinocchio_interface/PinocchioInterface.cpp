@@ -3,6 +3,7 @@
 #include "pinocchio/spatial/symmetric3.hpp"
 #include <Eigen/Dense>
 #include <unistd.h>
+#include <algorithm>
 // clang-format on
 
 // PinocchioInterface::PinocchioInterface() {}
@@ -10,9 +11,11 @@
 void PinocchioInterface::init(const std::string& urdfFilePath, bool print_info) {
   Model model;
   createFloatingBaseModel(urdfFilePath, model, print_info);
+  floating_base_joint_num_ = 2;
+  base_dof_ = 6;
   model_ptr_ = std::make_shared<Model>(model);
   data_ptr_ = std::make_unique<Data>(*model_ptr_);
-  printf("[PinocchioInterface] init finished\n");
+  // printf("[PinocchioInterface] init finished\n");
 }
 
 int PinocchioInterface::getLinkID(const std::string& link_name) {
@@ -24,7 +27,41 @@ int PinocchioInterface::getLinkID(const std::string& link_name) {
   return model_ptr_->getBodyId(link_name);
 }
 
+int PinocchioInterface::getLinkParentJointID(const std::string& link_name) { return model_ptr_->frames[getLinkID(link_name)].parent; }
+
 int PinocchioInterface::getJointID(const std::string& joint_name) { return model_ptr_->getJointId(joint_name); }
+
+std::vector<int> PinocchioInterface::getAllJointParentIDsExceptBase(std::vector<int> joint_ids) {
+  std::vector<int> parents;
+  parents.clear();
+  assert(joint_ids.size() > 0 && "joint_ids is empty");
+  for (int i = 0; i < joint_ids.size(); ++i) {
+    int index = joint_ids[i];
+    assert(index >= 0 && index < model_ptr_->parents.size() && "index out of range");
+    auto it = std::find(parents.begin(), parents.end(), index);  // check if index is already in parents
+    if (it == parents.end()) {
+      parents.insert(parents.begin(), index);
+    }
+
+    while (true) {
+      if (model_ptr_->parents[index] == index) {
+        break;
+      }
+      auto it = std::find(parents.begin(), parents.end(), model_ptr_->parents[index]);  // check if index is already in parents
+      if (it == parents.end()) {
+        parents.insert(parents.begin(), model_ptr_->parents[index]);
+      }
+      index = model_ptr_->parents[index];
+    }
+  }
+  // resort parents and remove joint ids of floating base
+  std::sort(parents.begin(), parents.end());
+  for (int i = 0; i < floating_base_joint_num_; ++i) {
+    parents.erase(parents.begin());
+  }
+
+  return parents;
+}
 
 void PinocchioInterface::computeKinematics(const Eigen::VectorXd& qpos, const Eigen::VectorXd& qvel) {
   assert(qpos.rows() == model_ptr_->nv && "qpos size not match");
