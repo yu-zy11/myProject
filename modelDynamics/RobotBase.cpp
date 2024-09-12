@@ -7,7 +7,8 @@
 // clang-format on
 
 template <typename T>
-void RobotBase<T>::localForwardKinematics(const Eigen::Matrix<T, -1, 1>& qpos, const Eigen::Matrix<T, -1, 1>& qvel, std::vector<endEffectorData<T>>& data) {
+void RobotBase<T>::localForwardKinematics(const Eigen::Matrix<T, -1, 1>& qpos, const Eigen::Matrix<T, -1, 1>& qvel,
+                                          std::vector<EndEffectorData<T>>& data) {
   assert(qpos.size() == qvel.size() && "size of qpos must same with size of qvel");
   assert(qpos.size() == pino_.getDoF() - pino_.getBaseDoF() && "size of qpos must same with actuator number");
   Eigen::VectorXd qpos_tmp, qvel_tmp;
@@ -20,20 +21,25 @@ void RobotBase<T>::localForwardKinematics(const Eigen::Matrix<T, -1, 1>& qpos, c
   pino_.computeKinematics(qpos_tmp, qvel_tmp);
   data.resize(end_effector_name_.size());
 
-  endEffectorData<double> data_tmp;
+  EndEffectorData<double> data_tmp;
   data_tmp.reshape(pino_.getDoF());
   for (size_t i = 0; i < end_effector_name_.size(); ++i) {
-    pino_.getLinkKinematicsData(pino_.getLinkID(end_effector_name_[i]), data_tmp.pos, data_tmp.rotm, data_tmp.vel, data_tmp.omega, data_tmp.jacobian, data_tmp.jacobian_derivative);
+    pino_.getLinkKinematicsData(pino_.getLinkID(end_effector_name_[i]), data_tmp.pos, data_tmp.rotm, data_tmp.vel,
+                                data_tmp.omega, data_tmp.jacobian, data_tmp.jacobian_derivative);
     data[i].pos = data_tmp.pos.template cast<T>();
     data[i].rotm = data_tmp.rotm.template cast<T>();
     data[i].vel = data_tmp.vel.template cast<T>();
     data[i].omega = data_tmp.omega.template cast<T>();
-    data[i].jacobian = data_tmp.jacobian.block(0, pino_.getBaseDoF(), 6, pino_.getDoF() - pino_.getBaseDoF()).template cast<T>();
-    data[i].jacobian_derivative = data_tmp.jacobian_derivative.block(0, pino_.getBaseDoF(), 6, pino_.getDoF() - pino_.getBaseDoF()).template cast<T>();
+    data[i].jacobian =
+        data_tmp.jacobian.block(0, pino_.getBaseDoF(), 6, pino_.getDoF() - pino_.getBaseDoF()).template cast<T>();
+    data[i].jacobian_derivative =
+        data_tmp.jacobian_derivative.block(0, pino_.getBaseDoF(), 6, pino_.getDoF() - pino_.getBaseDoF())
+            .template cast<T>();
   }
 }
 template <typename T>
-void RobotBase<T>::fullForwardKinematics(const Eigen::Matrix<T, -1, 1>& qpos, const Eigen::Matrix<T, -1, 1>& qvel, std::vector<endEffectorData<T>>& data) {
+void RobotBase<T>::fullForwardKinematics(const Eigen::Matrix<T, -1, 1>& qpos, const Eigen::Matrix<T, -1, 1>& qvel,
+                                         std::vector<EndEffectorData<T>>& data) {
   assert(qpos.size() == qvel.size() && "size of qpos must same with size of qvel");
   assert(qpos.size() == pino_.getDoF() && "size of qpos must same with freedom of robot");
   Eigen::VectorXd qpos_tmp = qpos.template cast<double>();
@@ -42,10 +48,11 @@ void RobotBase<T>::fullForwardKinematics(const Eigen::Matrix<T, -1, 1>& qpos, co
   pino_.computeKinematics(qpos_tmp, qvel_tmp);
   data.resize(end_effector_name_.size());
 
-  endEffectorData<double> data_tmp;
+  EndEffectorData<double> data_tmp;
   data_tmp.reshape(pino_.getDoF());
   for (size_t i = 0; i < end_effector_name_.size(); ++i) {
-    pino_.getLinkKinematicsData(pino_.getLinkID(end_effector_name_[i]), data_tmp.pos, data_tmp.rotm, data_tmp.vel, data_tmp.omega, data_tmp.jacobian, data_tmp.jacobian_derivative);
+    pino_.getLinkKinematicsData(pino_.getLinkID(end_effector_name_[i]), data_tmp.pos, data_tmp.rotm, data_tmp.vel,
+                                data_tmp.omega, data_tmp.jacobian, data_tmp.jacobian_derivative);
     data[i].pos = data_tmp.pos.template cast<T>();
     data[i].rotm = data_tmp.rotm.template cast<T>();
     data[i].vel = data_tmp.vel.template cast<T>();
@@ -55,7 +62,9 @@ void RobotBase<T>::fullForwardKinematics(const Eigen::Matrix<T, -1, 1>& qpos, co
   }
 }
 template <typename T>
-void RobotBase<T>::localInverseKinematics(const Eigen::Matrix<T, -1, 1>& qpos_ref, std::vector<std::string> user_selected_end_effector_name, const std::vector<endEffectorData<T>>& data_des,
+void RobotBase<T>::localInverseKinematics(const Eigen::Matrix<T, -1, 1>& qpos_ref,
+                                          std::vector<std::string> user_selected_end_effector_name,
+                                          const std::vector<EndEffectorData<T>>& data_des,
                                           Eigen::Matrix<T, -1, 1>& qpos_des) {
   const double MAX_ERROR = 1e-4;
   const int MAX_COUNTER = 20;
@@ -63,10 +72,12 @@ void RobotBase<T>::localInverseKinematics(const Eigen::Matrix<T, -1, 1>& qpos_re
   const double MAX_COMPOSITE_ERROR_ORI = 0.4;
   const T PI{3.1415926};
   // check dimensions of input
-  assert(qpos_ref.size() == (pino_.getDoF() - pino_.getBaseDoF()) && "the size of reference qpos must be equal to joint bumber");
+  assert(qpos_ref.size() == (pino_.getDoF() - pino_.getBaseDoF()) &&
+         "the size of reference qpos must be equal to joint bumber");
   assert(data_des.size() == end_effector_name_.size() && "the size of data must be equal to end_effector size()");
   assert(data_des[0].jacobian.cols() == qpos_ref.size() && "wrong size of data_des.jacobian");
-  assert(user_selected_end_effector_name.size() > 0 && user_selected_end_effector_name.size() <= data_des.size() && "wrong size of user_selected_end_effector_name");
+  assert(user_selected_end_effector_name.size() > 0 && user_selected_end_effector_name.size() <= data_des.size() &&
+         "wrong size of user_selected_end_effector_name");
 
   size_t selected_end_effector_num = user_selected_end_effector_name.size();
   Eigen::Matrix<T, -1, 1> qpos = qpos_ref;
@@ -75,7 +86,7 @@ void RobotBase<T>::localInverseKinematics(const Eigen::Matrix<T, -1, 1>& qpos_re
   composite_Jacobian.resize(selected_end_effector_num * 6, qpos_ref.size());
   composite_error.resize(selected_end_effector_num * 6, 1);
   Eigen::Matrix<T, -1, 1> qvel = qpos * 0.0;
-  std::vector<endEffectorData<T>> data;
+  std::vector<EndEffectorData<T>> data;
   std::vector<int> joint_ids;
   joint_ids.clear();
   int counter{0};
@@ -83,16 +94,24 @@ void RobotBase<T>::localInverseKinematics(const Eigen::Matrix<T, -1, 1>& qpos_re
     counter++;
     localForwardKinematics(qpos, qvel, data);
     for (int i = 0; i < selected_end_effector_num; ++i) {
-      int index = getIndexInEndEffectorDatas(user_selected_end_effector_name[i]);  // pino_.getLinkID(user_selected_end_effector_name[i]);
+      int index = getIndexInEndEffectorDatas(
+          user_selected_end_effector_name[i]);  // pino_.getLinkID(user_selected_end_effector_name[i]);
       composite_Jacobian.block(i * 6, 0, 6, qpos_ref.size()) = data[index].jacobian;
       composite_error.block(i * 6, 0, 3, 1) = data_des[index].pos - data[index].pos;  // position erorr
       Eigen::Matrix<T, 3, 3> rotm_error = data_des[index].rotm * data[index].rotm.transpose();
       Eigen::Matrix<T, 4, 1> axis_angle = rotm2axisangle(rotm_error);
+      Eigen::AngleAxis<T> theta_lambda(rotm_error);
+      composite_error.block(i * 6 + 3, 0, 3, 1) = theta_lambda.angle() * theta_lambda.axis();
+      std::cout << "composite_error.block(i * 6 + 3, 0, 3, 1)0:" << composite_error.block(i * 6 + 3, 0, 3, 1)
+                << std::endl;
       composite_error.block(i * 6 + 3, 0, 3, 1) = axis_angle.head(3) * axis_angle[3];  // orientation erorr
+      std::cout << "composite_error.block(i * 6 + 3, 0, 3, 1)1:" << composite_error.block(i * 6 + 3, 0, 3, 1)
+                << std::endl;
 
       /*add limit to position and orirtation errors*/
       if (composite_error.block(i * 6, 0, 3, 1).norm() > MAX_COMPOSITE_ERROR_TRANS) {
-        composite_error.block(i * 6, 0, 3, 1) *= MAX_COMPOSITE_ERROR_TRANS / composite_error.block(i * 6, 0, 3, 1).norm();
+        composite_error.block(i * 6, 0, 3, 1) *=
+            MAX_COMPOSITE_ERROR_TRANS / composite_error.block(i * 6, 0, 3, 1).norm();
       }
       if (composite_error.block(i * 6 + 3, 0, 3, 1).norm() > MAX_COMPOSITE_ERROR_ORI) {
         axis_angle[3] *= MAX_COMPOSITE_ERROR_ORI / composite_error.block(i * 6 + 3, 0, 3, 1).norm();
@@ -102,12 +121,14 @@ void RobotBase<T>::localInverseKinematics(const Eigen::Matrix<T, -1, 1>& qpos_re
     }
     /*get all joint parent ids which relative to jacobians of selected end effector*/
     std::vector<int> selected_joint_ids = pino_.getAllJointParentIDsExceptBase(joint_ids);
-    /*get net jacobian relative to relative joints,remove columns of un-relative joints,whose jacobians are all zero,zero colums in jacobian could cause bad results*/
+    /*get net jacobian relative to relative joints,remove columns of un-relative joints,whose jacobians are all
+     * zero,zero colums in jacobian could cause bad results*/
     Eigen::Matrix<T, -1, -1> net_jacobian;
     net_jacobian.resize(composite_Jacobian.rows(), selected_joint_ids.size());
     net_jacobian.setZero();
     for (int i = 0; i < selected_joint_ids.size(); ++i) {
-      net_jacobian.col(i) = composite_Jacobian.col(pino_.JointIdToJacobianColumns(selected_joint_ids[i]) - pino_.getBaseDoF());
+      net_jacobian.col(i) =
+          composite_Jacobian.col(pino_.JointIdToJacobianColumns(selected_joint_ids[i]) - pino_.getBaseDoF());
     }
     // std::cout << "net_jacobian:\n" << net_jacobian << std::endl;
     // std::cout << "composite_Jacobian:\n" << composite_Jacobian << std::endl;
@@ -116,7 +137,8 @@ void RobotBase<T>::localInverseKinematics(const Eigen::Matrix<T, -1, 1>& qpos_re
     dumpedPseudoInverse(net_jacobian, 0.001, jacobian_inverse_test);
     Eigen::Matrix<T, -1, 1> delta_q1 = jacobian_inverse_test * composite_error;
     for (int i = 0; i < selected_joint_ids.size(); ++i) {
-      net_jacobian.col(i) = composite_Jacobian.col(pino_.JointIdToJacobianColumns(selected_joint_ids[i]) - pino_.getBaseDoF());
+      net_jacobian.col(i) =
+          composite_Jacobian.col(pino_.JointIdToJacobianColumns(selected_joint_ids[i]) - pino_.getBaseDoF());
       qpos[pino_.JointIdToJacobianColumns(selected_joint_ids[i]) - pino_.getBaseDoF()] += delta_q1[i];
     }
 
@@ -146,7 +168,9 @@ void RobotBase<T>::localInverseKinematics(const Eigen::Matrix<T, -1, 1>& qpos_re
 }
 
 template <typename T>
-void RobotBase<T>::fullInverseKinematics(const Eigen::Matrix<T, -1, 1>& qpos_ref, std::vector<std::string> user_selected_end_effector_name, const std::vector<endEffectorData<T>>& data_des,
+void RobotBase<T>::fullInverseKinematics(const Eigen::Matrix<T, -1, 1>& qpos_ref,
+                                         std::vector<std::string> user_selected_end_effector_name,
+                                         const std::vector<EndEffectorData<T>>& data_des,
                                          Eigen::Matrix<T, -1, 1>& qpos_des) {
   const double MAX_ERROR = 1e-4;
   const int MAX_COUNTER = 20;
@@ -157,7 +181,8 @@ void RobotBase<T>::fullInverseKinematics(const Eigen::Matrix<T, -1, 1>& qpos_ref
   assert(qpos_ref.size() == pino_.getDoF() && "the size of reference qpos must be equal to dof of robot");
   assert(data_des.size() == end_effector_name_.size() && "the size of data must be equal to end_effector size()");
   assert(data_des[0].jacobian.cols() == qpos_ref.size() && "wrong size of data_des.jacobian");
-  assert(user_selected_end_effector_name.size() > 0 && user_selected_end_effector_name.size() <= data_des.size() && "wrong size of user_selected_end_effector_name");
+  assert(user_selected_end_effector_name.size() > 0 && user_selected_end_effector_name.size() <= data_des.size() &&
+         "wrong size of user_selected_end_effector_name");
 
   size_t selected_end_effector_num = user_selected_end_effector_name.size();
   Eigen::Matrix<T, -1, 1> qpos = qpos_ref;
@@ -167,7 +192,7 @@ void RobotBase<T>::fullInverseKinematics(const Eigen::Matrix<T, -1, 1>& qpos_ref
   composite_error.resize(selected_end_effector_num * 6, 1);
   // composite_Jacobian composite_error;
   Eigen::Matrix<T, -1, 1> qvel = qpos * 0.0;
-  std::vector<endEffectorData<T>> data;
+  std::vector<EndEffectorData<T>> data;
   int counter{0};
   while (true) {
     counter++;
@@ -181,7 +206,8 @@ void RobotBase<T>::fullInverseKinematics(const Eigen::Matrix<T, -1, 1>& qpos_ref
       composite_error.block(i * 6 + 3, 0, 3, 1) = axis_angle.head(3) * axis_angle[3];  // orientation erorr
       /*add limit to position and orirtation error*/
       if (composite_error.block(i * 6, 0, 3, 1).norm() > MAX_COMPOSITE_ERROR_TRANS) {
-        composite_error.block(i * 6, 0, 3, 1) *= MAX_COMPOSITE_ERROR_TRANS / composite_error.block(i * 6, 0, 3, 1).norm();
+        composite_error.block(i * 6, 0, 3, 1) *=
+            MAX_COMPOSITE_ERROR_TRANS / composite_error.block(i * 6, 0, 3, 1).norm();
       }
       if (composite_error.block(i * 6 + 3, 0, 3, 1).norm() > MAX_COMPOSITE_ERROR_ORI) {
         axis_angle[3] *= MAX_COMPOSITE_ERROR_ORI / composite_error.block(i * 6 + 3, 0, 3, 1).norm();

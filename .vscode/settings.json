@@ -97,7 +97,9 @@
         "dense": "cpp",
         "specialfunctions": "cpp",
         "qr": "cpp",
-        "*.ipp": "cpp"
+        "*.ipp": "cpp",
+        "svd": "cpp",
+        "span": "cpp"
     },
     "clang-tidy.buildPath": "build",
     "clang-tidy.fixOnSave": true,

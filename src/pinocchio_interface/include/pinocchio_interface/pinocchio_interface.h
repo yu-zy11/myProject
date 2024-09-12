@@ -18,51 +18,52 @@
 #include <pinocchio/spatial/inertia.hpp>
 #include <string>
 #include <vector>
+#include "pinocchio_interface/basic_structure.h"
 
 // clang-format on
 /**
  * Pinocchio interface class loading urdf and contatining robot model and data.
  * The robot model is shared between interface instances.
  */
+namespace pino {
+using Model = pinocchio::ModelTpl<double, 0, pinocchio::JointCollectionDefaultTpl>;
+using Data = pinocchio::DataTpl<double, 0, pinocchio::JointCollectionDefaultTpl>;
 
 class PinocchioInterface {
  public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-  using Model = pinocchio::ModelTpl<double, 0, pinocchio::JointCollectionDefaultTpl>;
-  using Data = pinocchio::DataTpl<double, 0, pinocchio::JointCollectionDefaultTpl>;
-
   PinocchioInterface() = default;
-
   /**
    * load urdf and construct robot
-   * @param [in] urdfFilePath: The absolute path to the URDF file for the robot.
+   * @param [in] model_info: information of the robot for pinocchio
    */
-  void init(const std::string& urdfFilePath, bool print_info = false);
+  PinocchioInterface(const PinocchioModelInfo& model_info);
 
   /**
    * get link index in pinocchio model by link name
    * @param [in] link_name: link name in urdf
    * */
-  int getLinkID(const std::string& link_name);
+  int GetLinkID(const std::string& link_name);
+  int getEndEffectorNum();
 
   /**
    * get the parent joint id of a link in pinocchio model
    * @param [in] link_name: link name in urdf
    * */
-  int getLinkParentJointID(const std::string& link_name);
+  int GetLinkParentJointID(const std::string& link_name);
 
   /**
    * get joint index in pinocchio model by joint name
    * @param [in] joint_name: joint name in urdf
    * @return joint index in pinocchio model
    * */
-  int getJointID(const std::string& joint_name);
+  int GetJointID(const std::string& joint_name);
 
   /** Get the total mass of robot.*/
-  double getTotalMass() { return pinocchio::computeTotalMass(*model_ptr_); };
+  double GetTotalMass() { return pinocchio::computeTotalMass(*model_ptr_); };
 
-  Eigen::VectorXd getJointLowerPositionLimit() { return model_ptr_->lowerPositionLimit; }  // getJointLowerPositionLimit
+  Eigen::VectorXd getJointLowerPositionLimit() { return model_ptr_->lowerPositionLimit; }
 
   Eigen::VectorXd getJointUpperPositionLimit() { return model_ptr_->upperPositionLimit; }
 
@@ -70,7 +71,7 @@ class PinocchioInterface {
 
   Eigen::VectorXd getJointTorqueLimit() { return model_ptr_->effortLimit; }
 
-  std::vector<int> getAllJointParentIDsExceptBase(std::vector<int> joint_ids);
+  std::vector<int> GetAllRelatedJointParentIDsExceptBase(std::vector<int> joint_ids);
 
   /**
    * @brief transfer joint id to jacobian columns
@@ -103,18 +104,19 @@ class PinocchioInterface {
    */
   void computeDynamics(const Eigen::VectorXd& qpos, const Eigen::VectorXd& qvel);
 
-  /** Get the link data.
-   * @param [in] index: frame index,0:
-   * @param [in] pos:link position
-   * @param [in] rotm:link rotation matrix
-   * @param [in] vel:link velocity
-   * @param [in] omega:link angular velocity
-   * @param [in] jacobian:link jacobian
-   * @param [in] jacobian_derivative:link jacobian derivative
-   * @note requires pinocchioInterface to be updated with: computeKinematics()
-   */
-  void getLinkKinematicsData(const int& index, Eigen::Vector3d& pos, Eigen::Matrix3d& rotm, Eigen::Vector3d& vel, Eigen::Vector3d& omega, Eigen::Matrix<double, 6, Eigen::Dynamic>& jacobian,
-                             Eigen::Matrix<double, 6, Eigen::Dynamic>& jacobian_derivative);
+  // /** Get the link data.
+  //  * @param [in] index: frame index,0:
+  //  * @param [in] pos:link position
+  //  * @param [in] rotm:link rotation matrix
+  //  * @param [in] vel:link velocity
+  //  * @param [in] omega:link angular velocity
+  //  * @param [in] jacobian:link jacobian
+  //  * @param [in] jacobian_derivative:link jacobian derivative
+  //  * @note requires pinocchioInterface to be updated with: computeKinematics()
+  //  */
+  // void getLinkKinematicsData(const int& index, Eigen::Vector3d& pos, Eigen::Matrix3d& rotm, Eigen::Vector3d& vel,
+  //                            Eigen::Vector3d& omega, Eigen::Matrix<double, 6, Eigen::Dynamic>& jacobian,
+  //                            Eigen::Matrix<double, 6, Eigen::Dynamic>& jacobian_derivative);
 
   /** Get the joint position vectors.
    * @note requires pinocchioInterface to be updated with: computeKinematics()
@@ -186,6 +188,10 @@ class PinocchioInterface {
 
   int getExtraJointNumber() { return floating_base_joint_num_; }
 
+  std::shared_ptr<Model> GetModel() { return model_ptr_; }
+  std::shared_ptr<Data> GetData() { return data_ptr_; }
+  std::shared_ptr<PinocchioModelInfo> GetModelInfo() { return info_ptr_; }
+
  private:
   /**
    * load urdf and construct robot
@@ -195,9 +201,10 @@ class PinocchioInterface {
    */
   void createFloatingBaseModel(const std::string& urdfFilePath, Model& model, bool print_info);
   std::shared_ptr<Model> model_ptr_;
-  std::unique_ptr<Data> data_ptr_;
+  std::shared_ptr<Data> data_ptr_;
   int floating_base_joint_num_{2};
   int base_dof_{6};
+  std::shared_ptr<PinocchioModelInfo> info_ptr_;
 };
-
+}  // namespace pino
 #endif

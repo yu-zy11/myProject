@@ -11,7 +11,7 @@
 
 enum class RobotType { SA01a, SA01b };
 template <typename T>
-struct endEffectorData {
+struct EndEffectorData {
   Eigen::Matrix<T, 3, 1> pos;
   Eigen::Matrix<T, 3, 3> rotm;
   Eigen::Matrix<T, 3, 1> vel;
@@ -39,7 +39,7 @@ class RobotBase {
 
   // read from pinocchio
   // int base_link_id_;
-  std::vector<endEffectorData<T>> data_;
+  std::vector<EndEffectorData<T>> data_;
   // pinocchio interface
   PinocchioInterface pino_;
 
@@ -58,7 +58,8 @@ class RobotBase {
    * @param qvel joint velocities of the robot,dimension is same with qpos
    * @param data output data of all end-effectors set by the user
    */
-  virtual void localForwardKinematics(const Eigen::Matrix<T, -1, 1>& qpos, const Eigen::Matrix<T, -1, 1>& qvel, std::vector<endEffectorData<T>>& data);
+  virtual void localForwardKinematics(const Eigen::Matrix<T, -1, 1>& qpos, const Eigen::Matrix<T, -1, 1>& qvel,
+                                      std::vector<EndEffectorData<T>>& data);
 
   /**
    * @brief compute forward kinematics and jacobian of robot, base link is free
@@ -67,7 +68,8 @@ class RobotBase {
    * @param qvel joint velocities of the robot,dimension is same with qpos
    * @param data output data of all end-effectors set by the user
    */
-  virtual void fullForwardKinematics(const Eigen::Matrix<T, -1, 1>& qpos, const Eigen::Matrix<T, -1, 1>& qvel, std::vector<endEffectorData<T>>& data);
+  virtual void fullForwardKinematics(const Eigen::Matrix<T, -1, 1>& qpos, const Eigen::Matrix<T, -1, 1>& qvel,
+                                     std::vector<EndEffectorData<T>>& data);
   /**
    * @brief compute the joint position and velocity of robot given the desired position and velocity of end effectors
    * @param qpos_ref [in] joint position reference
@@ -75,7 +77,9 @@ class RobotBase {
    * @param data [in] the current data of end effectors
    * @param qpos_des [out] joint position result
    */
-  virtual void localInverseKinematics(const Eigen::Matrix<T, -1, 1>& qpos_ref, std::vector<std::string> user_selected_end_effector_name, const std::vector<endEffectorData<T>>& data_des,
+  virtual void localInverseKinematics(const Eigen::Matrix<T, -1, 1>& qpos_ref,
+                                      std::vector<std::string> user_selected_end_effector_name,
+                                      const std::vector<EndEffectorData<T>>& data_des,
                                       Eigen::Matrix<T, -1, 1>& qpos_des);
 
   /**
@@ -85,7 +89,9 @@ class RobotBase {
    * @param data [in] the current data of end effectors
    * @param qpos_des [out] joint position result
    */
-  virtual void fullInverseKinematics(const Eigen::Matrix<T, -1, 1>& qpos_ref, std::vector<std::string> user_selected_end_effector_name, const std::vector<endEffectorData<T>>& data_des,
+  virtual void fullInverseKinematics(const Eigen::Matrix<T, -1, 1>& qpos_ref,
+                                     std::vector<std::string> user_selected_end_effector_name,
+                                     const std::vector<EndEffectorData<T>>& data_des,
                                      Eigen::Matrix<T, -1, 1>& qpos_des);
 
  private:

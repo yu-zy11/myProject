@@ -19,15 +19,17 @@ void testForwardKinematics() {
   qvel_full.resize(18);
   qvel_full.setZero();
   RobotSA01a<double> robot;
-  std::vector<endEffectorData<double>> data, data_full;
+  std::vector<EndEffectorData<double>> data, data_full;
   robot.fullForwardKinematics(qpos_full, qvel_full, data_full);
   robot.localForwardKinematics(qpos, qvel, data);
   bool success = true;
   for (int i = 0; i < robot.end_effector_name_.size(); ++i) {
-    if (data[i].pos[0] != data_full[i].pos[0] || data[i].pos[1] != data_full[i].pos[1] || data[i].pos[2] != data_full[i].pos[2]) {
+    if (data[i].pos[0] != data_full[i].pos[0] || data[i].pos[1] != data_full[i].pos[1] ||
+        data[i].pos[2] != data_full[i].pos[2]) {
       success = false;
     }
-    if (data[i].vel[0] != data_full[i].vel[0] || data[i].vel[1] != data_full[i].vel[1] || data[i].vel[2] != data_full[i].vel[2]) {
+    if (data[i].vel[0] != data_full[i].vel[0] || data[i].vel[1] != data_full[i].vel[1] ||
+        data[i].vel[2] != data_full[i].vel[2]) {
       success = false;
     }
   }
@@ -41,7 +43,7 @@ void testInverseKinematics() {
   bool success = true;
   RobotSA01a<double> robot;
   Eigen::VectorXd qpos, qpos_des, qvel;
-  std::vector<endEffectorData<double>> data, data_des;
+  std::vector<EndEffectorData<double>> data, data_des;
   qpos.resize(12);
   qpos.setZero();
   qvel.resize(12);
@@ -90,7 +92,7 @@ void testInverseKinematics() {
   }
 }
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
   testForwardKinematics();
   testInverseKinematics();
   return 0;

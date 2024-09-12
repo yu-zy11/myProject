@@ -1,24 +1,29 @@
 // clang-format off
-#include "PinocchioInterface.h"
+#include "pinocchio_interface/pinocchio_interface.h"
 #include "pinocchio/spatial/symmetric3.hpp"
 #include <Eigen/Dense>
 #include <unistd.h>
 #include <algorithm>
 // clang-format on
+namespace pino {
 
-// PinocchioInterface::PinocchioInterface() {}
-
-void PinocchioInterface::init(const std::string& urdfFilePath, bool print_info) {
+PinocchioInterface::PinocchioInterface(const PinocchioModelInfo& model_info) {
   Model model;
-  createFloatingBaseModel(urdfFilePath, model, print_info);
-  floating_base_joint_num_ = 2;
-  base_dof_ = 6;
+  if (model_info.use_floating_base) {
+    createFloatingBaseModel(model_info.urdf_file_path, model, model_info.print_pinocchio_info);
+    base_dof_ = 6;
+    floating_base_joint_num_ = 2;
+  } else {
+    pinocchio::urdf::buildModel(model_info.urdf_file_path, model, model_info.print_pinocchio_info);
+    floating_base_joint_num_ = 0;
+    base_dof_ = 0;
+  }
   model_ptr_ = std::make_shared<Model>(model);
   data_ptr_ = std::make_unique<Data>(*model_ptr_);
-  // printf("[PinocchioInterface] init finished\n");
+  info_ptr_ = std::make_shared<PinocchioModelInfo>(model_info);
 }
 
-int PinocchioInterface::getLinkID(const std::string& link_name) {
+int PinocchioInterface::GetLinkID(const std::string& link_name) {
   if (!model_ptr_->existBodyName(link_name)) {
     const char* cstr = link_name.c_str();
     printf("Error,link name: [%s] does not exits in URDF, please check\n", cstr);
@@ -26,35 +31,44 @@ int PinocchioInterface::getLinkID(const std::string& link_name) {
   }
   return model_ptr_->getBodyId(link_name);
 }
+int PinocchioInterface::getEndEffectorNum() {
+  int counter{0};
+  for (std::string name : info_ptr_->end_effector_names) {
+    counter = model_ptr_->existBodyName(name) ? counter + 1 : counter;
+  }
+  return counter;
+};
 
-int PinocchioInterface::getLinkParentJointID(const std::string& link_name) { return model_ptr_->frames[getLinkID(link_name)].parent; }
+int PinocchioInterface::GetLinkParentJointID(const std::string& link_name) {
+  return model_ptr_->frames[GetLinkID(link_name)].parent;
+}
 
-int PinocchioInterface::getJointID(const std::string& joint_name) { return model_ptr_->getJointId(joint_name); }
+int PinocchioInterface::GetJointID(const std::string& joint_name) { return model_ptr_->getJointId(joint_name); }
 
-std::vector<int> PinocchioInterface::getAllJointParentIDsExceptBase(std::vector<int> joint_ids) {
+std::vector<int> PinocchioInterface::GetAllRelatedJointParentIDsExceptBase(std::vector<int> joint_ids) {
   std::vector<int> parents;
   parents.clear();
   assert(joint_ids.size() > 0 && "joint_ids is empty");
   for (int i = 0; i < joint_ids.size(); ++i) {
-    int index = joint_ids[i];
-    assert(index >= 0 && index < model_ptr_->parents.size() && "index out of range");
-    auto it = std::find(parents.begin(), parents.end(), index);  // check if index is already in parents
+    int joint_id = joint_ids[i];
+    assert(joint_id >= 0 && joint_id < model_ptr_->parents.size() && "joint_id out of range");
+    auto it = std::find(parents.begin(), parents.end(), joint_id);  // check if joint_id is already in parents
     if (it == parents.end()) {
-      parents.insert(parents.begin(), index);
+      parents.insert(parents.begin(), joint_id);
     }
-
+    /*find all parents joint ids*/
     while (true) {
-      if (model_ptr_->parents[index] == index) {
+      if (model_ptr_->parents[joint_id] == joint_id) {  // base joint id and its parent are both 0
         break;
-      }
-      auto it = std::find(parents.begin(), parents.end(), model_ptr_->parents[index]);  // check if index is already in parents
+      }  // check if joint_id is already in parents
+      auto it = std::find(parents.begin(), parents.end(), model_ptr_->parents[joint_id]);
       if (it == parents.end()) {
-        parents.insert(parents.begin(), model_ptr_->parents[index]);
+        parents.insert(parents.begin(), model_ptr_->parents[joint_id]);
       }
-      index = model_ptr_->parents[index];
+      joint_id = model_ptr_->parents[joint_id];
     }
   }
-  // resort parents and remove joint ids of floating base
+  /*resort parents and remove joint ids of floating base*/
   std::sort(parents.begin(), parents.end());
   for (int i = 0; i < floating_base_joint_num_; ++i) {
     parents.erase(parents.begin());
@@ -69,7 +83,6 @@ void PinocchioInterface::computeKinematics(const Eigen::VectorXd& qpos, const Ei
   pinocchio::forwardKinematics(*model_ptr_, *data_ptr_, qpos, qvel);
   pinocchio::updateFramePlacements(*model_ptr_, *data_ptr_);
   pinocchio::computeJointJacobians(*model_ptr_, *data_ptr_, qpos);
-  // pinocchio::crba(*model_ptr_, *data_ptr_, qpos_);
 }
 
 void PinocchioInterface::computeDynamics(const Eigen::VectorXd& qpos, const Eigen::VectorXd& qvel) {
@@ -77,21 +90,6 @@ void PinocchioInterface::computeDynamics(const Eigen::VectorXd& qpos, const Eige
   pinocchio::crba(*model_ptr_, *data_ptr_, qpos);
   pinocchio::nonLinearEffects(*model_ptr_, *data_ptr_, qpos, qvel);
   pinocchio::computeMinverse(*model_ptr_, *data_ptr_, qpos);
-}
-
-void PinocchioInterface::getLinkKinematicsData(const int& index, Eigen::Vector3d& pos, Eigen::Matrix3d& rotm, Eigen::Vector3d& vel, Eigen::Vector3d& omega,
-                                               Eigen::Matrix<double, 6, Eigen::Dynamic>& jacobian, Eigen::Matrix<double, 6, Eigen::Dynamic>& jacobian_derivative) {
-  assert(index < model_ptr_->nframes && " index out of range in getLinkPosition");
-  pos = data_ptr_->oMf[index].translation();
-  rotm = data_ptr_->oMf[index].rotation();
-
-  auto vel_tmp = pinocchio::getFrameVelocity(*model_ptr_, *data_ptr_, index, pinocchio::ReferenceFrame::LOCAL_WORLD_ALIGNED);
-  vel = vel_tmp.linear();
-  omega = vel_tmp.angular();
-  jacobian.setZero();
-  jacobian_derivative.setZero();
-  pinocchio::getFrameJacobian(*model_ptr_, *data_ptr_, index, pinocchio::ReferenceFrame::LOCAL_WORLD_ALIGNED, jacobian);
-  pinocchio::getFrameJacobianTimeVariation(*model_ptr_, *data_ptr_, index, pinocchio::ReferenceFrame::LOCAL_WORLD_ALIGNED, jacobian_derivative);
 }
 
 Eigen::Vector3d PinocchioInterface::getJointPosition(int jointID) { return data_ptr_->oMi[jointID].translation(); }
@@ -113,11 +111,15 @@ Eigen::MatrixXd PinocchioInterface::getJointSpaceInertialMassMatrixInverse() {
   Minv.triangularView<Eigen::Lower>() = data_ptr_->Minv.transpose().triangularView<Eigen::Lower>();
   return Minv;
 }
-void PinocchioInterface::computeCentroidalDynamics(const Eigen::VectorXd& qpos, const Eigen::VectorXd& qvel) { pinocchio::computeCentroidalMomentum(*model_ptr_, *data_ptr_, qpos, qvel); }
+void PinocchioInterface::computeCentroidalDynamics(const Eigen::VectorXd& qpos, const Eigen::VectorXd& qvel) {
+  pinocchio::computeCentroidalMomentum(*model_ptr_, *data_ptr_, qpos, qvel);
+}
 
 double PinocchioInterface::getLinkMass(int joint_index) { return model_ptr_->inertias[joint_index].mass(); }
 
-Eigen::Matrix3d PinocchioInterface::getLinkInertia(int joint_index) { return model_ptr_->inertias[joint_index].inertia(); };
+Eigen::Matrix3d PinocchioInterface::getLinkInertia(int joint_index) {
+  return model_ptr_->inertias[joint_index].inertia();
+};
 void PinocchioInterface::resetLinkMass(int index, double new_mass) {
   assert(index < model_ptr_->nv && "index out of range in resetLinkMass");
   auto mass = model_ptr_->inertias[index].mass();
@@ -139,18 +141,15 @@ void PinocchioInterface::resetLinkCoM(int index, Eigen::Vector3d com) {
   auto inertia = model_ptr_->inertias[index].inertia();
   pinocchio::Inertia inerita_tmp(mass, com, inertia);
   model_ptr_->inertias[index] = inerita_tmp;
-  // pinocchio::forwardKinematics(*model_ptr_, *data_ptr_, qpos_, qvel_);
 }
 
-Eigen::Vector3d PinocchioInterface::getCenterOfMass() {
-  // pinocchio::centerOfMass(*model_ptr_, *data_ptr_, qpos_, true);
-  return data_ptr_->com[0];
-}
+Eigen::Vector3d PinocchioInterface::getCenterOfMass() { return data_ptr_->com[0]; }
 
 // add 6 joints to the root link,construct floating base model
 void PinocchioInterface::createFloatingBaseModel(const std::string& urdfFilePath, Model& model, bool print_info) {
   pinocchio::JointModelComposite jointComposite(2);
   jointComposite.addJoint(pinocchio::JointModelTranslation());
   jointComposite.addJoint(pinocchio::JointModelSphericalZYX());
-  pinocchio::urdf::buildModel(urdfFilePath, jointComposite, model, print_info);
+  pinocchio::urdf::buildModel(urdfFilePath, jointComposite, model, false);
 };
+}  // namespace pino
