@@ -805,7 +805,6 @@ Stephen Brawner (brawner@gmail.com)
 
   <joint name="leg_r7_joint" type="fixed">
     <origin xyz="0.06567 0.0 -0.0495" rpy="0 0 0"/>
-    <!-- <origin xyz="0.06567 -0.00592 -0.0495" rpy="0 0 0"/> -->
     <parent link="leg_r6_link"/>
     <child  link="leg_r_foot_center"/>
   </joint>

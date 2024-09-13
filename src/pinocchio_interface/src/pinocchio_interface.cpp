@@ -12,10 +12,10 @@ PinocchioInterface::PinocchioInterface(const PinocchioModelInfo& model_info) {
   if (model_info.use_floating_base) {
     createFloatingBaseModel(model_info.urdf_file_path, model, model_info.print_pinocchio_info);
     base_dof_ = 6;
-    floating_base_joint_num_ = 2;
+    floating_base_joint_num_ = 2;  // createFloatingBaseModel add 1,pinocchio create 1 univese joint
   } else {
     pinocchio::urdf::buildModel(model_info.urdf_file_path, model, model_info.print_pinocchio_info);
-    floating_base_joint_num_ = 0;
+    floating_base_joint_num_ = 1;  // pinocchio create 1 univese joint
     base_dof_ = 0;
   }
   model_ptr_ = std::make_shared<Model>(model);
@@ -31,7 +31,7 @@ int PinocchioInterface::GetLinkID(const std::string& link_name) {
   }
   return model_ptr_->getBodyId(link_name);
 }
-int PinocchioInterface::getEndEffectorNum() {
+int PinocchioInterface::GetEndEffectorNumber() {
   int counter{0};
   for (std::string name : info_ptr_->end_effector_names) {
     counter = model_ptr_->existBodyName(name) ? counter + 1 : counter;
@@ -77,20 +77,20 @@ std::vector<int> PinocchioInterface::GetAllRelatedJointParentIDsExceptBase(std::
   return parents;
 }
 
-void PinocchioInterface::computeKinematics(const Eigen::VectorXd& qpos, const Eigen::VectorXd& qvel) {
-  assert(qpos.rows() == model_ptr_->nv && "qpos size not match");
-  assert(qvel.rows() == model_ptr_->nv && "qvel size not match");
-  pinocchio::forwardKinematics(*model_ptr_, *data_ptr_, qpos, qvel);
-  pinocchio::updateFramePlacements(*model_ptr_, *data_ptr_);
-  pinocchio::computeJointJacobians(*model_ptr_, *data_ptr_, qpos);
-}
+// void PinocchioInterface::computeKinematics(const Eigen::VectorXd& qpos, const Eigen::VectorXd& qvel) {
+//   assert(qpos.rows() == model_ptr_->nv && "qpos size not match");
+//   assert(qvel.rows() == model_ptr_->nv && "qvel size not match");
+//   pinocchio::forwardKinematics(*model_ptr_, *data_ptr_, qpos, qvel);
+//   pinocchio::updateFramePlacements(*model_ptr_, *data_ptr_);
+//   pinocchio::computeJointJacobians(*model_ptr_, *data_ptr_, qpos);
+// }
 
-void PinocchioInterface::computeDynamics(const Eigen::VectorXd& qpos, const Eigen::VectorXd& qvel) {
-  computeKinematics(qpos, qvel);
-  pinocchio::crba(*model_ptr_, *data_ptr_, qpos);
-  pinocchio::nonLinearEffects(*model_ptr_, *data_ptr_, qpos, qvel);
-  pinocchio::computeMinverse(*model_ptr_, *data_ptr_, qpos);
-}
+// void PinocchioInterface::computeDynamics(const Eigen::VectorXd& qpos, const Eigen::VectorXd& qvel) {
+//   // computeKinematics(qpos, qvel);
+//   pinocchio::crba(*model_ptr_, *data_ptr_, qpos);
+//   pinocchio::nonLinearEffects(*model_ptr_, *data_ptr_, qpos, qvel);
+//   pinocchio::computeMinverse(*model_ptr_, *data_ptr_, qpos);
+// }
 
 Eigen::Vector3d PinocchioInterface::getJointPosition(int jointID) { return data_ptr_->oMi[jointID].translation(); }
 

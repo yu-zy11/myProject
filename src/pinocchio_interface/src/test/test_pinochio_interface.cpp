@@ -14,6 +14,6 @@ TEST(TestPinocchioKinematics, testPinocchioInverseKinematics) {
     model_info.use_floating_base = true;
     model_info.print_pinocchio_info = false;
   };
-  pino::PinocchioInterface pinocchio_interface(model_info);  // getEndEffectorNum()
-  ASSERT_EQ(pinocchio_interface.getEndEffectorNum(), model_info.end_effector_names.size());
+  pino::PinocchioInterface pinocchio_interface(model_info);  // GetEndEffectorNumber()
+  ASSERT_EQ(pinocchio_interface.GetEndEffectorNumber(), model_info.end_effector_names.size());
 }

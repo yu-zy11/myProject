@@ -45,7 +45,7 @@ class PinocchioInterface {
    * @param [in] link_name: link name in urdf
    * */
   int GetLinkID(const std::string& link_name);
-  int getEndEffectorNum();
+  int GetEndEffectorNumber();
 
   /**
    * get the parent joint id of a link in pinocchio model
@@ -70,31 +70,17 @@ class PinocchioInterface {
   Eigen::VectorXd getJointVelocityLimit() { return model_ptr_->velocityLimit; }
 
   Eigen::VectorXd getJointTorqueLimit() { return model_ptr_->effortLimit; }
-
+  /**
+   * @brief get all related parent joint ids except base,used for inverse kinematics to select jacobian columns
+   */
   std::vector<int> GetAllRelatedJointParentIDsExceptBase(std::vector<int> joint_ids);
 
   /**
    * @brief transfer joint id to jacobian columns
    * @param [in] joint_id: joint id
-   * @return  columns in jacobian matrix.jacobian is full jacobian matrix in cluding floating base
-   *
-   * For a robot with a floating base, the size of jacobian is 6 + nq,
-   * where nq is the number of joints. The first 6 columns of jacobian are the
-   * derivatives of the floating base, and the last nq columns are the
-   * derivatives of the other joints. So we need to add 6 to the joint id to
-   * get the correct jacobian column.
-   *
-   * However, the two extra joints for cloating base are replaced by base dof n the jacobian, so we need
-   * to subtract the number of extra joints from the joint id.
+   * @return  columns id in jacobian matrix.jacobian is full jacobian matrix in cluding floating base
    */
   int JointIdToJacobianColumns(const int& joint_id) { return joint_id - floating_base_joint_num_ + base_dof_; };
-
-  /**
-   * calculate pinocchio  kinematics data,include cartesian position, velocity, jacobian and jacobian derivatives.
-   * @param [in] qpos:robot configuration,including nq*1
-   * @param [in] qvel:joint velocity,nq*1,for bieped robot is 18*1
-   */
-  void computeKinematics(const Eigen::VectorXd& qpos, const Eigen::VectorXd& qvel);
 
   /**
    * calculate pinocchio dynamics data,include mass matrix and coriolis matrix.
@@ -102,7 +88,7 @@ class PinocchioInterface {
    * @param [in] qvel:joint velocity,for bieped robot is 18*1
    * @note:requires pinocchioInterface to be updated computeKinematics()first
    */
-  void computeDynamics(const Eigen::VectorXd& qpos, const Eigen::VectorXd& qvel);
+  // void computeDynamics(const Eigen::VectorXd& qpos, const Eigen::VectorXd& qvel);
 
   // /** Get the link data.
   //  * @param [in] index: frame index,0:
