@@ -17,25 +17,25 @@ TEST(TestPinocchioInterface, testForwardKinematics) {
   pino::PinocchioKinematics pino_kine(pino_ptr_);
 
   Eigen::VectorXd qpos, qpos_des, qvel;
-  qpos.resize(pino_ptr_->getDoF());
+  qpos.resize(pino_ptr_->GetDof());
   qpos.setZero();
-  qvel.resize(pino_ptr_->getDoF());
+  qvel.resize(pino_ptr_->GetDof());
   qvel.setZero();
 
-  qpos_des.resize(pino_ptr_->getDoF());
+  qpos_des.resize(pino_ptr_->GetDof());
   qpos_des.setZero();
-  qpos_des[0 + pino_ptr_->getBaseDoF()] = 0.340188;
-  qpos_des[1 + pino_ptr_->getBaseDoF()] = -0.105617;
-  qpos_des[2 + pino_ptr_->getBaseDoF()] = 0.283099;
-  qpos_des[3 + pino_ptr_->getBaseDoF()] = 0.29844;
-  qpos_des[4 + pino_ptr_->getBaseDoF()] = 0.411647;
-  qpos_des[5 + pino_ptr_->getBaseDoF()] = -0.302449;
-  qpos_des[6 + pino_ptr_->getBaseDoF()] = -0.164777;
-  qpos_des[7 + pino_ptr_->getBaseDoF()] = 0.26823;
-  qpos_des[8 + pino_ptr_->getBaseDoF()] = -0.222225;
-  qpos_des[9 + pino_ptr_->getBaseDoF()] = 0.05397;
-  qpos_des[10 + pino_ptr_->getBaseDoF()] = -0.0226029;
-  qpos_des[11 + pino_ptr_->getBaseDoF()] = 0.128871;
+  qpos_des[0 + pino_ptr_->GetBaseDof()] = 0.340188;
+  qpos_des[1 + pino_ptr_->GetBaseDof()] = -0.105617;
+  qpos_des[2 + pino_ptr_->GetBaseDof()] = 0.283099;
+  qpos_des[3 + pino_ptr_->GetBaseDof()] = 0.29844;
+  qpos_des[4 + pino_ptr_->GetBaseDof()] = 0.411647;
+  qpos_des[5 + pino_ptr_->GetBaseDof()] = -0.302449;
+  qpos_des[6 + pino_ptr_->GetBaseDof()] = -0.164777;
+  qpos_des[7 + pino_ptr_->GetBaseDof()] = 0.26823;
+  qpos_des[8 + pino_ptr_->GetBaseDof()] = -0.222225;
+  qpos_des[9 + pino_ptr_->GetBaseDof()] = 0.05397;
+  qpos_des[10 + pino_ptr_->GetBaseDof()] = -0.0226029;
+  qpos_des[11 + pino_ptr_->GetBaseDof()] = 0.128871;
   /*test inverse kinematics using two endeffector*/
   std::vector<pino::EndEffectorData> data, data_des;
   pino_kine.FixedBaseForwardKinematics(qpos_des, qvel, data_des);
@@ -69,25 +69,25 @@ TEST(TestPinocchioInterface, testInverseKinematics3dof) {
   pino::PinocchioKinematics pino_kine(pino_ptr_);
 
   Eigen::VectorXd qpos, qpos_des, qvel;
-  qpos.resize(pino_ptr_->getDoF());
+  qpos.resize(pino_ptr_->GetDof());
   qpos.setZero();
-  qvel.resize(pino_ptr_->getDoF());
+  qvel.resize(pino_ptr_->GetDof());
   qvel.setZero();
 
-  qpos_des.resize(pino_ptr_->getDoF());
+  qpos_des.resize(pino_ptr_->GetDof());
   qpos_des.setZero();
-  qpos_des[0 + pino_ptr_->getBaseDoF()] = 0.340188;
-  qpos_des[1 + pino_ptr_->getBaseDoF()] = -0.105617;
-  qpos_des[2 + pino_ptr_->getBaseDoF()] = 0.283099;
-  qpos_des[3 + pino_ptr_->getBaseDoF()] = 0.29844;
-  qpos_des[4 + pino_ptr_->getBaseDoF()] = 0.411647;
-  qpos_des[5 + pino_ptr_->getBaseDoF()] = -0.302449;
-  qpos_des[6 + pino_ptr_->getBaseDoF()] = -0.164777;
-  qpos_des[7 + pino_ptr_->getBaseDoF()] = 0.26823;
-  qpos_des[8 + pino_ptr_->getBaseDoF()] = -0.222225;
-  qpos_des[9 + pino_ptr_->getBaseDoF()] = 0.05397;
-  qpos_des[10 + pino_ptr_->getBaseDoF()] = -0.0226029;
-  qpos_des[11 + pino_ptr_->getBaseDoF()] = 0.128871;
+  qpos_des[0 + pino_ptr_->GetBaseDof()] = 0.340188;
+  qpos_des[1 + pino_ptr_->GetBaseDof()] = -0.105617;
+  qpos_des[2 + pino_ptr_->GetBaseDof()] = 0.283099;
+  qpos_des[3 + pino_ptr_->GetBaseDof()] = 0.29844;
+  qpos_des[4 + pino_ptr_->GetBaseDof()] = 0.411647;
+  qpos_des[5 + pino_ptr_->GetBaseDof()] = -0.302449;
+  qpos_des[6 + pino_ptr_->GetBaseDof()] = -0.164777;
+  qpos_des[7 + pino_ptr_->GetBaseDof()] = 0.26823;
+  qpos_des[8 + pino_ptr_->GetBaseDof()] = -0.222225;
+  qpos_des[9 + pino_ptr_->GetBaseDof()] = 0.05397;
+  qpos_des[10 + pino_ptr_->GetBaseDof()] = -0.0226029;
+  qpos_des[11 + pino_ptr_->GetBaseDof()] = 0.128871;
   /*test inverse kinematics using two endeffector*/
   std::vector<pino::EndEffectorData> data, data_des;
   pino_kine.FixedBaseForwardKinematics(qpos_des, qvel, data_des);

@@ -37,9 +37,9 @@ void PinocchioKinematics::FixedBaseForwardKinematics(const Eigen::VectorXd& qpos
                                                      std::vector<EndEffectorData>& data) {
   Eigen::VectorXd qpos_tmp = qpos;
   Eigen::VectorXd qvel_tmp = qvel;
-  if (pino_ptr_->getBaseDoF() > 0) {
-    qpos_tmp.head(pino_ptr_->getBaseDoF()) = Eigen::VectorXd::Zero(pino_ptr_->getBaseDoF());
-    qvel_tmp.head(pino_ptr_->getBaseDoF()) = Eigen::VectorXd::Zero(pino_ptr_->getBaseDoF());
+  if (pino_ptr_->GetBaseDof() > 0) {
+    qpos_tmp.head(pino_ptr_->GetBaseDof()) = Eigen::VectorXd::Zero(pino_ptr_->GetBaseDof());
+    qvel_tmp.head(pino_ptr_->GetBaseDof()) = Eigen::VectorXd::Zero(pino_ptr_->GetBaseDof());
   }
   FullModelForwardKinematics(qpos_tmp, qvel_tmp, data);
 }
@@ -54,7 +54,7 @@ void PinocchioKinematics::FixedBaseInverseKinematics(const Eigen::VectorXd& qpos
                                                      const std::vector<EndEffectorData>& data_des,
                                                      Eigen::VectorXd& qpos_des) {
   // check dimensions of input
-  assert(qpos_ref.size() == pino_ptr_->getDoF() && "the size of reference qpos must be equal to joint bumber");
+  assert(qpos_ref.size() == pino_ptr_->GetDof() && "the size of reference qpos must be equal to joint bumber");
   assert(data_des.size() == pino_ptr_->GetModelInfo()->end_effector_names.size() &&
          "the data size  must be equal to end_effector size()");
   assert(data_des[0].jacobian.cols() == qpos_ref.size() && "wrong size of data_des.jacobian");
@@ -109,18 +109,18 @@ void PinocchioKinematics::FixedBaseInverseKinematics(const Eigen::VectorXd& qpos
      *jacobian,column=jointid-base_joint_num+base_dof. so we
      * can select related columns of jacobian to form  net jacobian,used in inverse kimenatics.un-relative joints
      * columns jacobians are all zero,zero colums in jacobian could cause bad results*/
-    std::vector<int> selected_joint_ids = pino_ptr_->GetAllRelatedJointParentIDsExceptBase(related_joint_ids);
+    std::vector<int> selected_joint_ids = pino_ptr_->GetJointAllRelatedParentJointIDsExceptBase(related_joint_ids);
     Eigen::MatrixXd net_jacobian;
     net_jacobian.resize(composite_Jacobian.rows(), selected_joint_ids.size());
     net_jacobian.setZero();
     for (int i = 0; i < selected_joint_ids.size(); ++i) {
-      net_jacobian.col(i) = composite_Jacobian.col(pino_ptr_->JointIdToJacobianColumns(selected_joint_ids[i]));
+      net_jacobian.col(i) = composite_Jacobian.col(JointIdToJacobianColumns(selected_joint_ids[i]));
     }
     Eigen::MatrixXd jacobian_inverse;
     core::math::dumpedPseudoInverse(net_jacobian, 0.001, jacobian_inverse);
     Eigen::VectorXd delta_qos = jacobian_inverse * composite_error;
     for (int i = 0; i < selected_joint_ids.size(); ++i) {
-      qpos[pino_ptr_->JointIdToJacobianColumns(selected_joint_ids[i])] += delta_qos[i];
+      qpos[JointIdToJacobianColumns(selected_joint_ids[i])] += delta_qos[i];
     }
 
     /*limit joint position to -180~180*/
@@ -134,7 +134,7 @@ void PinocchioKinematics::FixedBaseInverseKinematics(const Eigen::VectorXd& qpos
     }
     /*limit joint position inside joint limits*/
     for (int i = 0; i < selected_joint_ids.size(); ++i) {
-      int index = pino_ptr_->JointIdToJacobianColumns(selected_joint_ids[i]);
+      int index = JointIdToJacobianColumns(selected_joint_ids[i]);
       if (qpos[index] > pino_ptr_->GetModel()->upperPositionLimit[index]) {
         qpos[index] = pino_ptr_->GetModel()->upperPositionLimit[index];
       } else if (qpos[index] < pino_ptr_->GetModel()->lowerPositionLimit[index]) {
@@ -179,7 +179,7 @@ void PinocchioKinematics::FixedBaseInverseKinematics3Dof(const Eigen::VectorXd& 
                                                          const std::string& end_effector_name,
                                                          const Eigen::Vector3d& pos_des, Eigen::VectorXd& qpos_des) {
   // check dimensions of input
-  assert(qpos_ref.size() == pino_ptr_->getDoF() && "the size of reference qpos must be equal to joint bumber");
+  assert(qpos_ref.size() == pino_ptr_->GetDof() && "the size of reference qpos must be equal to joint bumber");
   Eigen::VectorXd qpos = qpos_ref;
   Eigen::MatrixXd composite_Jacobian;
   Eigen::VectorXd composite_error;
@@ -191,7 +191,7 @@ void PinocchioKinematics::FixedBaseInverseKinematics3Dof(const Eigen::VectorXd& 
   related_joint_ids.clear();
   related_joint_ids.push_back(pino_ptr_->GetLinkParentJointID(end_effector_name));
 
-  std::vector<int> selected_joint_ids = pino_ptr_->GetAllRelatedJointParentIDsExceptBase(related_joint_ids);
+  std::vector<int> selected_joint_ids = pino_ptr_->GetJointAllRelatedParentJointIDsExceptBase(related_joint_ids);
   int counter{0};
   while (true) {
     counter++;
@@ -221,14 +221,14 @@ void PinocchioKinematics::FixedBaseInverseKinematics3Dof(const Eigen::VectorXd& 
     net_jacobian.resize(3, selected_joint_ids.size());
     net_jacobian.setZero();
     for (int i = 0; i < selected_joint_ids.size(); ++i) {
-      net_jacobian.col(i) = composite_Jacobian.col(pino_ptr_->JointIdToJacobianColumns(selected_joint_ids[i]));
+      net_jacobian.col(i) = composite_Jacobian.col(JointIdToJacobianColumns(selected_joint_ids[i]));
     }
 
     Eigen::MatrixXd jacobian_inverse;
     core::math::dumpedPseudoInverse(net_jacobian, 0.001, jacobian_inverse);
     Eigen::VectorXd delta_qos = jacobian_inverse * composite_error;
     for (int i = 0; i < selected_joint_ids.size(); ++i) {
-      qpos[pino_ptr_->JointIdToJacobianColumns(selected_joint_ids[i])] += delta_qos[i];
+      qpos[JointIdToJacobianColumns(selected_joint_ids[i])] += delta_qos[i];
     }
 
     /*limit joint position to -180~180*/
@@ -242,7 +242,7 @@ void PinocchioKinematics::FixedBaseInverseKinematics3Dof(const Eigen::VectorXd& 
     }
     /*limit joint position inside joint limits*/
     for (int i = 0; i < selected_joint_ids.size(); ++i) {
-      int index = pino_ptr_->JointIdToJacobianColumns(selected_joint_ids[i]);
+      int index = JointIdToJacobianColumns(selected_joint_ids[i]);
       if (qpos[index] > pino_ptr_->GetModel()->upperPositionLimit[index]) {
         qpos[index] = pino_ptr_->GetModel()->upperPositionLimit[index];
       } else if (qpos[index] < pino_ptr_->GetModel()->lowerPositionLimit[index]) {
@@ -259,4 +259,8 @@ void PinocchioKinematics::FixedBaseInverseKinematics3Dof(const Eigen::VectorXd& 
   }
   qpos_des = qpos;
 }
+
+int PinocchioKinematics::JointIdToJacobianColumns(const int& joint_id) {
+  return joint_id - pino_ptr_->GetFloatingBaseJointNum() + pino_ptr_->GetBaseDof();
+};
 }  // namespace pino

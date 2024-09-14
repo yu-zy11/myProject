@@ -58,7 +58,7 @@ class PinocchioKinematics {
                                   const Eigen::Vector3d& pos_des, const Eigen::Matrix3d& rotm_des,
                                   Eigen::VectorXd& qpos_des);
 
-  /** @brief compute inverse kinematics of  position,recomand to use for point foot,base link is fixed
+  /**  compute inverse kinematics of  position,recomand to use for point foot,base link is fixed
    * @param qpos_ref joint positions of the robot, including base freejoint
    * @param end_effector_name name of the end effector
    * @param pos_des position of the end effector
@@ -68,6 +68,12 @@ class PinocchioKinematics {
                                       const Eigen::Vector3d& pos_des, Eigen::VectorXd& qpos_des);
 
   std::shared_ptr<PinocchioInterface> get_pinocchio_interface() { return pino_ptr_; }
+
+  /** transfer joint id to jacobian columns
+   * @param [in] joint_id: joint id
+   * @return  columns id in jacobian matrix.
+   */
+  int JointIdToJacobianColumns(const int& joint_id);
 
  private:
   std::shared_ptr<PinocchioInterface> pino_ptr_;

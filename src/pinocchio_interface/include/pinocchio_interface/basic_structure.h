@@ -29,6 +29,5 @@ struct PinocchioModelInfo {
   bool use_floating_base = true;
   bool print_pinocchio_info = false;
 };
-
 }  // namespace pino
 #endif
