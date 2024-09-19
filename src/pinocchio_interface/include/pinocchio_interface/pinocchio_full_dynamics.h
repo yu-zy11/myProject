@@ -4,7 +4,8 @@
 #define PINOCCHIO_INTERFACE_PINOCCHIO_FULL_DYNAMICS_H_
 #include "pinocchio_interface/pinocchio_interface.h"
 
-namespace pino {
+namespace core {
+namespace pinocchio_interface {
 class PinocchioFullDynamics {
  public:
   PinocchioFullDynamics(std::shared_ptr<PinocchioInterface> pino_ptr) : pino_ptr_(pino_ptr){};
@@ -29,8 +30,11 @@ class PinocchioFullDynamics {
    */
   Eigen::VectorXd GetCoriolisAndGravity(const Eigen::VectorXd& qpos, const Eigen::VectorXd& qvel);
 
+  std::shared_ptr<PinocchioModelInfo> GetModelInfo() { return pino_ptr_->GetModelInfo(); }
+
  private:
   std::shared_ptr<PinocchioInterface> pino_ptr_;
 };
-}  // namespace pino
+}  // namespace pinocchio_interface
+}  // namespace core
 #endif

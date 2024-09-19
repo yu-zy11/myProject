@@ -4,6 +4,7 @@ string(REGEX REPLACE ".*/\(.*\)" "\\1" CURRENT_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 # Set target name
 get_namespace(${CMAKE_CURRENT_SOURCE_DIR} CURRENT_TARGET_NAME)
 get_alias_namespace(${CMAKE_CURRENT_SOURCE_DIR} CURRENT_TARGET_ALIAS_NAME)
+
 # Set file collection
 file(GLOB_RECURSE head_files ${CMAKE_CURRENT_SOURCE_DIR}/*.h ${CMAKE_CURRENT_SOURCE_DIR}/*.hpp)
 file(GLOB_RECURSE souce_files ${CMAKE_CURRENT_SOURCE_DIR}/*.cc ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
@@ -20,24 +21,28 @@ target_sources(${CURRENT_TARGET_NAME} PRIVATE ${souce_files})
 # Set head files of target
 target_sources(${CURRENT_TARGET_NAME} INTERFACE ${head_files})
 
-find_package(pinocchio REQUIRED)
 # Set include path of target
 target_include_directories(${CURRENT_TARGET_NAME}
-  PUBLIC
+  PUBLIC 
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/..>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    ${pinocchio_INCLUDE_DIRS}
 )
-
 
 # Set link libraries of target
 target_link_libraries(${CURRENT_TARGET_NAME}
-  PUBLIC
-    Eigen3::Eigen
-    pinocchio
+  PUBLIC 
+    yaml-cpp::yaml-cpp
     glog::glog
+    fmt::fmt
+    Eigen3::Eigen
+    src::data
+    # src::common::monitor
+    # src::common::tool
     src::core::math
-    ${pinocchio_LIBRARIES}
+    src::core::pinocchio_interface
+    
+    #for ros2 interface test
+    src::ros2_interface
 )
 
 # Set installation of target

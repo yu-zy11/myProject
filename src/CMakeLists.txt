@@ -7,7 +7,6 @@
 
 add_subdirectory(pinocchio_interface)
 # file(GLOB all_subdirectories RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/*)
-
 # foreach(subdir ${all_subdirectories})
 #     set(subdir_cmake_file ${CMAKE_CURRENT_SOURCE_DIR}/${subdir}/CMakeLists.txt)
 

@@ -5,7 +5,8 @@
 #include <unistd.h>
 #include <algorithm>
 // clang-format on
-namespace pino {
+namespace core {
+namespace pinocchio_interface {
 
 PinocchioInterface::PinocchioInterface(const PinocchioModelInfo& model_info) {
   Model model;
@@ -115,4 +116,5 @@ void PinocchioInterface::createFloatingBaseModel(const std::string& urdfFilePath
   jointComposite.addJoint(pinocchio::JointModelSphericalZYX());
   pinocchio::urdf::buildModel(urdfFilePath, jointComposite, model, false);
 };
-}  // namespace pino
+}  // namespace pinocchio_interface
+}  // namespace core

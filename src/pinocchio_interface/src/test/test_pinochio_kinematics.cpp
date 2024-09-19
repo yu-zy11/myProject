@@ -4,25 +4,28 @@
 #include "pinocchio_interface/pinocchio_kinematics.h"
 
 TEST(TestPinocchioInterface, testForwardKinematics) {
-  pino::PinocchioModelInfo model_info;
+  core::pinocchio_interface::PinocchioModelInfo model_info;
   {
-    model_info.urdf_file_path = "/home/ubuntu/workspace/myProject/src/pinocchio_interface/src/test/SA01p.urdf";
+    model_info.urdf_file_path =
+        "/home/ubuntu/workspace/engineai_robotics/src/core/pinocchio_interface/src/test/SA01p.urdf";
     model_info.base_link_name = "base_link";
     model_info.end_effector_names = {"leg_l_foot_center", "leg_r_foot_center"};
-    model_info.contact_type = {pino::ContactType::kSixDofContact, pino::ContactType::kSixDofContact};
+    model_info.contact_type = {core::pinocchio_interface::ContactType::kSixDofContact,
+                               core::pinocchio_interface::ContactType::kSixDofContact};
     model_info.use_floating_base = true;
     model_info.print_pinocchio_info = false;
   };
-  std::shared_ptr<pino::PinocchioInterface> pino_ptr_ = std::make_shared<pino::PinocchioInterface>(model_info);
-  pino::PinocchioKinematics pino_kine(pino_ptr_);
+  std::shared_ptr<core::pinocchio_interface::PinocchioInterface> pino_ptr_ =
+      std::make_shared<core::pinocchio_interface::PinocchioInterface>(model_info);
+  core::pinocchio_interface::PinocchioKinematics pino_kine(pino_ptr_);
 
   Eigen::VectorXd qpos, qpos_des, qvel;
-  qpos.resize(pino_ptr_->GetDof());
+  qpos.resize(pino_ptr_->GetRobotDof());
   qpos.setZero();
-  qvel.resize(pino_ptr_->GetDof());
+  qvel.resize(pino_ptr_->GetRobotDof());
   qvel.setZero();
 
-  qpos_des.resize(pino_ptr_->GetDof());
+  qpos_des.resize(pino_ptr_->GetRobotDof());
   qpos_des.setZero();
   qpos_des[0 + pino_ptr_->GetBaseDof()] = 0.340188;
   qpos_des[1 + pino_ptr_->GetBaseDof()] = -0.105617;
@@ -37,7 +40,7 @@ TEST(TestPinocchioInterface, testForwardKinematics) {
   qpos_des[10 + pino_ptr_->GetBaseDof()] = -0.0226029;
   qpos_des[11 + pino_ptr_->GetBaseDof()] = 0.128871;
   /*test inverse kinematics using two endeffector*/
-  std::vector<pino::EndEffectorData> data, data_des;
+  std::vector<core::pinocchio_interface::EndEffectorData> data, data_des;
   pino_kine.FixedBaseForwardKinematics(qpos_des, qvel, data_des);
   std::vector<std::string> select_name{model_info.end_effector_names[0], model_info.end_effector_names[1]};
   Eigen::VectorXd q_result;
@@ -56,25 +59,28 @@ TEST(TestPinocchioInterface, testForwardKinematics) {
 }
 
 TEST(TestPinocchioInterface, testInverseKinematics3dof) {
-  pino::PinocchioModelInfo model_info;
+  core::pinocchio_interface::PinocchioModelInfo model_info;
   {
-    model_info.urdf_file_path = "/home/ubuntu/workspace/myProject/src/pinocchio_interface/src/test/SA01p.urdf";
+    model_info.urdf_file_path =
+        "/home/ubuntu/workspace/engineai_robotics/src/core/pinocchio_interface/src/test/SA01p.urdf";
     model_info.base_link_name = "base_link";
     model_info.end_effector_names = {"leg_l_foot_center", "leg_r_foot_center"};
-    model_info.contact_type = {pino::ContactType::kSixDofContact, pino::ContactType::kSixDofContact};
+    model_info.contact_type = {core::pinocchio_interface::ContactType::kSixDofContact,
+                               core::pinocchio_interface::ContactType::kSixDofContact};
     model_info.use_floating_base = false;
     model_info.print_pinocchio_info = false;
   };
-  std::shared_ptr<pino::PinocchioInterface> pino_ptr_ = std::make_shared<pino::PinocchioInterface>(model_info);
-  pino::PinocchioKinematics pino_kine(pino_ptr_);
+  std::shared_ptr<core::pinocchio_interface::PinocchioInterface> pino_ptr_ =
+      std::make_shared<core::pinocchio_interface::PinocchioInterface>(model_info);
+  core::pinocchio_interface::PinocchioKinematics pino_kine(pino_ptr_);
 
   Eigen::VectorXd qpos, qpos_des, qvel;
-  qpos.resize(pino_ptr_->GetDof());
+  qpos.resize(pino_ptr_->GetRobotDof());
   qpos.setZero();
-  qvel.resize(pino_ptr_->GetDof());
+  qvel.resize(pino_ptr_->GetRobotDof());
   qvel.setZero();
 
-  qpos_des.resize(pino_ptr_->GetDof());
+  qpos_des.resize(pino_ptr_->GetRobotDof());
   qpos_des.setZero();
   qpos_des[0 + pino_ptr_->GetBaseDof()] = 0.340188;
   qpos_des[1 + pino_ptr_->GetBaseDof()] = -0.105617;
@@ -89,7 +95,7 @@ TEST(TestPinocchioInterface, testInverseKinematics3dof) {
   qpos_des[10 + pino_ptr_->GetBaseDof()] = -0.0226029;
   qpos_des[11 + pino_ptr_->GetBaseDof()] = 0.128871;
   /*test inverse kinematics using two endeffector*/
-  std::vector<pino::EndEffectorData> data, data_des;
+  std::vector<core::pinocchio_interface::EndEffectorData> data, data_des;
   pino_kine.FixedBaseForwardKinematics(qpos_des, qvel, data_des);
 
   /*test inverse kinematics using endeffector 0*/

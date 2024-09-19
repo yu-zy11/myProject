@@ -3,7 +3,8 @@
 #define PINOCCHIO_INTERFACE_PINOCCHIO_KINEMATICS_H_
 
 #include "pinocchio_interface/pinocchio_interface.h"
-namespace pino {
+namespace core {
+namespace pinocchio_interface {
 
 class PinocchioKinematics {
  public:
@@ -29,6 +30,7 @@ class PinocchioKinematics {
    */
   void FixedBaseForwardKinematics(const Eigen::VectorXd& qpos, const Eigen::VectorXd& qvel,
                                   std::vector<EndEffectorData>& data);
+  std::vector<EndEffectorData> FixedBaseForwardKinematics(const Eigen::VectorXd& qpos, const Eigen::VectorXd& qvel);
   /**
    * @brief compute forward kinematics of robot,set joint positions for base are all 0.
    * @param qpos generalized joint positions of the robot.
@@ -67,7 +69,9 @@ class PinocchioKinematics {
   void FixedBaseInverseKinematics3Dof(const Eigen::VectorXd& qpos_ref, const std::string& end_effector_name,
                                       const Eigen::Vector3d& pos_des, Eigen::VectorXd& qpos_des);
 
-  std::shared_ptr<PinocchioInterface> get_pinocchio_interface() { return pino_ptr_; }
+  std::shared_ptr<PinocchioInterface> GetInterface() { return pino_ptr_; }
+
+  std::shared_ptr<PinocchioModelInfo> GetModelInfo() { return pino_ptr_->GetModelInfo(); }
 
   /** transfer joint id to jacobian columns
    * @param [in] joint_id: joint id
@@ -78,5 +82,6 @@ class PinocchioKinematics {
  private:
   std::shared_ptr<PinocchioInterface> pino_ptr_;
 };
-}  // namespace pino
+}  // namespace pinocchio_interface
+}  // namespace core
 #endif

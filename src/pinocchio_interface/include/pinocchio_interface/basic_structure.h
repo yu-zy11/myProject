@@ -3,7 +3,8 @@
 
 #include <Eigen/Dense>
 
-namespace pino {
+namespace core {
+namespace pinocchio_interface {
 constexpr double kPi = 3.14159265358979323846;
 struct EndEffectorData {
   Eigen::Vector3d pos;
@@ -29,5 +30,6 @@ struct PinocchioModelInfo {
   bool use_floating_base = true;
   bool print_pinocchio_info = false;
 };
-}  // namespace pino
+}  // namespace pinocchio_interface
+}  // namespace core
 #endif

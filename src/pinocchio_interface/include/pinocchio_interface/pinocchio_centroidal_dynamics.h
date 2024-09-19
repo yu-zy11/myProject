@@ -5,7 +5,8 @@
 
 #include "pinocchio_interface/pinocchio_interface.h"
 
-namespace pino {
+namespace core {
+namespace pinocchio_interface {
 class PinocchioCentroidalDynamics {
  public:
   PinocchioCentroidalDynamics(std::shared_ptr<PinocchioInterface> pino_ptr) : pino_ptr_(pino_ptr){};
@@ -85,9 +86,12 @@ class PinocchioCentroidalDynamics {
    */
   Eigen::Vector3d GetEndEffectorPositionToComInWorldFrame(std::string endeffector_name);
 
+  std::shared_ptr<PinocchioModelInfo> GetModelInfo() { return pino_ptr_->GetModelInfo(); }
+
  private:
   std::shared_ptr<PinocchioInterface> pino_ptr_;
 };
-}  // namespace pino
+}  // namespace pinocchio_interface
+}  // namespace core
 
 #endif

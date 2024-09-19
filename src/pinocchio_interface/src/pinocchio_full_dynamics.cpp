@@ -1,15 +1,7 @@
 
 #include "pinocchio_interface/pinocchio_full_dynamics.h"
-namespace pino {
-
-// void PinocchioFullDynamics::UpdateFullDynamics(const Eigen::VectorXd& qpos, const Eigen::VectorXd& qvel) {
-//   // assert(qpos.rows() == pino_ptr_->GetModel()->nv && "qpos size not match");
-//   // assert(qvel.rows() == pino_ptr_->GetModel()->nv && "qvel size not match");
-//   // pinocchio::forwardKinematics(*pino_ptr_->GetModel(), *pino_ptr_->GetData(), qpos, qvel);
-//   // pinocchio::updateFramePlacements(*pino_ptr_->GetModel(), *pino_ptr_->GetData());
-//   // pinocchio::computeJointJacobians(*pino_ptr_->GetModel(), *pino_ptr_->GetData(), qpos);
-//   // pinocchio::crba(*pino_ptr_->GetModel(), *pino_ptr_->GetData(), qpos);
-// }
+namespace core {
+namespace pinocchio_interface {
 
 Eigen::MatrixXd PinocchioFullDynamics::GetJointSpaceMassMatrix(const Eigen::VectorXd& qpos) {
   assert(qpos.rows() == pino_ptr_->GetModel()->nv && "qpos size not match");
@@ -34,4 +26,5 @@ Eigen::VectorXd PinocchioFullDynamics::GetCoriolisAndGravity(const Eigen::Vector
   return pino_ptr_->GetData()->nle;
 };
 
-}  // namespace pino
+}  // namespace pinocchio_interface
+}  // namespace core

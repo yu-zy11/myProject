@@ -25,7 +25,8 @@
  * Pinocchio interface class loading urdf and contatining robot model and data.
  * The robot model is shared between interface instances.
  */
-namespace pino {
+namespace core {
+namespace pinocchio_interface {
 using Model = pinocchio::ModelTpl<double, 0, pinocchio::JointCollectionDefaultTpl>;
 using Data = pinocchio::DataTpl<double, 0, pinocchio::JointCollectionDefaultTpl>;
 
@@ -94,7 +95,7 @@ class PinocchioInterface {
   /**  return degree of freedom of the robot
    * @param [out] model_nv_:degree of freedom
    */
-  int GetDof() { return model_ptr_->nv; }
+  int GetRobotDof() { return model_ptr_->nv; }
 
   /**
    * @brief get the degree of freedom of base link
@@ -138,5 +139,6 @@ class PinocchioInterface {
   int base_dof_;
   std::shared_ptr<PinocchioModelInfo> info_ptr_;
 };
-}  // namespace pino
+}  // namespace pinocchio_interface
+}  // namespace core
 #endif
