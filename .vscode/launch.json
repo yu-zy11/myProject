@@ -10,7 +10,8 @@
             "name": "(gdb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/main1",
+            // "program": "${workspaceFolder}/build/main1",
+            "program": "${fileDirname}/${fileBasenameNoExtension}",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",
@@ -29,7 +30,8 @@
                     "ignoreFailures": true
                 }
             ],
-            "preLaunchTask" : "CMake: build"
+            // "preLaunchTask" : "CMake: build"
+            "preLaunchTask" : "C/C++: gcc build active file"
 
         }
     ]
