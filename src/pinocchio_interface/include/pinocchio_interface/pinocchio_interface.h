@@ -25,7 +25,7 @@
  * Pinocchio interface class loading urdf and contatining robot model and data.
  * The robot model is shared between interface instances.
  */
-namespace core {
+
 namespace pinocchio_interface {
 using Model = pinocchio::ModelTpl<double, 0, pinocchio::JointCollectionDefaultTpl>;
 using Data = pinocchio::DataTpl<double, 0, pinocchio::JointCollectionDefaultTpl>;
@@ -140,5 +140,5 @@ class PinocchioInterface {
   std::shared_ptr<PinocchioModelInfo> info_ptr_;
 };
 }  // namespace pinocchio_interface
-}  // namespace core
+
 #endif

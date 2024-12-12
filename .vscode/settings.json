@@ -136,5 +136,9 @@
     ],
     "cpplint.root": "${workspaceFolder}",
     "C_Cpp.default.compileCommands": "${workspaceFolder}/build/compile_commands.json",
-    "xml.format.splitAttributes": true
+    "xml.format.splitAttributes": true,
+
+    {
+        "julia.environmentPath": "/home/ubuntu/.julia/environments/v1.10"
+    }
 }

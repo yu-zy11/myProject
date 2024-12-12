@@ -36,7 +36,6 @@
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
-namespace core {
 namespace math {
 
 template <typename T>
@@ -615,9 +614,8 @@ using RollPitchYawd = RollPitchYaw<double>;
 using RollPitchYawf = RollPitchYaw<float>;
 
 }  // namespace math
-}  // namespace core
 
-extern template class core::math::RollPitchYaw<double>;
-extern template class core::math::RollPitchYaw<float>;
+extern template class math::RollPitchYaw<double>;
+extern template class math::RollPitchYaw<float>;
 
 #endif  // MATH_ROLL_PITCH_YAW_H_

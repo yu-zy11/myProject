@@ -39,7 +39,6 @@
 #include "math/fast_pose_composition_functions.h"
 #include "math/roll_pitch_yaw.h"
 
-namespace core {
 namespace math {
 
 namespace internal {
@@ -956,9 +955,8 @@ double ProjectMatToRotMatWithAxis(const Eigen::Matrix3d& M, const Eigen::Vector3
                                   double angle_ub);
 
 }  // namespace math
-}  // namespace core
 
-extern template class core::math::RotationMatrix<double>;
-extern template class core::math::RotationMatrix<float>;
+extern template class math::RotationMatrix<double>;
+extern template class math::RotationMatrix<float>;
 
 #endif  // MATH_ROTATION_MATRIX_H_

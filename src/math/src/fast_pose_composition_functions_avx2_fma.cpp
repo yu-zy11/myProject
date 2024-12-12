@@ -41,7 +41,6 @@
 // part of a compilation unit that may have a different opinion about whether SIMD
 // instructions are enabled than Eigen does in the rest of Drake.
 
-namespace core {
 namespace math {
 namespace internal {
 
@@ -469,4 +468,3 @@ void ComposeXinvXAvx(const RigidTransform<double>&, const RigidTransform<double>
 
 }  // namespace internal
 }  // namespace math
-}  // namespace core

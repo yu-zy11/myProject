@@ -5,7 +5,7 @@
 #include <unistd.h>
 #include <algorithm>
 // clang-format on
-namespace core {
+
 namespace pinocchio_interface {
 
 PinocchioInterface::PinocchioInterface(const PinocchioModelInfo& model_info) {
@@ -117,4 +117,3 @@ void PinocchioInterface::createFloatingBaseModel(const std::string& urdfFilePath
   pinocchio::urdf::buildModel(urdfFilePath, jointComposite, model, false);
 };
 }  // namespace pinocchio_interface
-}  // namespace core

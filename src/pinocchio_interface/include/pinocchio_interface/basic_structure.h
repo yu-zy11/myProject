@@ -3,7 +3,6 @@
 
 #include <Eigen/Dense>
 
-namespace core {
 namespace pinocchio_interface {
 constexpr double kPi = 3.14159265358979323846;
 struct EndEffectorData {
@@ -31,5 +30,5 @@ struct PinocchioModelInfo {
   bool print_pinocchio_info = false;
 };
 }  // namespace pinocchio_interface
-}  // namespace core
+
 #endif

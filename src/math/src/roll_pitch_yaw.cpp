@@ -37,7 +37,6 @@
 
 #include "math/rotation_matrix.h"
 
-namespace core {
 namespace math {
 
 template <typename T>
@@ -275,7 +274,6 @@ template std::ostream& operator<<<double>(std::ostream& out, const RollPitchYaw<
 template std::ostream& operator<<<float>(std::ostream& out, const RollPitchYaw<float>& rpy);
 
 }  // namespace math
-}  // namespace core
 
-template class core::math::RollPitchYaw<double>;
-template class core::math::RollPitchYaw<float>;
+template class math::RollPitchYaw<double>;
+template class math::RollPitchYaw<float>;

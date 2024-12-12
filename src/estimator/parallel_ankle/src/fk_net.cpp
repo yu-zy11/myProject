@@ -3,7 +3,6 @@
 
 #include <iostream>
 
-namespace core {
 namespace estimator {
 
 void MapminmaxApply(Eigen::ArrayXd x, Eigen::Matrix<double, -1, 3> settings, Eigen::VectorXd& y) {
@@ -81,4 +80,3 @@ void FK(Eigen::VectorXd X, Eigen::VectorXd& Y) {
   MapminmaxReverse(a2, y1_step1, Y);
 }
 }  // namespace estimator
-}  // namespace core

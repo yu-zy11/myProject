@@ -34,7 +34,6 @@
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
-namespace core {
 namespace math {
 
 namespace {
@@ -411,7 +410,6 @@ Eigen::Vector3<T> RotationMatrix<T>::NormalizeOrThrow(const Eigen::Vector3<T>& v
 }
 
 }  // namespace math
-}  // namespace core
 
-template class core::math::RotationMatrix<double>;
-template class core::math::RotationMatrix<float>;
+template class math::RotationMatrix<double>;
+template class math::RotationMatrix<float>;

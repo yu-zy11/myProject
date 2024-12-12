@@ -1,6 +1,6 @@
 
 #include "pinocchio_interface/pinocchio_full_dynamics.h"
-namespace core {
+
 namespace pinocchio_interface {
 
 Eigen::MatrixXd PinocchioFullDynamics::GetJointSpaceMassMatrix(const Eigen::VectorXd& qpos) {
@@ -27,4 +27,3 @@ Eigen::VectorXd PinocchioFullDynamics::GetCoriolisAndGravity(const Eigen::Vector
 };
 
 }  // namespace pinocchio_interface
-}  // namespace core

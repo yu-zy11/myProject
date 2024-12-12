@@ -1,7 +1,6 @@
 #include "pinocchio_interface/pinocchio_kinematics.h"
-#include "math/pseudo_inverse.h"
+#include "pinocchio_interface/pseudo_inverse.h"
 
-namespace core {
 namespace pinocchio_interface {
 
 void PinocchioKinematics::FullModelForwardKinematics(const Eigen::VectorXd& qpos, const Eigen::VectorXd& qvel,
@@ -124,7 +123,7 @@ void PinocchioKinematics::FixedBaseInverseKinematics(const Eigen::VectorXd& qpos
       net_jacobian.col(i) = composite_Jacobian.col(JointIdToJacobianColumns(selected_joint_ids[i]));
     }
     Eigen::MatrixXd jacobian_inverse;
-    core::math::dumpedPseudoInverse(net_jacobian, 0.001, jacobian_inverse);
+    math::dumpedPseudoInverse(net_jacobian, 0.001, jacobian_inverse);
     Eigen::VectorXd delta_qos = jacobian_inverse * composite_error;
     for (int i = 0; i < selected_joint_ids.size(); ++i) {
       qpos[JointIdToJacobianColumns(selected_joint_ids[i])] += delta_qos[i];
@@ -232,7 +231,7 @@ void PinocchioKinematics::FixedBaseInverseKinematics3Dof(const Eigen::VectorXd& 
     }
 
     Eigen::MatrixXd jacobian_inverse;
-    core::math::dumpedPseudoInverse(net_jacobian, 0.001, jacobian_inverse);
+    math::dumpedPseudoInverse(net_jacobian, 0.001, jacobian_inverse);
     Eigen::VectorXd delta_qos = jacobian_inverse * composite_error;
     for (int i = 0; i < selected_joint_ids.size(); ++i) {
       qpos[JointIdToJacobianColumns(selected_joint_ids[i])] += delta_qos[i];
@@ -271,4 +270,3 @@ int PinocchioKinematics::JointIdToJacobianColumns(const int& joint_id) {
   return joint_id - pino_ptr_->GetFloatingBaseJointNum() + pino_ptr_->GetBaseDof();
 };
 }  // namespace pinocchio_interface
-}  // namespace core

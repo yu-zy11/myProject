@@ -12,7 +12,7 @@ list(REMOVE_ITEM souce_files ${test_files})
 
 # Add target
 add_library(${CURRENT_TARGET_NAME} SHARED)
-add_library(${CURRENT_TARGET_ALIAS_NAME} ALIAS ${CURRENT_TARGET_NAME})
+# add_library(${CURRENT_TARGET_ALIAS_NAME} ALIAS ${CURRENT_TARGET_NAME})
 
 # Set source file of target
 target_sources(${CURRENT_TARGET_NAME} PRIVATE ${souce_files})
@@ -41,7 +41,7 @@ target_link_libraries(${CURRENT_TARGET_NAME}
 
 # Set installation of target
 install(TARGETS ${CURRENT_TARGET_NAME}
-  EXPORT ${CURRENT_TARGET_ALIAS_NAME}
+  EXPORT ${CURRENT_TARGET_NAME}
   RUNTIME DESTINATION bin
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib

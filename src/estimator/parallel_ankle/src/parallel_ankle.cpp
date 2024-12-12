@@ -10,7 +10,6 @@
 
 #include "parallel_ankle/fk_net.h"
 
-namespace core {
 namespace estimator {
 
 typedef Eigen::Matrix<double, 6, 1> Vector6d;
@@ -744,4 +743,3 @@ void ParallelAnkle::JacobiMatrixTest() {
   }
 }
 }  // namespace estimator
-}  // namespace core

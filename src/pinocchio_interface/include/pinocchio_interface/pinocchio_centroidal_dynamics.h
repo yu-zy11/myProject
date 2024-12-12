@@ -5,7 +5,6 @@
 
 #include "pinocchio_interface/pinocchio_interface.h"
 
-namespace core {
 namespace pinocchio_interface {
 class PinocchioCentroidalDynamics {
  public:
@@ -92,6 +91,5 @@ class PinocchioCentroidalDynamics {
   std::shared_ptr<PinocchioInterface> pino_ptr_;
 };
 }  // namespace pinocchio_interface
-}  // namespace core
 
 #endif

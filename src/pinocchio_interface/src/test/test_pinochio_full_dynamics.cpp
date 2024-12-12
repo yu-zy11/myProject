@@ -4,20 +4,20 @@
 #include "pinocchio_interface/pinocchio_full_dynamics.h"
 
 TEST(TestPinocchioInterface, testFullDynamics) {
-  core::pinocchio_interface::PinocchioModelInfo model_info;
+  pinocchio_interface::PinocchioModelInfo model_info;
   {
     model_info.urdf_file_path =
         "/home/ubuntu/workspace/engineai_robotics/src/core/pinocchio_interface/src/test/SA01p.urdf";
     model_info.base_link_name = "base_link";
     model_info.end_effector_names = {"leg_l_foot_center", "leg_r_foot_center"};
-    model_info.contact_type = {core::pinocchio_interface::ContactType::kSixDofContact,
-                               core::pinocchio_interface::ContactType::kSixDofContact};
+    model_info.contact_type = {pinocchio_interface::ContactType::kSixDofContact,
+                               pinocchio_interface::ContactType::kSixDofContact};
     model_info.use_floating_base = true;
     model_info.print_pinocchio_info = false;
   };
-  std::shared_ptr<core::pinocchio_interface::PinocchioInterface> pino_ptr_ =
-      std::make_shared<core::pinocchio_interface::PinocchioInterface>(model_info);
-  core::pinocchio_interface::PinocchioFullDynamics pino_dyn(pino_ptr_);
+  std::shared_ptr<pinocchio_interface::PinocchioInterface> pino_ptr_ =
+      std::make_shared<pinocchio_interface::PinocchioInterface>(model_info);
+  pinocchio_interface::PinocchioFullDynamics pino_dyn(pino_ptr_);
 
   Eigen::VectorXd qpos = Eigen::VectorXd::Zero(pino_ptr_->GetRobotDof());
   Eigen::VectorXd qvel = Eigen::VectorXd::Zero(pino_ptr_->GetRobotDof());

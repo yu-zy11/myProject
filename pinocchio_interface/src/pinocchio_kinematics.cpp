@@ -1,7 +1,7 @@
 #include "pinocchio_interface/pinocchio_kinematics.h"
 #include "pinocchio_interface/pseudo_inverse.h"
-// PinocchioKinematics::PinocchioKinematics() {
-namespace pino {
+
+namespace pinocchio_interface {
 
 void PinocchioKinematics::FullModelForwardKinematics(const Eigen::VectorXd& qpos, const Eigen::VectorXd& qvel,
                                                      std::vector<EndEffectorData>& data) {
@@ -43,6 +43,12 @@ void PinocchioKinematics::FixedBaseForwardKinematics(const Eigen::VectorXd& qpos
   }
   FullModelForwardKinematics(qpos_tmp, qvel_tmp, data);
 }
+std::vector<EndEffectorData> PinocchioKinematics::FixedBaseForwardKinematics(const Eigen::VectorXd& qpos,
+                                                                             const Eigen::VectorXd& qvel) {
+  std::vector<EndEffectorData> data;
+  FixedBaseForwardKinematics(qpos, qvel, data);
+  return data;
+};
 
 void PinocchioKinematics::FixedBaseForwardKinematics(const Eigen::VectorXd& qpos, std::vector<EndEffectorData>& data) {
   Eigen::VectorXd qvel = Eigen::VectorXd::Zero(qpos.size());
@@ -54,7 +60,7 @@ void PinocchioKinematics::FixedBaseInverseKinematics(const Eigen::VectorXd& qpos
                                                      const std::vector<EndEffectorData>& data_des,
                                                      Eigen::VectorXd& qpos_des) {
   // check dimensions of input
-  assert(qpos_ref.size() == pino_ptr_->GetDof() && "the size of reference qpos must be equal to joint bumber");
+  assert(qpos_ref.size() == pino_ptr_->GetRobotDof() && "the size of reference qpos must be equal to joint bumber");
   assert(data_des.size() == pino_ptr_->GetModelInfo()->end_effector_names.size() &&
          "the data size  must be equal to end_effector size()");
   assert(data_des[0].jacobian.cols() == qpos_ref.size() && "wrong size of data_des.jacobian");
@@ -117,7 +123,7 @@ void PinocchioKinematics::FixedBaseInverseKinematics(const Eigen::VectorXd& qpos
       net_jacobian.col(i) = composite_Jacobian.col(JointIdToJacobianColumns(selected_joint_ids[i]));
     }
     Eigen::MatrixXd jacobian_inverse;
-    core::math::dumpedPseudoInverse(net_jacobian, 0.001, jacobian_inverse);
+    math::dumpedPseudoInverse(net_jacobian, 0.001, jacobian_inverse);
     Eigen::VectorXd delta_qos = jacobian_inverse * composite_error;
     for (int i = 0; i < selected_joint_ids.size(); ++i) {
       qpos[JointIdToJacobianColumns(selected_joint_ids[i])] += delta_qos[i];
@@ -179,7 +185,7 @@ void PinocchioKinematics::FixedBaseInverseKinematics3Dof(const Eigen::VectorXd& 
                                                          const std::string& end_effector_name,
                                                          const Eigen::Vector3d& pos_des, Eigen::VectorXd& qpos_des) {
   // check dimensions of input
-  assert(qpos_ref.size() == pino_ptr_->GetDof() && "the size of reference qpos must be equal to joint bumber");
+  assert(qpos_ref.size() == pino_ptr_->GetRobotDof() && "the size of reference qpos must be equal to joint bumber");
   Eigen::VectorXd qpos = qpos_ref;
   Eigen::MatrixXd composite_Jacobian;
   Eigen::VectorXd composite_error;
@@ -225,7 +231,7 @@ void PinocchioKinematics::FixedBaseInverseKinematics3Dof(const Eigen::VectorXd& 
     }
 
     Eigen::MatrixXd jacobian_inverse;
-    core::math::dumpedPseudoInverse(net_jacobian, 0.001, jacobian_inverse);
+    math::dumpedPseudoInverse(net_jacobian, 0.001, jacobian_inverse);
     Eigen::VectorXd delta_qos = jacobian_inverse * composite_error;
     for (int i = 0; i < selected_joint_ids.size(); ++i) {
       qpos[JointIdToJacobianColumns(selected_joint_ids[i])] += delta_qos[i];
@@ -263,4 +269,4 @@ void PinocchioKinematics::FixedBaseInverseKinematics3Dof(const Eigen::VectorXd& 
 int PinocchioKinematics::JointIdToJacobianColumns(const int& joint_id) {
   return joint_id - pino_ptr_->GetFloatingBaseJointNum() + pino_ptr_->GetBaseDof();
 };
-}  // namespace pino
+}  // namespace pinocchio_interface

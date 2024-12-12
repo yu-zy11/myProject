@@ -37,7 +37,6 @@
 // included by a compilation unit that may have a different opinion about whether
 // SIMD instructions are enabled than Eigen does in the rest of Drake.
 
-namespace core {
 namespace math {
 
 // We do not have access to the declarations for RotationMatrix and
@@ -114,5 +113,5 @@ void ComposeXinvXAvx(const RigidTransform<double>& X_BA, const RigidTransform<do
 
 }  // namespace internal
 }  // namespace math
-}  // namespace core
+
 #endif  // MATH_FAST_POSE_COMPOSITION_FUNCTIONS_AVX2_FMA_H_

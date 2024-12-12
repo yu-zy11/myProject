@@ -3,7 +3,7 @@
 #define PINOCCHIO_INTERFACE_PINOCCHIO_KINEMATICS_H_
 
 #include "pinocchio_interface/pinocchio_interface.h"
-namespace core {
+
 namespace pinocchio_interface {
 
 class PinocchioKinematics {
@@ -83,5 +83,5 @@ class PinocchioKinematics {
   std::shared_ptr<PinocchioInterface> pino_ptr_;
 };
 }  // namespace pinocchio_interface
-}  // namespace core
+
 #endif

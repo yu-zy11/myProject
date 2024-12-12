@@ -3,12 +3,11 @@
 #include "linearKF_state_estimator/linearKF_state_estimator.h"
 #include "math/roll_pitch_yaw.h"
 
-namespace core {
 namespace estimator {
 
 LinearKFStateEstimator::LinearKFStateEstimator(const std::shared_ptr<data::DataStore>& data_store) {
   data_ptr_ = data_store;
-  pino_kine_ = std::make_shared<core::pinocchio_interface::PinocchioKinematics>(data_ptr_->pinocchio_interface);
+  pino_kine_ = std::make_shared<pinocchio_interface::PinocchioKinematics>(data_ptr_->pinocchio_interface);
   quaternion_offset_.setIdentity();
   first_run_counter_ = 0;
   UpdateSetting();
@@ -65,7 +64,7 @@ void LinearKFStateEstimator::Run() {
 void LinearKFStateEstimator::UpdateOrietationData() {
   if (first_run_counter_ < 100) {
     data_ptr_->imu_info().quaternion.normalize();
-    core::math::RollPitchYaw rpy_init(data_ptr_->imu_info().quaternion);
+    math::RollPitchYaw rpy_init(data_ptr_->imu_info().quaternion);
     rpy_init.set(0.0, 0.0, -rpy_init.yaw());
     quaternion_offset_ = rpy_init.ToQuaternion();
     first_run_counter_++;
@@ -173,4 +172,3 @@ void LinearKFStateEstimator::RunLinearKalmanFilterForPositionVelocity() {
 }
 
 }  // namespace estimator
-}  // namespace core

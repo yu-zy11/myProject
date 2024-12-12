@@ -5,7 +5,6 @@
 #include <vector>
 
 // TODO(qsy): Format the code
-namespace core {
 namespace estimator {
 
 struct ParallelAnkleInfo {
@@ -97,6 +96,5 @@ class ParallelAnkle {
   void JacobiMatrixTest();
 };
 }  // namespace estimator
-}  // namespace core
 
 #endif  // CORE_ESTIMATOR_PARALLEL_ANKLE_INCLUDE_PARALLEL_ANKLE_PARALLEL_ANKLE_H_

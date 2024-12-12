@@ -5,7 +5,7 @@
 #include "data/imu_info/imu_info.h"
 #include "linearKF_state_estimator/linearKF_state_estimator.h"
 TEST(linearKF, testLinearKF) {
-  core::estimator::LinearKFSetting setting;
+  estimator::LinearKFSetting setting;
   setting.foot_num = 1;
   setting.step = 0.002;
   setting.foot_sensor_noise_height = 0.001;
@@ -31,7 +31,7 @@ TEST(linearKF, testLinearKF) {
   imu_info.angular_velocity = Eigen::Vector3d(0, 0, 0);
   data_store->imu_info.Set(imu_info);
 
-  core::estimator::LinearKFStateEstimator estimator(data_store);
+  estimator::LinearKFStateEstimator estimator(data_store);
 
   estimator.UpdateSetting(setting);
   estimator.Setup();

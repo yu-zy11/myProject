@@ -13,7 +13,6 @@
  *position,base velocity,and foot positions observation equation: y_k=H*X_k+noise, observation y=[pos_base-foot_pos1,
  *pos_base-foot_pos2 ,vel_base,vel_base,foot_pos1_z,foot_pos2_z]
  */
-namespace core {
 namespace estimator {
 
 class LinearKFStateEstimator {
@@ -45,7 +44,7 @@ class LinearKFStateEstimator {
 
   std::shared_ptr<data::DataStore> data_ptr_;
   std::unique_ptr<data::EstimatorParam> param_;
-  std::shared_ptr<core::pinocchio_interface::PinocchioKinematics> pino_kine_;
+  std::shared_ptr<pinocchio_interface::PinocchioKinematics> pino_kine_;
 
   int first_run_counter_ = 0;
   Eigen::Quaterniond quaternion_offset_;
@@ -68,5 +67,4 @@ class LinearKFStateEstimator {
 //   std::shared_ptr<data::DataStore> data_ptr_;
 // };
 }  // namespace estimator
-}  // namespace core
 #endif

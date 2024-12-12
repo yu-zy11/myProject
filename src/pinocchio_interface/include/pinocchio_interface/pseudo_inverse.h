@@ -6,7 +6,7 @@
 #include <Eigen/Dense>
 #include <eigen3/Eigen/LU>
 #include <eigen3/Eigen/SVD>
-namespace core {
+
 namespace math {
 /**
  * Compute the dumped pseudo inverse of a matrix. If the singular value is less than
@@ -67,5 +67,5 @@ void pseudoInverse(Eigen::Matrix<T, -1, -1> const& matrix, double threshold, Eig
   inverse_matrix = svd.matrixV() * invS * svd.matrixU().transpose();
 }
 }  // namespace math
-}  // namespace core
+
 #endif

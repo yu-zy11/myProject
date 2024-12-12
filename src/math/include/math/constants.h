@@ -1,7 +1,6 @@
 #ifndef MATH_CONSTANTS_H_
 #define MATH_CONSTANTS_H_
 
-namespace core {
 namespace math {
 constexpr double kGravity = 9.80665;
 constexpr float kGravityFloat = 9.80665f;
@@ -17,6 +16,5 @@ constexpr float kDegreesPerRadianFloat = 57.29577951308232087680f;
 
 constexpr int kSecondToMilliSecond = 1000;
 }  // namespace math
-}  // namespace core
 
 #endif  // MATH_CONSTANTS_H_

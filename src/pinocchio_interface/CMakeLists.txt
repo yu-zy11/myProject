@@ -36,7 +36,6 @@ target_link_libraries(${CURRENT_TARGET_NAME}
     Eigen3::Eigen
     pinocchio
     glog::glog
-    src::core::math
     ${pinocchio_LIBRARIES}
 )
 

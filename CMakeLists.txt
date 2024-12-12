@@ -39,9 +39,9 @@ include_directories(
 # # glog::glog
 # )
 
-add_subdirectory(src)
-# target_link_libraries(${PROJECT_NAME} linearDynamics)
+# add_subdirectory(src)
+add_subdirectory(pinocchio_interface)
 
-# add_subdirectory(controller)
+# target_link_libraries(${PROJECT_NAME} linearDynamics)
 
 # target_link_libraries(mpc_controller)

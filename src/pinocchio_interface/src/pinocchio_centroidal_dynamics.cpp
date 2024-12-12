@@ -1,7 +1,7 @@
 
 
 #include "pinocchio_interface/pinocchio_centroidal_dynamics.h"
-namespace core {
+
 namespace pinocchio_interface {
 Eigen::MatrixXd PinocchioCentroidalDynamics::GetCentroidalMomentumMap(const Eigen::VectorXd& qpos) {
   assert(qpos.rows() == pino_ptr_->GetModel()->nv && "qpos size not match");
@@ -88,4 +88,3 @@ Eigen::Vector3d PinocchioCentroidalDynamics::GetEndEffectorPositionToComInWorldF
 }
 
 }  // namespace pinocchio_interface
-}  // namespace core

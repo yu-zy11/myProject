@@ -8,7 +8,6 @@ template <typename T>
 class MatrixBase;
 }
 
-namespace core {
 namespace math {
 
 // Linearly interpolates from |start| and |end|. t ∈ [0, 1].
@@ -128,5 +127,5 @@ void QuinticInterpolate(const T& start, const T& end, double period, double phas
 }
 
 }  // namespace math
-}  // namespace core
+
 #endif  // CORE_MATH_INCLUDE_MATH_INTERPOLATION_H_

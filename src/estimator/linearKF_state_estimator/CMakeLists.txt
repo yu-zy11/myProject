@@ -23,14 +23,14 @@ target_sources(${CURRENT_TARGET_NAME} INTERFACE ${head_files})
 
 # Set include path of target
 target_include_directories(${CURRENT_TARGET_NAME}
-  PUBLIC 
+  PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/..>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
 )
 
 # Set link libraries of target
 target_link_libraries(${CURRENT_TARGET_NAME}
-  PUBLIC 
+  PUBLIC
     yaml-cpp::yaml-cpp
     glog::glog
     fmt::fmt
@@ -38,9 +38,9 @@ target_link_libraries(${CURRENT_TARGET_NAME}
     src::data
     # src::common::monitor
     # src::common::tool
-    src::core::math
-    src::core::pinocchio_interface
-    
+    src::math
+    src::pinocchio_interface
+
     #for ros2 interface test
     src::ros2_interface
 )

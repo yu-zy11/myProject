@@ -1,6 +1,5 @@
 #ifndef ESTIMATOR_INCLUDE_ESTIMATOR_LINEAR_KF_SETTING_H_
 #define ESTIMATOR_INCLUDE_ESTIMATOR_LINEAR_KF_SETTING_H_
-namespace core {
 namespace estimator {
 
 struct LinearKFSetting {
@@ -14,5 +13,4 @@ struct LinearKFSetting {
   double imu_process_noise_velocity;
 };
 }  // namespace estimator
-}  // namespace core
 #endif
