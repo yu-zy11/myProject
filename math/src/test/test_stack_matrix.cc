@@ -1,4 +1,3 @@
-
 #include <Eigen/Dense>
 #include <ctime>
 #include <iostream>
@@ -37,12 +36,15 @@ bool test_stack_matrix() {
 
 bool test_IsPositiveDefinite() {
   Eigen::MatrixXd matrix = Eigen::MatrixXd::Identity(3, 3);
-  if (!math::IsPositiveDefiniteUseEigenvalues(matrix)) {
+  matrix(2, 2) = 0;
+  bool semi_definite = math::IsSemiPositiveDefinite(matrix);
+  matrix(2, 2) = 1;
+  if (!math::IsPositiveDefinite(matrix)) {
     std::cout << "test_IsPositiveDefinite failed" << std::endl;
     return false;
   }
   matrix = -Eigen::MatrixXd::Identity(3, 3);
-  if (math::IsPositiveDefiniteUseEigenvalues(matrix)) {
+  if (math::IsPositiveDefinite(matrix)) {
     std::cout << "test_IsPositiveDefinite failed" << std::endl;
     return false;
   }

@@ -1,69 +1,13 @@
+
+
+#ifndef PSEUDO_INVERSE_H
+#define PSEUDO_INVERSE_H
+
 #include <Eigen/Dense>
+#include <eigen3/Eigen/LU>
+#include <eigen3/Eigen/SVD>
 
 namespace math {
-template <typename T>
-Eigen::Matrix<T, -1, -1> StackMatrix(const Eigen::Matrix<T, -1, -1>& m1, const Eigen::Matrix<T, -1, -1>& m2) {
-  int cols = m1.cols();
-  if (cols != m2.cols()) {
-    throw std::runtime_error("cols of m1 and m2 not equal");
-  }
-  Eigen::Matrix<T, -1, -1> res(m1.rows() + m2.rows(), cols);
-  res << m1, m2;
-  return res;
-}
-
-Eigen::VectorXd StackMatrix(const Eigen::VectorXd& v1, const Eigen::VectorXd& v2) {
-  Eigen::VectorXd res(v1.size() + v2.size());
-  res << v1, v2;
-  return res;
-}
-
-// 判断矩阵是否正定
-template <typename T>
-bool IsPositiveDefinite(const Eigen::Matrix<T, -1, -1>& matrix) {
-  if (matrix.rows() != matrix.cols()) {
-    throw std::runtime_error("matrix is not square");
-  }
-  try {
-    Eigen::LLT<Eigen::Matrix<T, -1, -1>> llt(matrix);
-    return llt.info() == Eigen::Success;
-  } catch (...) {
-    return false;
-  }
-}
-
-template <typename T>
-bool IsSemiPositiveDefinite(const Eigen::Matrix<T, -1, -1>& matrix) {
-  if (matrix.rows() != matrix.cols()) {
-    throw std::runtime_error("matrix is not square");
-  }
-  Eigen::SelfAdjointEigenSolver<Eigen::Matrix<T, -1, -1>> eigenSolver(matrix);
-  Eigen::VectorXd eigenvalues = eigenSolver.eigenvalues();
-  if (eigenvalues.array().any() < T(0)) {
-    return false;
-  } else {
-    return true;
-  }
-}
-
-template <typename T>
-bool RegualizeMatrix(Eigen::Matrix<T, -1, -1>& matrix, T lambda = 0.1, int max_iter = 100) {
-  if (IsPositiveDefinite(matrix)) {
-    return true;
-  }
-  int iter = 0;
-  int rows = matrix.rows();
-  while (!IsPositiveDefinite(matrix) && iter < max_iter) {
-    matrix.diagonal() += Eigen::Matrix<T, -1, 1>::Ones(rows) * lambda;
-    std::cout << "RegualizeMatrix matrix:\n" << matrix << std::endl;
-    ++iter;
-  }
-  if (iter == max_iter) {
-    return false;
-  }
-  return true;
-}
-
 /**
  * Compute the dumped pseudo inverse of a matrix. If the singular value is less than
  * threshold, then replace it with 1/threshold. This is useful for
@@ -72,6 +16,7 @@ bool RegualizeMatrix(Eigen::Matrix<T, -1, -1>& matrix, T lambda = 0.1, int max_i
  * \param threshold threshold for the singular values
  * \param inverse_matrix output matrix, the pseudo inverse of matrix
  */
+
 template <typename T>
 void dumpedPseudoInverse(Eigen::Matrix<T, -1, -1> const& matrix, double threshold,
                          Eigen::Matrix<T, -1, -1>& inverse_matrix) {
@@ -121,5 +66,6 @@ void pseudoInverse(Eigen::Matrix<T, -1, -1> const& matrix, double threshold, Eig
   }
   inverse_matrix = svd.matrixV() * invS * svd.matrixU().transpose();
 }
-
 }  // namespace math
+
+#endif
