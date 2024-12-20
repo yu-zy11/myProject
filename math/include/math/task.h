@@ -3,12 +3,12 @@
 #include <Eigen/Dense>
 namespace math {
 
-// PosTask definition: weight*f(x) =weight* p_d, Ax<= ub, Using Newton-Euler method to find x
-// which meets the objective: min (weight*f(x)-weight* p_d|)^T*(weight*f(x)-weight* p_d|)
-class PosTask {
+// Task definition: weight*f(x) =weight* p_d, Ax< = ub, Using Newton-Euler method to solve
+// min (weight*f(x)-weight* p_d|)^T*(weight*f(x)-weight* p_d|)
+class Task {
  public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-  PosTask(int weight = 1) {
+  Task(int weight = 1) {
     if (weight < 0.0) {
       throw std::runtime_error("weight must be positive");
     }
@@ -25,6 +25,7 @@ class PosTask {
     CalculateConstraint();
     Check();
   };
+
   void Check() {
     if (jacobian_.rows() != value_.rows()) {
       throw std::runtime_error("rows of jacobian and value not equal");
@@ -39,6 +40,7 @@ class PosTask {
       throw std::runtime_error("rows of jacobian and value not equal");
     }
   }
+
   Eigen::MatrixXd GetJacobian() { return jacobian_; }
   Eigen::VectorXd GetValue() { return value_; }
   Eigen::VectorXd GetTarget() { return target_; }

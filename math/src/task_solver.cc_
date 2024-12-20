@@ -1,16 +1,16 @@
 
-#include "../include/math/matrix_utils.h"
 #include "../include/math/root_finding.h"
+#include "../include/math/matrix_utils.h"
 
 namespace math {
 
-RootFinding::RootFinding(const Eigen::VectorXd& init_state, double thresh_hold) {
+TaskSolver::TaskSolver(const Eigen::VectorXd& init_state, double thresh_hold) {
   thresh_hold_ = thresh_hold;
   state_ = init_state;
   task_list_.clear();
 }
 
-void RootFinding::UpdateData() {
+void TaskSolver::UpdateData() {
   composite_jacobian_.resize(0, 0);
   composite_value_.resize(0);
   composite_target_.resize(0);
@@ -29,7 +29,7 @@ void RootFinding::UpdateData() {
   }
 }
 
-void RootFinding::Solve() {
+void TaskSolver::Solve() {
   SolveStep();
   state_old_ = state_;
   while ((state_ - state_old_).norm() > thresh_hold_) {
@@ -38,7 +38,7 @@ void RootFinding::Solve() {
   }
 };
 
-void RootFinding::UpdateValueOnly(const Eigen::VectorXd& state, Eigen::VectorXd& value) {
+void TaskSolver::UpdateValueOnly(const Eigen::VectorXd& state, Eigen::VectorXd& value) {
   value.resize(0);
   for (auto& task : task_list_) {
     task->Update(state);
@@ -46,7 +46,7 @@ void RootFinding::UpdateValueOnly(const Eigen::VectorXd& state, Eigen::VectorXd&
   }
 };
 
-void RootFinding::SolveStep() {
+void TaskSolver::SolveStep() {
   UpdateData();
   // Do not need regularize hession matrix, J*JT is already semi positive definite
   Eigen::MatrixXd hessian = composite_jacobian_.transpose() * composite_jacobian_;

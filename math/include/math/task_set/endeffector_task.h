@@ -1,14 +1,14 @@
 #include <math.h>
 #include <iostream>
 
-#include "pos_task.h"
+#include "../task.h"
 
 namespace math {
 
-class EndeffectorTask : public PosTask {
+class EndeffectorTask : public Task {
  public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-  EndeffectorTask(int weight = 10) : PosTask(weight) {}
+  EndeffectorTask(int weight = 10) : Task(weight) {}
   void CalculateJacobian() override {
     jacobian_ = Eigen::Matrix3d::Zero();
     jacobian_(0, 0) = 4 * std::pow(state_[0], 3) + 6 * std::pow(state_[0], 2) + 3;

@@ -4,14 +4,14 @@
 #include <iostream>
 
 #include "../../include/math/matrix_utils.h"
-#include "../../include/math/pos_task_set/endeffector_task.h"
-#include "../../include/math/root_finding.h"
+#include "../../include/math/task_set/endeffector_task.h"
+#include "../../include/math/task_solver.h"
 
 bool test_root_finding() {
   double task1_weight = 5;
   double task2_weight = 1;
-  std::shared_ptr<math::PosTask> task1 = std::make_shared<math::EndeffectorTask>(task1_weight);
-  std::shared_ptr<math::PosTask> task2 = std::make_shared<math::EndeffectorTask>(task2_weight);
+  std::shared_ptr<math::Task> task1 = std::make_shared<math::EndeffectorTask>(task1_weight);
+  std::shared_ptr<math::Task> task2 = std::make_shared<math::EndeffectorTask>(task2_weight);
   Eigen::VectorXd target1 = Eigen::Vector3d{1, 2, 3};
   std::cout << target1 << std::endl;
   Eigen::VectorXd target2 = Eigen::Vector3d{3, 2, 3};
@@ -20,12 +20,12 @@ bool test_root_finding() {
   task2->SetTarget(target2);
 
   Eigen::Vector3d init_state{0, 0, 0};
-  math::RootFinding root_finding{init_state, 1e-8};
-  root_finding.AddTask(task1);
-  root_finding.AddTask(task2);
-  root_finding.Solve();
+  math::TaskSolver solver{init_state, 1e-8};
+  solver.AddTask(task1);
+  solver.AddTask(task2);
+  solver.Solve();
   Eigen::VectorXd state;
-  root_finding.GetResult(state);
+  solver.GetResult(state);
 
   task1->Update(state);
   task2->Update(state);

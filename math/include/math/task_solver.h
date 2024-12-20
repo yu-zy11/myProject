@@ -6,17 +6,17 @@
 
 #include <Eigen/Dense>
 
-#include "./pos_task_set/pos_task.h"
+#include "task.h"
 
 namespace math {
 
-class RootFinding {
+class TaskSolver {
  public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-  RootFinding(const Eigen::VectorXd& init_state, double thresh_hold = 1e-6);
+  TaskSolver(const Eigen::VectorXd& init_state, double thresh_hold = 1e-6);
   void Reset() { task_list_.clear(); }
   void Solve();
-  void AddTask(std::shared_ptr<PosTask> task_added) { task_list_.push_back(task_added); }
+  void AddTask(std::shared_ptr<Task> task_added) { task_list_.push_back(task_added); }
   void GetResult(Eigen::VectorXd& state) { state = state_; }
 
  private:
@@ -24,7 +24,7 @@ class RootFinding {
   void UpdateData();
   void UpdateValueOnly(const Eigen::VectorXd& state, Eigen::VectorXd& value);
   void SolveStep();
-  std::vector<std::shared_ptr<PosTask>> task_list_;
+  std::vector<std::shared_ptr<Task>> task_list_;
   Eigen::VectorXd state_, state_old_;
   Eigen::MatrixXd composite_jacobian_;
   Eigen::VectorXd composite_value_;
@@ -34,13 +34,13 @@ class RootFinding {
   double thresh_hold_;
 };
 
-RootFinding::RootFinding(const Eigen::VectorXd& init_state, double thresh_hold) {
+TaskSolver::TaskSolver(const Eigen::VectorXd& init_state, double thresh_hold) {
   thresh_hold_ = thresh_hold;
   state_ = init_state;
   task_list_.clear();
 }
 
-void RootFinding::UpdateData() {
+void TaskSolver::UpdateData() {
   composite_jacobian_.resize(0, state_.size());
   composite_value_.resize(0);
   composite_target_.resize(0);
@@ -59,7 +59,7 @@ void RootFinding::UpdateData() {
   }
 }
 
-void RootFinding::Solve() {
+void TaskSolver::Solve() {
   state_old_ = state_;
   SolveStep();
   while ((state_ - state_old_).norm() > thresh_hold_) {
@@ -68,7 +68,7 @@ void RootFinding::Solve() {
   }
 };
 
-void RootFinding::UpdateValueOnly(const Eigen::VectorXd& state, Eigen::VectorXd& value) {
+void TaskSolver::UpdateValueOnly(const Eigen::VectorXd& state, Eigen::VectorXd& value) {
   value.resize(0);
   for (auto& task : task_list_) {
     task->Update(state);
@@ -76,7 +76,7 @@ void RootFinding::UpdateValueOnly(const Eigen::VectorXd& state, Eigen::VectorXd&
   }
 };
 
-void RootFinding::SolveStep() {
+void TaskSolver::SolveStep() {
   UpdateData();
   // regualize hession matrix
   Eigen::MatrixXd hessian = composite_jacobian_.transpose() * composite_jacobian_;
