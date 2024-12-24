@@ -1,3 +1,6 @@
+#pragma once
+
+#include <glog/logging.h>
 #include <Eigen/Dense>
 
 namespace math {
@@ -12,8 +15,9 @@ Eigen::Matrix<T, -1, -1> StackMatrix(const Eigen::Matrix<T, -1, -1>& m1, const E
   return res;
 }
 
-Eigen::VectorXd StackMatrix(const Eigen::VectorXd& v1, const Eigen::VectorXd& v2) {
-  Eigen::VectorXd res(v1.size() + v2.size());
+template <typename T>
+Eigen::Matrix<T, -1, 1> StackMatrix(const Eigen::Matrix<T, -1, 1>& v1, const Eigen::Matrix<T, -1, 1>& v2) {
+  Eigen::Matrix<T, -1, 1> res(v1.size() + v2.size());
   res << v1, v2;
   return res;
 }
@@ -38,7 +42,7 @@ bool IsSemiPositiveDefinite(const Eigen::Matrix<T, -1, -1>& matrix) {
     throw std::runtime_error("matrix is not square");
   }
   Eigen::SelfAdjointEigenSolver<Eigen::Matrix<T, -1, -1>> eigenSolver(matrix);
-  Eigen::VectorXd eigenvalues = eigenSolver.eigenvalues();
+  Eigen::Matrix<T, -1, 1> eigenvalues = eigenSolver.eigenvalues();
   if (eigenvalues.array().any() < T(0)) {
     return false;
   } else {
@@ -55,7 +59,6 @@ bool RegualizeMatrix(Eigen::Matrix<T, -1, -1>& matrix, T lambda = 0.1, int max_i
   int rows = matrix.rows();
   while (!IsPositiveDefinite(matrix) && iter < max_iter) {
     matrix.diagonal() += Eigen::Matrix<T, -1, 1>::Ones(rows) * lambda;
-    std::cout << "RegualizeMatrix matrix:\n" << matrix << std::endl;
     ++iter;
   }
   if (iter == max_iter) {

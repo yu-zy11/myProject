@@ -6,24 +6,43 @@
 
 #include <Eigen/Dense>
 
+#include "matrix_utils.h"
 #include "task.h"
 
 namespace math {
 
+// A class for augmented lagrange method to solve task: f(x) = target, s.t. Ax <= ub;
+// Objective: min (f(x)- target|)^T*(f(x)- target|)+ lambda^T*(Ax-ub)+p_coef/2*[max(0,Ax-ub)]^2
+// method:  Augmented Newton-Euler
 class TaskSolver {
  public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-  TaskSolver(const Eigen::VectorXd& init_state, double thresh_hold = 1e-6);
+  TaskSolver(double thresh_hold = 1e-6, int max_iteration = 50);
   void Reset() { task_list_.clear(); }
-  void Solve();
   void AddTask(std::shared_ptr<Task> task_added) { task_list_.push_back(task_added); }
+  void SolveWithNoConstraint(const Eigen::VectorXd& init_state);
+  void SolveUsingAugmentedLagrange(const Eigen::VectorXd& init_state);
   void GetResult(Eigen::VectorXd& state) { state = state_; }
+  void GetCompositeTarget(Eigen::VectorXd& target) { target = composite_target_; }
+  void GetCompositeValue(Eigen::VectorXd& value) { value = composite_value_; }
+  void GetCompositeJacobian(Eigen::MatrixXd& jacobian) { jacobian = composite_jacobian_; }
 
  private:
-  static constexpr int kLineSearchStep = 10;
-  void UpdateData();
-  void UpdateValueOnly(const Eigen::VectorXd& state, Eigen::VectorXd& value);
-  void SolveStep();
+  static constexpr double kMultiplier = 10.0;
+  static constexpr int kMaxLineSearchStep = 5;
+
+  void UpdateTaskData(const Eigen::VectorXd& state);
+  void UpdateTaskValue(const Eigen::VectorXd& state, Eigen::VectorXd& value);
+  void SolveStepWithNoConstraint();
+  void AugmentedLagrangeNewtonStep(const Eigen::VectorXd& lagrange_multiplier, double punish_coef);
+  void CalculateAugmentedLagrangeGradientAndHessian(const Eigen::VectorXd& state,
+                                                    const Eigen::VectorXd& lagrange_multiplier, double p_coef,
+                                                    Eigen::VectorXd& gradient, Eigen::MatrixXd& hessian);
+  void CalculateAugmentedLagrangeGradient(const Eigen::VectorXd& state, const Eigen::VectorXd& lagrange_multiplier,
+                                          double p_coef, Eigen::VectorXd& gradient);
+  // CalculateAugmentedLagrangeGradient must be called first
+  void CalculateAugmentedLagrangeHessian(double p_coef, Eigen::MatrixXd& hessian);
+
   std::vector<std::shared_ptr<Task>> task_list_;
   Eigen::VectorXd state_, state_old_;
   Eigen::MatrixXd composite_jacobian_;
@@ -32,76 +51,6 @@ class TaskSolver {
   Eigen::MatrixXd composite_A_;
   Eigen::VectorXd composite_ub_;
   double thresh_hold_;
+  int max_iteration_;
 };
-
-TaskSolver::TaskSolver(const Eigen::VectorXd& init_state, double thresh_hold) {
-  thresh_hold_ = thresh_hold;
-  state_ = init_state;
-  task_list_.clear();
-}
-
-void TaskSolver::UpdateData() {
-  composite_jacobian_.resize(0, state_.size());
-  composite_value_.resize(0);
-  composite_target_.resize(0);
-  composite_A_.resize(0, state_.size());
-  composite_ub_.resize(0);
-  for (auto& task : task_list_) {
-    task->Update(state_);
-    Eigen::MatrixXd task_jacobian = task->GetWeightedJacobian();
-    composite_jacobian_ = StackMatrix(composite_jacobian_, task_jacobian);
-    Eigen::VectorXd value = task->GetWeightedValue();
-    composite_value_ = StackMatrix(composite_value_, value);
-    Eigen::VectorXd target = task->GetWeightedTarget();
-    composite_target_ = StackMatrix(composite_target_, target);
-    composite_A_ = StackMatrix(composite_A_, task->GetA());
-    composite_ub_ = StackMatrix(composite_ub_, task->GetUb());
-  }
-}
-
-void TaskSolver::Solve() {
-  state_old_ = state_;
-  SolveStep();
-  while ((state_ - state_old_).norm() > thresh_hold_) {
-    state_old_ = state_;
-    SolveStep();
-  }
-};
-
-void TaskSolver::UpdateValueOnly(const Eigen::VectorXd& state, Eigen::VectorXd& value) {
-  value.resize(0);
-  for (auto& task : task_list_) {
-    task->Update(state);
-    value = StackMatrix(value, task->GetWeightedValue());
-  }
-};
-
-void TaskSolver::SolveStep() {
-  UpdateData();
-  // regualize hession matrix
-  Eigen::MatrixXd hessian = composite_jacobian_.transpose() * composite_jacobian_;
-  math::RegualizeMatrix(hessian);
-  Eigen::VectorXd error = composite_value_ - composite_target_;
-  Eigen::VectorXd gradient = composite_jacobian_.transpose() * error;
-  Eigen::VectorXd delta = hessian.ldlt().solve(-gradient);
-  // line search to avoid overshooting
-  Eigen::VectorXd state_new = state_ + delta;
-  Eigen::VectorXd value_new;
-  UpdateValueOnly(state_new, value_new);
-  Eigen::VectorXd error_new = value_new - composite_target_;
-  double alpha = 1.0;
-  int itr = 0;
-  while (error_new.norm() > error.norm() && itr < kLineSearchStep) {
-    alpha *= 0.5;
-    state_new = state_ + alpha * delta;
-    UpdateValueOnly(state_new, value_new);
-    error_new = value_new - composite_target_;
-    ++itr;
-  }
-  if (itr == kLineSearchStep) {
-    std::cout << "warnnig, line search reach maximun steps:" << std::endl;
-  }
-  state_ = state_new;
-}
-
 }  // namespace math

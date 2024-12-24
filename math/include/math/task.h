@@ -3,8 +3,7 @@
 #include <Eigen/Dense>
 namespace math {
 
-// Task definition: weight*f(x) =weight* p_d, Ax< = ub, Using Newton-Euler method to solve
-// min (weight*f(x)-weight* p_d|)^T*(weight*f(x)-weight* p_d|)
+// A class for task definition: weight*f(x) =weight* target_, Ax< = ub
 class Task {
  public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -18,6 +17,8 @@ class Task {
   virtual void CalculateValue() = 0;
   virtual void CalculateConstraint() = 0;
   void SetTarget(const Eigen::VectorXd& target) { target_ = target; }
+  void SetWeight(double weight) { weight_ = weight; }
+  virtual void UpdateCommon(const Eigen::VectorXd& state) = 0;
   void Update(const Eigen::VectorXd& state) {
     state_ = state;
     CalculateJacobian();
@@ -27,26 +28,23 @@ class Task {
   };
 
   void Check() {
-    if (jacobian_.rows() != value_.rows()) {
+    if (jacobian_.rows() != value_.size()) {
       throw std::runtime_error("rows of jacobian and value not equal");
     }
-    if (jacobian_.cols() != state_.rows()) {
+    if (jacobian_.cols() != state_.size()) {
       throw std::runtime_error("cols of jacobian and state not equal");
     }
-    if (jacobian_.rows() != target_.rows()) {
+    if (jacobian_.rows() != target_.size()) {
       throw std::runtime_error("rows of jacobian and target not equal");
-    }
-    if (jacobian_.rows() != value_.rows()) {
-      throw std::runtime_error("rows of jacobian and value not equal");
     }
   }
 
-  Eigen::MatrixXd GetJacobian() { return jacobian_; }
-  Eigen::VectorXd GetValue() { return value_; }
-  Eigen::VectorXd GetTarget() { return target_; }
   Eigen::MatrixXd GetWeightedJacobian() { return weight_ * jacobian_; }
   Eigen::VectorXd GetWeightedValue() { return weight_ * value_; }
   Eigen::VectorXd GetWeightedTarget() { return weight_ * target_; }
+  Eigen::MatrixXd GetJacobian() { return jacobian_; }
+  Eigen::VectorXd GetValue() { return value_; }
+  Eigen::VectorXd GetTarget() { return target_; }
   Eigen::MatrixXd& GetA() { return A_; }
   Eigen::VectorXd& GetUb() { return ub_; }
 
