@@ -8,7 +8,7 @@
             "args": [
                 "-fdiagnostics-color=always",
                 "-g",
-                "${file}","${fileDirname}/../task_solver.cc",
+                "${file}","${fileDirname}/../augmented_lagrange_solver.cc",
                 "-o",
                 "${fileDirname}/${fileBasenameNoExtension}"
             ],

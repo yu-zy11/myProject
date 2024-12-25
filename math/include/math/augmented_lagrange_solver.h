@@ -14,10 +14,10 @@ namespace math {
 // A class for augmented lagrange method to solve task: f(x) = target, s.t. Ax <= ub;
 // Objective: min (f(x)- target|)^T*(f(x)- target|)+ lambda^T*(Ax-ub)+p_coef/2*[max(0,Ax-ub)]^2
 // method:  Augmented Newton-Euler
-class TaskSolver {
+class AugmentedLagrangeSolver {
  public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-  TaskSolver(double thresh_hold = 1e-6, int max_iteration = 50);
+  AugmentedLagrangeSolver(double tolerance = 1e-6, int max_iteration = 20);
   void Reset() { task_list_.clear(); }
   void AddTask(std::shared_ptr<Task> task_added) { task_list_.push_back(task_added); }
   void SolveWithNoConstraint(const Eigen::VectorXd& init_state);
@@ -28,8 +28,9 @@ class TaskSolver {
   void GetCompositeJacobian(Eigen::MatrixXd& jacobian) { jacobian = composite_jacobian_; }
 
  private:
-  static constexpr double kMultiplier = 10.0;
-  static constexpr int kMaxLineSearchStep = 5;
+  static constexpr double kPenaltyMultiplier = 10.0;
+  static constexpr int kMaxIterationLineSearch = 5;
+  static constexpr int kMaxIterationPerStep = 20;
 
   void UpdateTaskData(const Eigen::VectorXd& state);
   void UpdateTaskValue(const Eigen::VectorXd& state, Eigen::VectorXd& value);
@@ -49,8 +50,10 @@ class TaskSolver {
   Eigen::VectorXd composite_value_;
   Eigen::VectorXd composite_target_;
   Eigen::MatrixXd composite_A_;
+  Eigen::MatrixXd modified_A_;
   Eigen::VectorXd composite_ub_;
-  double thresh_hold_;
+  Eigen::VectorXd modified_ub_;
+  double tolerance_;
   int max_iteration_;
 };
 }  // namespace math

@@ -4,10 +4,9 @@
 #include <ctime>
 #include <iostream>
 
+#include "../../include/math/augmented_lagrange_solver.h"
 #include "../../include/math/matrix_utils.h"
 #include "../../include/math/task.h"
-#include "../../include/math/task_set/endeffector_task.h"
-#include "../../include/math/task_solver.h"
 
 class TestedTask : public math::Task {
  public:
@@ -49,7 +48,7 @@ bool test_root_finding() {
   task2->SetTarget(target2);
 
   Eigen::Vector3d init_state{0, 0, 0};
-  math::TaskSolver solver{1e-8, 50};
+  math::AugmentedLagrangeSolver solver{1e-8, 50};
   solver.AddTask(task1);
   solver.AddTask(task2);
   solver.SolveWithNoConstraint(init_state);
@@ -86,7 +85,7 @@ bool TESTAugmentedLagrange() {
   task2->SetTarget(target2);
 
   Eigen::Vector3d init_state{0, 0, 0};
-  math::TaskSolver solver{1e-8, 50};
+  math::AugmentedLagrangeSolver solver{1e-8, 50};
   solver.AddTask(task1);
   solver.AddTask(task2);
   solver.SolveUsingAugmentedLagrange(init_state);

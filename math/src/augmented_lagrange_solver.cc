@@ -1,18 +1,18 @@
 #pragma once
 
-#include <glog/logging.h>
+#include "../include/math/augmented_lagrange_solver.h"
 
-#include "../include/math/task_solver.h"
+#include <glog/logging.h>
 
 namespace math {
 
-TaskSolver::TaskSolver(double thresh_hold, int max_iteration) {
-  thresh_hold_ = thresh_hold;
+AugmentedLagrangeSolver::AugmentedLagrangeSolver(double tolerance, int max_iteration) {
+  tolerance_ = tolerance;
   max_iteration_ = max_iteration;
   task_list_.clear();
 }
 
-void TaskSolver::UpdateTaskData(const Eigen::VectorXd& state) {
+void AugmentedLagrangeSolver::UpdateTaskData(const Eigen::VectorXd& state) {
   composite_jacobian_.resize(0, state.size());
   composite_value_.resize(0);
   composite_target_.resize(0);
@@ -32,12 +32,12 @@ void TaskSolver::UpdateTaskData(const Eigen::VectorXd& state) {
   }
 }
 
-void TaskSolver::SolveWithNoConstraint(const Eigen::VectorXd& init_state) {
+void AugmentedLagrangeSolver::SolveWithNoConstraint(const Eigen::VectorXd& init_state) {
   state_ = init_state;
   state_old_ = state_;
   SolveStepWithNoConstraint();
   int itr = 0;
-  while ((state_ - state_old_).norm() > thresh_hold_ && itr < max_iteration_) {
+  while ((state_ - state_old_).norm() > tolerance_ && itr < max_iteration_) {
     state_old_ = state_;
     SolveStepWithNoConstraint();
     ++itr;
@@ -47,7 +47,7 @@ void TaskSolver::SolveWithNoConstraint(const Eigen::VectorXd& init_state) {
   }
 };
 
-void TaskSolver::UpdateTaskValue(const Eigen::VectorXd& state, Eigen::VectorXd& value) {
+void AugmentedLagrangeSolver::UpdateTaskValue(const Eigen::VectorXd& state, Eigen::VectorXd& value) {
   value.resize(0);
   task_list_[0]->UpdateCommon(state);
   for (auto& task : task_list_) {
@@ -56,7 +56,7 @@ void TaskSolver::UpdateTaskValue(const Eigen::VectorXd& state, Eigen::VectorXd& 
   }
 };
 
-void TaskSolver::SolveStepWithNoConstraint() {
+void AugmentedLagrangeSolver::SolveStepWithNoConstraint() {
   UpdateTaskData(state_);
   // regualize hession matrix
   Eigen::MatrixXd hessian = composite_jacobian_.transpose() * composite_jacobian_;
@@ -71,43 +71,46 @@ void TaskSolver::SolveStepWithNoConstraint() {
   Eigen::VectorXd error_new = value_new - composite_target_;
   double alpha = 1.0;
   int itr = 0;
-  while (error_new.norm() > error.norm() && itr < kMaxLineSearchStep) {
+  while (error_new.norm() > error.norm() && itr < kMaxIterationLineSearch) {
     alpha *= 0.5;
     state_new = state_ + alpha * delta;
     UpdateTaskValue(state_new, value_new);
     error_new = value_new - composite_target_;
     ++itr;
   }
-  if (itr == kMaxLineSearchStep) {
+  if (itr == kMaxIterationLineSearch) {
     std::cout << "warnnig, line search reach maximun steps:" << std::endl;
   }
   state_ = state_new;
 }
 
-void TaskSolver::SolveUsingAugmentedLagrange(const Eigen::VectorXd& init_state) {
+void AugmentedLagrangeSolver::SolveUsingAugmentedLagrange(const Eigen::VectorXd& init_state) {
   state_ = init_state;
   UpdateTaskData(state_);
   int num_constraint = composite_ub_.size();
   Eigen::VectorXd lagrange_multiplier = Eigen::VectorXd::Zero(num_constraint);
-  double p_coef = kMultiplier;
+  double p_coef = kPenaltyMultiplier;
   state_old_ = state_;
   AugmentedLagrangeNewtonStep(lagrange_multiplier, p_coef);
   int itr = 0;
-  while ((state_ - state_old_).norm() > thresh_hold_ && itr < max_iteration_) {
+  while ((state_ - state_old_).norm() > tolerance_ && itr < max_iteration_) {
     state_old_ = state_;
     lagrange_multiplier += p_coef * (composite_A_ * state_ - composite_ub_);
-    p_coef *= kMultiplier;
+    lagrange_multiplier = lagrange_multiplier.cwiseMax(0.0);
+    p_coef *= kPenaltyMultiplier;
     AugmentedLagrangeNewtonStep(lagrange_multiplier, p_coef);
     ++itr;
-    // std::cout << "state_old_:\n" << state_old_.transpose() << std::endl;
-    // std::cout << "state_:\n" << state_.transpose() << std::endl;
   }
   if (itr == max_iteration_) {
     std::cout << "solver reach max iteration in SolveUsingAugmentedLagrange";
   }
+  Eigen::VectorXd constraint = composite_A_ * state_ - composite_ub_;
+  if (constraint.maxCoeff() > tolerance_) {
+    std::cout << "Failed, constraint not satisfied in SolveUsingAugmentedLagrange" << std::endl;
+  }
 };
 
-void TaskSolver::AugmentedLagrangeNewtonStep(const Eigen::VectorXd& lagrange_multiplier, double p_coef) {
+void AugmentedLagrangeSolver::AugmentedLagrangeNewtonStep(const Eigen::VectorXd& lagrange_multiplier, double p_coef) {
   Eigen::VectorXd gradient;
   Eigen::MatrixXd hessian;
   CalculateAugmentedLagrangeGradientAndHessian(state_, lagrange_multiplier, p_coef, gradient, hessian);
@@ -119,7 +122,7 @@ void TaskSolver::AugmentedLagrangeNewtonStep(const Eigen::VectorXd& lagrange_mul
   // Add line search to avoid overshooting
   CalculateAugmentedLagrangeGradient(state_new, lagrange_multiplier, p_coef, gradient_new);
   int itr_line_search = 0;
-  while (gradient_new.norm() > gradient.norm() && itr_line_search < kMaxLineSearchStep) {
+  while (gradient_new.norm() > gradient.norm() && itr_line_search < kMaxIterationLineSearch) {
     delta = 0.5 * delta;
     state_new = state_ + delta;
     CalculateAugmentedLagrangeGradient(state_new, lagrange_multiplier, p_coef, gradient_new);
@@ -130,15 +133,15 @@ void TaskSolver::AugmentedLagrangeNewtonStep(const Eigen::VectorXd& lagrange_mul
   hessian = hessian_new;
   state_new = state_ + delta;
   int itr = 0;
-  while (delta.norm() > thresh_hold_ && itr < max_iteration_) {
-    // while (gradient.norm() > thresh_hold_ && itr < max_iteration_) {
+  // while (gradient.norm() > tolerance_ && itr < kMaxIterationPerStep)
+  while (delta.norm() > tolerance_ && itr < kMaxIterationPerStep) {
     math::RegualizeMatrix(hessian);
     delta = hessian.ldlt().solve(-gradient);
     // Add line search to avoid overshooting
     Eigen::VectorXd state_new_tmp = state_new + delta;
     CalculateAugmentedLagrangeGradient(state_new_tmp, lagrange_multiplier, p_coef, gradient_new);
     int itr_line_search_tmp = 0;
-    while (gradient_new.norm() > gradient.norm() && itr_line_search_tmp < kMaxLineSearchStep) {
+    while (gradient_new.norm() > gradient.norm() && itr_line_search_tmp < kMaxIterationLineSearch) {
       delta = 0.5 * delta;
       state_new_tmp = state_new + delta;
       CalculateAugmentedLagrangeGradient(state_new_tmp, lagrange_multiplier, p_coef, gradient_new);
@@ -146,48 +149,49 @@ void TaskSolver::AugmentedLagrangeNewtonStep(const Eigen::VectorXd& lagrange_mul
     }
 
     CalculateAugmentedLagrangeHessian(p_coef, hessian_new);
-    // std::cout << "gradient:\n" << gradient.transpose() << std::endl;
-    // std::cout << "delta:\n" << delta.transpose() << std::endl;
-    state_new = state_new + delta;
     gradient = gradient_new;
     hessian = hessian_new;
+    state_new = state_new + delta;
     ++itr;
   }
-  if (itr == max_iteration_) {
-    std::cout << "reach max iteration in AugmentedLagrangeNewtonStep, itr=" << itr << std::endl;
+  if (itr == kMaxIterationPerStep) {
+    std::cout << "reach max iteration per step in AugmentedLagrangeNewtonStep, itr=" << itr << std::endl;
   }
   state_ = state_new;
 };
-void TaskSolver::CalculateAugmentedLagrangeGradientAndHessian(const Eigen::VectorXd& state,
-                                                              const Eigen::VectorXd& lagrange_multiplier, double p_coef,
-                                                              Eigen::VectorXd& gradient, Eigen::MatrixXd& hessian) {
+void AugmentedLagrangeSolver::CalculateAugmentedLagrangeGradientAndHessian(const Eigen::VectorXd& state,
+                                                                           const Eigen::VectorXd& lagrange_multiplier,
+                                                                           double p_coef, Eigen::VectorXd& gradient,
+                                                                           Eigen::MatrixXd& hessian) {
   CalculateAugmentedLagrangeGradient(state, lagrange_multiplier, p_coef, gradient);
   CalculateAugmentedLagrangeHessian(p_coef, hessian);
 };
 
-void TaskSolver::CalculateAugmentedLagrangeGradient(const Eigen::VectorXd& state,
-                                                    const Eigen::VectorXd& lagrange_multiplier, double p_coef,
-                                                    Eigen::VectorXd& gradient) {
+void AugmentedLagrangeSolver::CalculateAugmentedLagrangeGradient(const Eigen::VectorXd& state,
+                                                                 const Eigen::VectorXd& lagrange_multiplier,
+                                                                 double p_coef, Eigen::VectorXd& gradient) {
   int num_constraint = composite_ub_.size();
   if (lagrange_multiplier.size() != num_constraint) {
     throw std::runtime_error("lagrange_multiplier size must be equal to size of inequality constriants");
   }
   UpdateTaskData(state);
   Eigen::VectorXd constraint = (composite_A_ * state - composite_ub_);
+  modified_A_ = composite_A_;
+  modified_ub_ = composite_ub_;
   for (int i = 0; i < num_constraint; ++i) {
     if (constraint[i] <= 0) {
-      composite_A_.row(i).setZero();
-      composite_ub_[i] = 0;
+      modified_A_.row(i).setZero();
+      modified_ub_[i] = 0;
       constraint[i] = 0;
     }
   }
   Eigen::VectorXd error = composite_value_ - composite_target_;
-  gradient = composite_jacobian_.transpose() * error + composite_A_.transpose() * lagrange_multiplier +
-             p_coef * composite_A_.transpose() * constraint;
+  gradient = composite_jacobian_.transpose() * error + modified_A_.transpose() * lagrange_multiplier +
+             p_coef * modified_A_.transpose() * constraint;
 };
 
-void TaskSolver::CalculateAugmentedLagrangeHessian(double p_coef, Eigen::MatrixXd& hessian) {
-  hessian = composite_jacobian_.transpose() * composite_jacobian_ + p_coef * composite_A_.transpose() * composite_A_;
+void AugmentedLagrangeSolver::CalculateAugmentedLagrangeHessian(double p_coef, Eigen::MatrixXd& hessian) {
+  hessian = composite_jacobian_.transpose() * composite_jacobian_ + p_coef * modified_A_.transpose() * modified_A_;
 };
 
 }  // namespace math
